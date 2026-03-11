@@ -185,14 +185,103 @@
 
     /* 结果和原文的并排布局 */
     .result-container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0;
+      display: flex;
+      flex-direction: column;
       min-height: 600px;
     }
 
     /* 当原文面板收起时 */
     .result-container.source-collapsed {
+      /* 保持单列布局 */
+    }
+
+    /* Sticky标题栏 - 固定在顶部 */
+    .sticky-header-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 16px 24px;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      flex-shrink: 0;
+    }
+
+    .sticky-header-bar .header-content {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .sticky-header-bar .article-info {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .sticky-header-bar .article-label {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 4px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .sticky-header-bar .article-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: white;
+      line-height: 1.4;
+      word-wrap: break-word;
+    }
+
+    .sticky-header-bar .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .sticky-header-bar .analyzer-badge {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+
+    .sticky-header-bar .source-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: white;
+      border: none;
+      color: #667eea;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      white-space: nowrap;
+    }
+
+    .sticky-header-bar .source-toggle-btn:hover {
+      background: rgba(255, 255, 255, 0.9);
+      transform: translateY(-1px);
+    }
+
+    /* 主内容区域 - 可滚动 */
+    .result-content-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .result-container.source-collapsed .result-content-wrapper {
       grid-template-columns: 1fr;
     }
 
@@ -477,40 +566,6 @@
 
     .info-card.relevance .value.低 {
       color: #6b7280;
-    }
-
-    /* 文章标题卡片 - Sticky固定在顶部 */
-    .article-title-card {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      padding: 18px 24px;
-      border-radius: 12px 12px 0 0;
-      margin-bottom: 0;
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-    }
-
-    .article-title-card .title-label {
-      font-size: 0.8em;
-      color: rgba(255, 255, 255, 0.8);
-      margin-bottom: 8px;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .article-title-card .title-value {
-      font-size: 1.15em;
-      font-weight: 700;
-      color: white;
-      line-height: 1.5;
-      word-wrap: break-word;
-    }
-
-    /* 调整result-panel的圆角 */
-    .result-panel {
-      border-radius: 0 0 12px 12px;
     }
 
     /* 摘要卡片 */
@@ -1032,17 +1087,14 @@
       <!-- 结果区域 -->
       <div class="result-section" id="resultSection">
         <div class="result-container source-collapsed">
-          <!-- 评估结果面板 -->
-          <div class="result-panel">
-            <!-- 文章标题 - 移到顶部 -->
-            <div class="article-title-card">
-              <div class="title-label">📄 文章标题</div>
-              <div class="title-value" id="articleTitle">-</div>
-            </div>
-
-            <div class="result-header">
-              <h2 class="result-title">评估结果</h2>
-              <div style="display: flex; gap: 10px; align-items: center;">
+          <!-- Sticky标题栏 - 文章标题+操作按钮 -->
+          <div class="sticky-header-bar">
+            <div class="header-content">
+              <div class="article-info">
+                <div class="article-label">📄 文章标题</div>
+                <div class="article-title" id="articleTitle">-</div>
+              </div>
+              <div class="header-actions">
                 <span class="analyzer-badge" id="analyzerBadge">行业认知基准（SaaS）</span>
                 <button class="source-toggle-btn" id="sourceToggleBtn" onclick="toggleSourcePanel()">
                   <span class="icon">📄</span>
@@ -1050,12 +1102,21 @@
                 </button>
               </div>
             </div>
+          </div>
 
-            <!-- 内容警告横幅 -->
-            <div class="warning-banner" id="warningBanner" style="display: none;">
-              <span class="warning-icon">⚠️</span>
-              <span class="warning-text">文章内容可能不完整，建议手动补充或点击"查看原文"确认</span>
-            </div>
+          <!-- 主内容区域 -->
+          <div class="result-content-wrapper">
+            <!-- 评估结果面板 -->
+            <div class="result-panel">
+              <div class="result-header">
+                <h2 class="result-title">评估结果</h2>
+              </div>
+
+              <!-- 内容警告横幅 -->
+              <div class="warning-banner" id="warningBanner" style="display: none;">
+                <span class="warning-icon">⚠️</span>
+                <span class="warning-text">文章内容可能不完整，建议手动补充或点击"查看原文"确认</span>
+              </div>
 
             <!-- 核心信息 -->
             <div class="core-info">
