@@ -1,0 +1,31 @@
+{
+  "name": "article-evaluator-demo",
+  "version": "1.2.0",
+  "description": "文章评估智能体 Demo v1.2 (P0优化版)",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "keywords": [
+    "article",
+    "evaluation",
+    "saas",
+    "ai"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@mozilla/readability": "^0.5.0",
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "jsdom": "^23.0.0",
+    "puppeteer-core": "^21.9.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
+  }
+}

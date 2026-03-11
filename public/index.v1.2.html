@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文章评估智能体 Demo v1.2</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+
+    .header .version {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      font-size: 16px;
+      opacity: 0.9;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      margin-bottom: 20px;
+    }
+
+    /* 输入区域样式 */
+    .input-tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    .tab {
+      padding: 12px 24px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      color: #6b7280;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+
+    .tab.active {
+      color: #667eea;
+      border-bottom-color: #667eea;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #374151;
+      font-weight: 500;
+    }
+
+    .input-group input,
+    .input-group textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+
+    .input-group input:focus,
+    .input-group textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .input-group textarea {
+      min-height: 200px;
+      resize: vertical;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* 加载状态 */
+    .loading {
+      text-align: center;
+      padding: 40px;
+      display: none;
+    }
+
+    .loading.active {
+      display: block;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* 评估结果区域 */
+    .result {
+      display: none;
+    }
+
+    .result.active {
+      display: block;
+    }
+
+    /* 🆕 v1.2 核心信息区 */
+    .core-info {
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+      border: 2px solid #0ea5e9;
+    }
+
+    .core-info-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .judgment-badge {
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .judgment-badge.agree {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .judgment-badge.disagree {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .relevance-badge,
+    .urgency-badge {
+      padding: 6px 14px;
+      border-radius: 16px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .relevance-badge {
+      background: white;
+      color: #667eea;
+      border: 1px solid #667eea;
+    }
+
+    .urgency-badge.urgent {
+      background: #fef2f2;
+      color: #dc2626;
+      border: 1px solid #dc2626;
+    }
+
+    .urgency-badge.normal {
+      background: #f0fdf4;
+      color: #16a34a;
+      border: 1px solid #16a34a;
+    }
+
+    .summary-box {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 16px;
+      border-left: 4px solid #0ea5e9;
+    }
+
+    .summary-box .label {
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .summary-box .content {
+      font-size: 15px;
+      color: #1f2937;
+      line-height: 1.6;
+    }
+
+    /* 可折叠区域 */
+    .collapsible-section {
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      overflow: hidden;
+      background: white;
+    }
+
+    .collapsible-header {
+      padding: 16px 20px;
+      background: #f9fafb;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.2s;
+    }
+
+    .collapsible-header:hover {
+      background: #f3f4f6;
+    }
+
+    .collapsible-header .title {
+      font-weight: 600;
+      color: #374151;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .collapsible-header .icon {
+      transition: transform 0.3s;
+      font-size: 12px;
+    }
+
+    .collapsible-header.expanded .icon {
+      transform: rotate(180deg);
+    }
+
+    .collapsible-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+      background: white;
+    }
+
+    .collapsible-content.expanded {
+      max-height: 500px;
+      padding: 16px 20px;
+    }
+
+    .collapsible-content p {
+      color: #4b5563;
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+
+    /* 🆕 v1.2 行动建议区域 */
+    .actions-section {
+      margin-top: 24px;
+    }
+
+    .actions-section .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 16px;
+    }
+
+    .priority-group {
+      margin-bottom: 20px;
+    }
+
+    .priority-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    .priority-header.high {
+      border-bottom-color: #ef4444;
+    }
+
+    .priority-header.medium {
+      border-bottom-color: #f59e0b;
+    }
+
+    .priority-header.low {
+      border-bottom-color: #10b981;
+    }
+
+    .priority-header .label {
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .action-item {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+      border-left: 4px solid #e5e7eb;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .action-item:hover {
+      transform: translateX(4px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .action-item.priority-high {
+      border-left-color: #ef4444;
+      background: #fef2f2;
+    }
+
+    .action-item.priority-medium {
+      border-left-color: #f59e0b;
+      background: #fffbeb;
+    }
+
+    .action-item.priority-low {
+      border-left-color: #10b981;
+      background: #f0fdf4;
+    }
+
+    .action-item .action-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 8px;
+    }
+
+    .action-item .action-text {
+      font-weight: 600;
+      color: #1f2937;
+      font-size: 15px;
+      flex: 1;
+    }
+
+    .action-item .timeline-badge {
+      background: white;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      color: #6b7280;
+      border: 1px solid #e5e7eb;
+      white-space: nowrap;
+      margin-left: 12px;
+    }
+
+    .action-item .reason {
+      font-size: 13px;
+      color: #6b7280;
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
+    .action-item .reason-label {
+      font-weight: 500;
+      color: #9ca3af;
+    }
+
+    /* 响应式 */
+    @media (max-width: 640px) {
+      .header h1 {
+        font-size: 24px;
+      }
+
+      .card {
+        padding: 20px;
+      }
+
+      .core-info-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .action-item .action-header {
+        flex-direction: column;
+      }
+
+      .action-item .timeline-badge {
+        margin-left: 0;
+        margin-top: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- 头部 -->
+    <div class="header">
+      <div class="version">v1.2 P0优化版</div>
+      <h1>📊 文章评估智能体</h1>
+      <p>基于专业知识基准的决策支持工具</p>
+    </div>
+
+    <!-- 输入卡片 -->
+    <div class="card">
+      <div class="input-tabs">
+        <div class="tab active" data-tab="url">🔗 粘贴链接</div>
+        <div class="tab" data-tab="content">📝 粘贴内容</div>
+      </div>
+
+      <form id="evaluationForm">
+        <div class="input-group" id="urlGroup">
+          <label for="urlInput">文章链接</label>
+          <input type="url" id="urlInput" placeholder="粘贴文章链接，例如：https://...">
+        </div>
+
+        <div class="input-group" id="contentGroup" style="display: none;">
+          <label for="contentInput">文章内容</label>
+          <textarea id="contentInput" placeholder="复制粘贴文章内容..."></textarea>
+        </div>
+
+        <button type="submit" class="btn" id="submitBtn">开始评估</button>
+      </form>
+    </div>
+
+    <!-- 加载状态 -->
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <p>正在分析文章，请稍候...</p>
+    </div>
+
+    <!-- 评估结果 -->
+    <div class="result" id="result">
+      <div class="card">
+        <!-- 核心信息区 -->
+        <div class="core-info">
+          <div class="core-info-header">
+            <div class="judgment-badge" id="judgmentBadge"></div>
+            <div class="relevance-badge" id="relevanceBadge"></div>
+            <div class="urgency-badge" id="urgencyBadge"></div>
+          </div>
+          <div class="summary-box">
+            <div class="label">💡 核心价值</div>
+            <div class="content" id="summary"></div>
+          </div>
+        </div>
+
+        <!-- 可折叠区域 -->
+        <div class="collapsible-sections">
+          <div class="collapsible-section">
+            <div class="collapsible-header" onclick="toggleSection(this)">
+              <div class="title">🔍 输入诊断</div>
+              <div class="icon">▼</div>
+            </div>
+            <div class="collapsible-content">
+              <p id="inputDiagnosis"></p>
+            </div>
+          </div>
+
+          <div class="collapsible-section">
+            <div class="collapsible-header" onclick="toggleSection(this)">
+              <div class="title">📊 宏观基准</div>
+              <div class="icon">▼</div>
+            </div>
+            <div class="collapsible-content">
+              <p id="macroBenchmark"></p>
+            </div>
+          </div>
+
+          <div class="collapsible-section">
+            <div class="collapsible-header" onclick="toggleSection(this)">
+              <div class="title">⚠️ 关键盲区</div>
+              <div class="icon">▼</div>
+            </div>
+            <div class="collapsible-content">
+              <p id="blindSpotAlert"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 行动建议区域 -->
+        <div class="actions-section">
+          <div class="section-title">🎯 行动建议</div>
+          <div id="actionsList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tab切换
+    const tabs = document.querySelectorAll('.tab');
+    const urlGroup = document.getElementById('urlGroup');
+    const contentGroup = document.getElementById('contentGroup');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        if (tab.dataset.tab === 'url') {
+          urlGroup.style.display = 'block';
+          contentGroup.style.display = 'none';
+        } else {
+          urlGroup.style.display = 'none';
+          contentGroup.style.display = 'block';
+        }
+      });
+    });
+
+    // 表单提交
+    const form = document.getElementById('evaluationForm');
+    const loading = document.getElementById('loading');
+    const result = document.getElementById('result');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const activeTab = document.querySelector('.tab.active').dataset.tab;
+      const url = document.getElementById('urlInput').value;
+      const content = document.getElementById('contentInput').value;
+
+      if (!url && !content) {
+        alert('请输入文章链接或内容');
+        return;
+      }
+
+      // 显示加载状态
+      loading.classList.add('active');
+      result.classList.remove('active');
+
+      try {
+        // 调用后端API
+        const response = await fetch('/api/evaluate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            type: activeTab,
+            url: url,
+            content: content
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          renderEvaluation(data.evaluation);
+          result.classList.add('active');
+        } else {
+          alert('评估失败：' + data.error);
+        }
+      } catch (error) {
+        alert('请求失败：' + error.message);
+      } finally {
+        loading.classList.remove('active');
+      }
+    });
+
+    // 渲染评估结果
+    function renderEvaluation(data) {
+      // 判断徽章
+      const judgmentBadge = document.getElementById('judgmentBadge');
+      judgmentBadge.textContent = data.judgment === '认同' ? '✅ 认同' : '❌ 不认同';
+      judgmentBadge.className = 'judgment-badge ' + (data.judgment === '认同' ? 'agree' : 'disagree');
+
+      // 相关性徽章
+      const relevanceStars = {
+        '高': '⭐⭐⭐⭐⭐',
+        '中': '⭐⭐⭐',
+        '低': '⭐⭐'
+      };
+      document.getElementById('relevanceBadge').textContent =
+        `相关性 ${relevanceStars[data.relevance] || '⭐⭐⭐'}`;
+
+      // 紧迫性徽章
+      const urgencyBadge = document.getElementById('urgencyBadge');
+      if (data.urgency === '是') {
+        urgencyBadge.textContent = '🔴 需要立即关注';
+        urgencyBadge.className = 'urgency-badge urgent';
+      } else {
+        urgencyBadge.textContent = '🟢 可以暂缓';
+        urgencyBadge.className = 'urgency-badge normal';
+      }
+
+      // 总结
+      document.getElementById('summary').textContent = data.summary || '暂无总结';
+
+      // 详细内容
+      document.getElementById('inputDiagnosis').textContent = data.input_diagnosis;
+      document.getElementById('macroBenchmark').textContent = data.macro_benchmark;
+      document.getElementById('blindSpotAlert').textContent = data.blind_spot_alert;
+
+      // 行动建议
+      renderActions(data.strategic_actions || []);
+    }
+
+    // 渲染行动建议
+    function renderActions(actions) {
+      const actionsList = document.getElementById('actionsList');
+
+      if (!actions || actions.length === 0) {
+        actionsList.innerHTML = '<p style="color: #9ca3af; text-align: center;">暂无行动建议</p>';
+        return;
+      }
+
+      const high = actions.filter(a => a.priority === '高');
+      const medium = actions.filter(a => a.priority === '中');
+      const low = actions.filter(a => a.priority === '低');
+
+      let html = '';
+
+      if (high.length > 0) {
+        html += '<div class="priority-group">';
+        html += '<div class="priority-header high">';
+        html += '<span class="label">🔴 高优先级 - 需要立即关注</span>';
+        html += '</div>';
+        high.forEach(action => {
+          html += renderActionItem(action, 'high');
+        });
+        html += '</div>';
+      }
+
+      if (medium.length > 0) {
+        html += '<div class="priority-group">';
+        html += '<div class="priority-header medium">';
+        html += '<span class="label">🟡 中优先级 - 可以规划关注</span>';
+        html += '</div>';
+        medium.forEach(action => {
+          html += renderActionItem(action, 'medium');
+        });
+        html += '</div>';
+      }
+
+      if (low.length > 0) {
+        html += '<div class="priority-group">';
+        html += '<div class="priority-header low">';
+        html += '<span class="label">🟢 低优先级 - 仅作参考</span>';
+        html += '</div>';
+        low.forEach(action => {
+          html += renderActionItem(action, 'low');
+        });
+        html += '</div>';
+      }
+
+      actionsList.innerHTML = html;
+    }
+
+    function renderActionItem(action, priority) {
+      return `
+        <div class="action-item priority-${priority}">
+          <div class="action-header">
+            <div class="action-text">${action.action}</div>
+            <div class="timeline-badge">⏰ ${action.timeline}</div>
+          </div>
+          <div class="reason">
+            <span class="reason-label">💡 提示：</span>${action.reason}
+          </div>
+        </div>
+      `;
+    }
+
+    // 折叠/展开
+    function toggleSection(header) {
+      header.classList.toggle('expanded');
+      const content = header.nextElementSibling;
+      content.classList.toggle('expanded');
+    }
+  </script>
+</body>
+</html>

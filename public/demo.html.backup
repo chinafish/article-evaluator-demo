@@ -1,0 +1,1594 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文章评估智能体 Demo v1.2</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .header .subtitle {
+      font-size: 1.1em;
+      opacity: 0.9;
+    }
+
+    .header .features {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .feature-badge {
+      background: rgba(255,255,255,0.2);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.9em;
+      backdrop-filter: blur(10px);
+    }
+
+    .main-card {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+
+    /* 输入区域 */
+    .input-section {
+      padding: 40px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    .tab {
+      padding: 12px 24px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1em;
+      color: #6b7280;
+      position: relative;
+      transition: all 0.3s;
+    }
+
+    .tab.active {
+      color: #667eea;
+      font-weight: 600;
+    }
+
+    .tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #667eea;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 1em;
+      transition: all 0.3s;
+      font-family: inherit;
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    textarea.input-field {
+      min-height: 200px;
+      resize: vertical;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .submit-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .submit-btn .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* 结果区域 */
+    .result-section {
+      display: none;
+      padding: 0;
+    }
+
+    .result-section.show {
+      display: block;
+    }
+
+    /* 结果和原文的并排布局 */
+    .result-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      min-height: 600px;
+    }
+
+    /* 当原文面板收起时 */
+    .result-container.source-collapsed {
+      grid-template-columns: 1fr;
+    }
+
+    .result-panel {
+      padding: 40px;
+      background: #f9fafb;
+      border-right: 1px solid #e5e7eb;
+      overflow-y: auto;
+      max-height: 800px;
+    }
+
+    /* 当原文面板收起时，移除右边框 */
+    .result-container.source-collapsed .result-panel {
+      border-right: none;
+    }
+
+    .source-panel {
+      padding: 0;
+      background: white;
+      overflow: hidden;
+      max-height: 800px;
+      position: relative;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+      border: 1px solid #e5e7eb;
+    }
+
+    .source-panel.collapsed {
+      display: none;
+    }
+
+    /* 浏览器标题栏 */
+    .browser-header {
+      background: linear-gradient(180deg, #f3f4f6 0%, #e5e7eb 100%);
+      padding: 12px 16px;
+      border-bottom: 1px solid #d1d5db;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .browser-controls {
+      display: flex;
+      gap: 8px;
+    }
+
+    .browser-control {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .browser-control:hover {
+      transform: scale(1.1);
+    }
+
+    .browser-control.close {
+      background: #ff5f57;
+    }
+
+    .browser-control.minimize {
+      background: #ffbd2e;
+    }
+
+    .browser-control.maximize {
+      background: #28ca42;
+    }
+
+    .browser-url-bar {
+      flex: 1;
+      background: white;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 0.85em;
+      color: #6b7280;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .browser-url-bar .icon {
+      font-size: 0.9em;
+    }
+
+    .browser-url-bar .url {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .browser-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .browser-action-btn {
+      background: none;
+      border: none;
+      font-size: 1.2em;
+      color: #6b7280;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+
+    .browser-action-btn:hover {
+      background: rgba(0,0,0,0.05);
+      color: #374151;
+    }
+
+    /* 原文内容区域 */
+    .source-content-wrapper {
+      flex: 1;
+      overflow: hidden;
+      background: white;
+      position: relative;
+    }
+
+    .source-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: white;
+    }
+
+    .source-content-fallback {
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      padding: 40px;
+    }
+
+    .result-title {
+      font-size: 1.5em;
+      font-weight: 700;
+      color: #1f2937;
+    }
+
+    .analyzer-badge {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.85em;
+      font-weight: 600;
+    }
+
+    .analyzer-badge.saas {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .analyzer-badge.general {
+      background: #e5e7eb;
+      color: #374151;
+    }
+
+    /* 溯源按钮 */
+    .source-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: white;
+      border: 2px solid #667eea;
+      color: #667eea;
+      border-radius: 10px;
+      font-size: 0.95em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .source-toggle-btn:hover {
+      background: #667eea;
+      color: white;
+    }
+
+    .source-toggle-btn .icon {
+      font-size: 1.1em;
+    }
+
+    /* 原文内容 */
+    .source-content {
+      padding: 40px;
+      line-height: 1.8;
+      color: #374151;
+      font-size: 1.05em;
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+    }
+
+    /* 保持原文HTML的样式 */
+    .source-content img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 20px auto;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .source-content p {
+      margin-bottom: 16px;
+      text-align: justify;
+    }
+
+    .source-content h1,
+    .source-content h2,
+    .source-content h3 {
+      margin-top: 24px;
+      margin-bottom: 16px;
+      font-weight: 700;
+      color: #1f2937;
+    }
+
+    .source-content h1 {
+      font-size: 1.8em;
+    }
+
+    .source-content h2 {
+      font-size: 1.5em;
+    }
+
+    .source-content h3 {
+      font-size: 1.3em;
+    }
+
+    .source-content ul,
+    .source-content ol {
+      margin: 16px 0;
+      padding-left: 24px;
+    }
+
+    .source-content li {
+      margin-bottom: 8px;
+    }
+
+    .source-content blockquote {
+      border-left: 4px solid #667eea;
+      padding-left: 16px;
+      margin: 16px 0;
+      color: #6b7280;
+      font-style: italic;
+    }
+
+    .source-content code {
+      background: #f3f4f6;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9em;
+    }
+
+    .source-content pre {
+      background: #1f2937;
+      color: #f9fafb;
+      padding: 16px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 16px 0;
+    }
+
+    .source-content pre code {
+      background: none;
+      color: inherit;
+    }
+
+    /* 微信公众号文章样式适配 */
+    .source-content .rich_media_title {
+      font-size: 1.8em;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #1f2937;
+    }
+
+    .source-content #js_content {
+      font-size: 1.05em;
+    }
+
+    /* 纯文本模式下的段落 */
+    .source-content .source-paragraph {
+      margin-bottom: 16px;
+      padding: 12px;
+      border-radius: 8px;
+      transition: all 0.3s;
+    }
+
+    .source-content .source-paragraph {
+      margin-bottom: 16px;
+      padding: 12px;
+      border-radius: 8px;
+      transition: all 0.3s;
+    }
+
+    .source-content .source-paragraph.highlighted {
+      background: #fef3c7;
+      border-left: 4px solid #f59e0b;
+      animation: highlightPulse 1s ease-out;
+    }
+
+    @keyframes highlightPulse {
+      0% {
+        background: #fbbf24;
+        transform: scale(1.02);
+      }
+      100% {
+        background: #fef3c7;
+        transform: scale(1);
+      }
+    }
+
+    .source-content .source-paragraph .segment {
+      padding: 2px 4px;
+      border-radius: 4px;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .source-content .source-paragraph .segment:hover {
+      background: #dbeafe;
+    }
+
+    .source-content .source-paragraph .segment.active {
+      background: #bfdbfe;
+      font-weight: 600;
+    }
+
+    /* 核心信息卡片 */
+    .core-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .info-card {
+      background: white;
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .info-card .label {
+      font-size: 0.85em;
+      color: #6b7280;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .info-card .value {
+      font-size: 1.2em;
+      font-weight: 700;
+      color: #1f2937;
+    }
+
+    .info-card.judgment .value.认同 {
+      color: #10b981;
+    }
+
+    .info-card.judgment .value.不认同 {
+      color: #ef4444;
+    }
+
+    .info-card.urgency .value.是 {
+      color: #f59e0b;
+    }
+
+    .info-card.urgency .value.否 {
+      color: #6b7280;
+    }
+
+    .info-card.relevance .value.高 {
+      color: #10b981;
+    }
+
+    .info-card.relevance .value.中 {
+      color: #f59e0b;
+    }
+
+    .info-card.relevance .value.低 {
+      color: #6b7280;
+    }
+
+    /* 摘要卡片 */
+    .summary-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 25px;
+    }
+
+    .summary-card .label {
+      font-size: 0.85em;
+      opacity: 0.9;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .summary-card .value {
+      font-size: 1.05em;
+      line-height: 1.6;
+    }
+
+    /* 行动建议 */
+    .actions-section {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 25px;
+    }
+
+    .actions-header {
+      padding: 16px;
+      background: #f9fafb;
+      border-bottom: 1px solid #e5e7eb;
+      font-weight: 700;
+      font-size: 1.05em;
+      color: #1f2937;
+    }
+
+    .action-item {
+      padding: 16px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      gap: 12px;
+      transition: background 0.2s;
+    }
+
+    .action-item:last-child {
+      border-bottom: none;
+    }
+
+    .action-item:hover {
+      background: #f9fafb;
+    }
+
+    .priority-badge {
+      flex-shrink: 0;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85em;
+    }
+
+    .priority-badge.高 {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .priority-badge.中 {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    .priority-badge.低 {
+      background: #d1d5db;
+      color: #4b5563;
+    }
+
+    .action-content {
+      flex: 1;
+    }
+
+    .action-title {
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 6px;
+      line-height: 1.5;
+    }
+
+    .action-meta {
+      display: flex;
+      gap: 15px;
+      font-size: 0.85em;
+      color: #6b7280;
+    }
+
+    .action-meta .label {
+      font-weight: 600;
+    }
+
+    /* 详细分析 */
+    .detail-section {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 25px;
+    }
+
+    .detail-header {
+      padding: 16px;
+      background: #f9fafb;
+      border-bottom: 1px solid #e5e7eb;
+      font-weight: 700;
+      font-size: 1.05em;
+      color: #1f2937;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .detail-header .toggle-icon {
+      transition: transform 0.3s;
+    }
+
+    .detail-header.expanded .toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    .detail-content {
+      display: none;
+      padding: 16px;
+    }
+
+    .detail-content.show {
+      display: block;
+    }
+
+    .detail-item {
+      margin-bottom: 16px;
+    }
+
+    .detail-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .detail-item .label {
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 6px;
+    }
+
+    .detail-item .value {
+      color: #4b5563;
+      line-height: 1.6;
+    }
+
+    /* 溯源角标 */
+    .source-ref {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      background: #667eea;
+      color: white;
+      border-radius: 50%;
+      font-size: 0.7em;
+      font-weight: 700;
+      margin-left: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+      vertical-align: middle;
+    }
+
+    .source-ref:hover {
+      background: #4f46e5;
+      transform: scale(1.1);
+    }
+
+    .source-ref.active {
+      background: #f59e0b;
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.1);
+      }
+    }
+
+    /* 错误提示 */
+    .error-message {
+      background: #fee2e2;
+      color: #dc2626;
+      padding: 16px;
+      border-radius: 12px;
+      margin-top: 20px;
+      display: none;
+    }
+
+    .error-message.show {
+      display: block;
+    }
+
+    /* 路由信息 */
+    .route-info {
+      background: #f3f4f6;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 0.85em;
+      color: #6b7280;
+      margin-top: 15px;
+    }
+
+    .route-info .label {
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .route-info .details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+    }
+
+    .route-info .detail-item {
+      background: white;
+      padding: 10px;
+      border-radius: 6px;
+    }
+
+    .route-info .detail-label {
+      font-size: 0.8em;
+      color: #9ca3af;
+      margin-bottom: 3px;
+    }
+
+    .route-info .detail-value {
+      font-weight: 600;
+      color: #374151;
+    }
+
+    /* 响应式 */
+    @media (max-width: 1024px) {
+      .result-container {
+        grid-template-columns: 1fr;
+      }
+
+      .source-panel {
+        border-top: 1px solid #e5e7eb;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 1.8em;
+      }
+
+      .input-section,
+      .result-panel,
+      .source-panel {
+        padding: 20px;
+      }
+
+      .core-info {
+        grid-template-columns: 1fr;
+      }
+
+      .action-meta {
+        flex-direction: column;
+        gap: 6px;
+      }
+    }
+
+    /* 示例提示 */
+    .example-hint {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 12px;
+      font-size: 0.9em;
+      color: #1e40af;
+    }
+
+    .example-hint .label {
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .example-hint .link {
+      color: #3b82f6;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .example-hint .link:hover {
+      color: #2563eb;
+    }
+
+    /* 移动端原文切换 */
+    .mobile-source-toggle {
+      display: none;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 1024px) {
+      .mobile-source-toggle {
+        display: block;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📊 文章评估智能体</h1>
+      <div class="subtitle">v1.2 P0优化版 - 智能路由 · 优先级判断 · 可溯源分析</div>
+      <div class="features">
+        <div class="feature-badge">✅ 决策优先级判断</div>
+        <div class="feature-badge">✅ 相关性评估</div>
+        <div class="feature-badge">✅ 紧迫性判断</div>
+        <div class="feature-badge">✅ 可执行建议</div>
+        <div class="feature-badge">🔍 智能溯源</div>
+      </div>
+    </div>
+
+    <div class="main-card">
+      <!-- 输入区域 -->
+      <div class="input-section">
+        <div class="tabs">
+          <button class="tab active" data-tab="url">🔗 URL链接</button>
+          <button class="tab" data-tab="content">📝 文章内容</button>
+        </div>
+
+        <form id="evaluationForm">
+          <!-- URL输入 -->
+          <div class="input-group" id="urlInputGroup">
+            <label for="urlInput">输入文章URL</label>
+            <input
+              type="url"
+              id="urlInput"
+              class="input-field"
+              placeholder="https://example.com/article"
+            />
+            <div class="example-hint">
+              <div class="label">💡 示例链接（点击快速填入）:</div>
+              <div>
+                <span class="link" onclick="fillUrl('https://36kr.com/p/2687432587362560')">36氪 SaaS文章</span> |
+                <span class="link" onclick="fillUrl('https://www.geekpark.net/news/342787')">极客公园 AI文章</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 内容输入 -->
+          <div class="input-group" id="contentInputGroup" style="display: none;">
+            <label for="contentInput">输入文章内容（至少50字）</label>
+            <textarea
+              id="contentInput"
+              class="input-field"
+              placeholder="请粘贴文章内容..."
+            ></textarea>
+            <div class="example-hint">
+              <div class="label">💡 示例内容（点击快速填入）:</div>
+              <div>
+                <span class="link" onclick="fillContent('saas')">SaaS行业示例</span> |
+                <span class="link" onclick="fillContent('ai')">AI助手示例</span> |
+                <span class="link" onclick="fillContent('general')">通用文章示例</span>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="submit-btn" id="submitBtn">
+            <span class="btn-text">🚀 开始评估</span>
+          </button>
+        </form>
+
+        <div class="error-message" id="errorMessage"></div>
+      </div>
+
+      <!-- 结果区域 -->
+      <div class="result-section" id="resultSection">
+        <div class="result-container">
+          <!-- 评估结果面板 -->
+          <div class="result-panel">
+            <div class="result-header">
+              <h2 class="result-title">评估结果</h2>
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <span class="analyzer-badge" id="analyzerBadge">SaaS专业分析</span>
+                <button class="source-toggle-btn" id="sourceToggleBtn" onclick="toggleSourcePanel()">
+                  <span class="icon">📄</span>
+                  <span>查看原文</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- 核心信息 -->
+            <div class="core-info">
+              <div class="info-card judgment">
+                <div class="label">判断</div>
+                <div class="value" id="judgmentValue">认同</div>
+              </div>
+              <div class="info-card relevance">
+                <div class="label">相关性</div>
+                <div class="value" id="relevanceValue">高</div>
+              </div>
+              <div class="info-card urgency">
+                <div class="label">紧迫性</div>
+                <div class="value" id="urgencyValue">是</div>
+              </div>
+            </div>
+
+            <!-- 摘要 -->
+            <div class="summary-card">
+              <div class="label">💡 核心价值</div>
+              <div class="value" id="summaryValue"></div>
+            </div>
+
+            <!-- 紧迫性理由 -->
+            <div class="info-card" style="margin-bottom: 20px;">
+              <div class="label">⏰ 紧迫性判断理由</div>
+              <div class="value" id="urgencyReason" style="font-size: 0.95em; font-weight: 400;"></div>
+            </div>
+
+            <!-- 行动建议 -->
+            <div class="actions-section">
+              <div class="actions-header">🎯 行动建议</div>
+              <div id="actionsList"></div>
+            </div>
+
+            <!-- 详细分析 -->
+            <div class="detail-section">
+              <div class="detail-header" onclick="toggleDetail()">
+                <span>📋 详细分析</span>
+                <span class="toggle-icon">▼</span>
+              </div>
+              <div class="detail-content" id="detailContent">
+                <div class="detail-item">
+                  <div class="label">输入诊断</div>
+                  <div class="value" id="inputDiagnosis"></div>
+                </div>
+                <div class="detail-item">
+                  <div class="label">宏观基准</div>
+                  <div class="value" id="macroBenchmark"></div>
+                </div>
+                <div class="detail-item">
+                  <div class="label">盲点警示</div>
+                  <div class="value" id="blindSpotAlert"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 路由信息 -->
+            <div class="route-info">
+              <div class="label">🔍 智能路由信息</div>
+              <div class="details">
+                <div class="detail-item">
+                  <div class="detail-label">分析器</div>
+                  <div class="detail-value" id="routeAnalyzer">-</div>
+                </div>
+                <div class="detail-item">
+                  <div class="detail-label">置信度</div>
+                  <div class="detail-value" id="routeConfidence">-</div>
+                </div>
+                <div class="detail-item">
+                  <div class="detail-label">基准匹配</div>
+                  <div class="detail-value" id="routeBenchmark">-</div>
+                </div>
+                <div class="detail-item">
+                  <div class="detail-label">置信度分数</div>
+                  <div class="detail-value" id="routeScore">-</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 移动端原文切换按钮 -->
+            <div class="mobile-source-toggle">
+              <button class="source-toggle-btn" style="width: 100%;" onclick="toggleSourcePanel()">
+                <span class="icon">📄</span>
+                <span>查看原文</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 原文面板 -->
+          <div class="source-panel" id="sourcePanel">
+            <!-- 浏览器标题栏 -->
+            <div class="browser-header">
+              <div class="browser-controls">
+                <div class="browser-control close" onclick="closeSourcePanel()" title="关闭"></div>
+                <div class="browser-control minimize" onclick="toggleSourcePanel()" title="最小化"></div>
+                <div class="browser-control maximize" title="最大化"></div>
+              </div>
+              <div class="browser-url-bar">
+                <span class="icon">🔒</span>
+                <span class="url" id="browserUrl">https://...</span>
+              </div>
+              <div class="browser-actions">
+                <button class="browser-action-btn" onclick="refreshIframe()" title="刷新">🔄</button>
+                <button class="browser-action-btn" onclick="closeSourcePanel()" title="关闭">✕</button>
+              </div>
+            </div>
+            <!-- iframe原文内容 -->
+            <div class="source-content-wrapper">
+              <iframe id="sourceIframe" class="source-iframe" sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe>
+              <div id="sourceContentFallback" class="source-content-fallback" style="display: none;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentTab = 'url';
+    let sourceContent = '';
+    let sourceHtmlContent = '';
+    let sourceUrl = '';
+    let sourceSegments = [];
+    let activeRefId = null;
+
+    // 示例内容
+    const examples = {
+      saas: `产品驱动增长(PLG) vs 销售驱动增长(SLG)：SaaS企业如何选择？
+
+随着SaaS行业竞争加剧，增长模式的选择变得至关重要。PLG模式通过产品自助体验降低获客成本，而SLG模式依赖销售团队建立深度客户关系。
+
+核心指标对比：
+- PLG：CAC更低，但需要强大的产品体验
+- SLG：ACV更高，但销售成本较大
+
+成功案例：
+- Slack：PLG模式，病毒式增长
+- Salesforce：SLG模式，企业级市场领导者
+
+选择建议：
+初创期优先PLG快速验证市场，成熟期引入SLG提升客户价值。`,
+
+      ai: `ChatGPT用户突破1亿大关，AI助手市场竞争白热化
+
+OpenAI的ChatGPT在推出仅两个月后，月活跃用户就已突破1亿大关，创下了互联网应用增长的新纪录。
+
+市场格局：
+1. OpenAI ChatGPT：GPT-4强大能力
+2. 微软Bing Chat：整合搜索优势
+3. Google Bard：快速追赶
+
+商业化进展：
+ChatGPT Plus订阅服务月费20美元，为企业用户提供更稳定的服务。
+
+行业影响：
+AI助手正在重塑客服、教育、内容创作等多个行业。`,
+
+      general: `2024年春节档电影票房破纪录
+
+2024年春节档票房突破80亿元大关，创下历史新高。其中《热辣滚烫》《飞驰人生2》《熊出没·逆转时空》三部影片贡献了超过60%的票房。
+
+观众满意度：
+根据猫眼专业版数据，今年春节档观众评分达到9.2分，为近五年最高。
+
+市场趋势：
+中国电影市场正在从疫情中恢复，2024年全年票房有望突破500亿元。`
+    };
+
+    // 切换标签页
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+
+        currentTab = this.dataset.tab;
+        if (currentTab === 'url') {
+          document.getElementById('urlInputGroup').style.display = 'block';
+          document.getElementById('contentInputGroup').style.display = 'none';
+        } else {
+          document.getElementById('urlInputGroup').style.display = 'none';
+          document.getElementById('contentInputGroup').style.display = 'block';
+        }
+      });
+    });
+
+    // 填入URL
+    function fillUrl(url) {
+      document.getElementById('urlInput').value = url;
+    }
+
+    // 填入示例内容
+    function fillContent(type) {
+      document.getElementById('contentInput').value = examples[type];
+    }
+
+    // 提交表单
+    document.getElementById('evaluationForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const submitBtn = document.getElementById('submitBtn');
+      const errorMessage = document.getElementById('errorMessage');
+      const resultSection = document.getElementById('resultSection');
+
+      // 获取输入
+      let data = '';
+      if (currentTab === 'url') {
+        data = document.getElementById('urlInput').value.trim();
+      } else {
+        data = document.getElementById('contentInput').value.trim();
+        sourceContent = data; // 保存原文内容
+      }
+
+      // 验证输入
+      if (!data) {
+        showError('请输入URL或文章内容');
+        return;
+      }
+
+      if (currentTab === 'content' && data.length < 50) {
+        showError('内容过少，请至少输入50字');
+        return;
+      }
+
+      // 隐藏错误和结果
+      errorMessage.classList.remove('show');
+      resultSection.classList.remove('show');
+
+      // 显示加载状态
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<div class="spinner"></div><span class="btn-text">分析中...</span>';
+
+      try {
+        // 发送请求
+        const response = await fetch('/api/evaluate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            type: currentTab,
+            data: data
+          })
+        });
+
+        const result = await response.json();
+
+        if (!result.success) {
+          showError(result.error?.message || '评估失败，请重试');
+          return;
+        }
+
+        // 如果是URL模式，保存返回的原文内容
+        if (currentTab === 'url' && result.evaluation) {
+          sourceContent = result.evaluation.article_content || '';
+          sourceHtmlContent = result.evaluation.article_html || '';
+          sourceUrl = result.evaluation.article_url || data;
+        }
+
+        // 显示结果
+        displayResult(result.evaluation);
+
+      } catch (error) {
+        showError('网络错误，请检查连接后重试');
+        console.error('Error:', error);
+      } finally {
+        // 恢复按钮状态
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span class="btn-text">🚀 开始评估</span>';
+      }
+    });
+
+    // 显示错误
+    function showError(message) {
+      const errorMessage = document.getElementById('errorMessage');
+      errorMessage.textContent = '❌ ' + message;
+      errorMessage.classList.add('show');
+    }
+
+    // 处理原文内容，生成可溯源的段落
+    function processSourceContent(content) {
+      if (!content) return [];
+
+      // 按段落分割
+      const paragraphs = content.split(/\n\n+/).filter(p => p.trim());
+
+      // 为每个段落生成ID和分割文本片段
+      return paragraphs.map((para, index) => {
+        const sentences = para.split(/([。！？\n])/).filter(s => s.trim());
+        const segments = [];
+
+        let currentSegment = '';
+        for (let i = 0; i < sentences.length; i++) {
+          currentSegment += sentences[i];
+          if (/[。！？\n]/.test(sentences[i]) || i === sentences.length - 1) {
+            if (currentSegment.trim()) {
+              segments.push({
+                id: `seg_${index}_${segments.length}`,
+                text: currentSegment.trim()
+              });
+            }
+            currentSegment = '';
+          }
+        }
+
+        return {
+          id: `para_${index}`,
+          segments: segments
+        };
+      });
+    }
+
+    // 渲染原文内容
+    function renderSourceContent() {
+      const iframe = document.getElementById('sourceIframe');
+      const fallback = document.getElementById('sourceContentFallback');
+
+      // 清空之前的srcdoc
+      iframe.srcdoc = '';
+
+      // 如果是URL模式，使用代理加载
+      if (sourceUrl && currentTab === 'url') {
+        iframe.style.display = 'block';
+        fallback.style.display = 'none';
+
+        // 使用后端代理URL，让iframe直接加载完整页面
+        const proxyUrl = `/api/proxy?url=${encodeURIComponent(sourceUrl)}`;
+        iframe.src = proxyUrl;
+
+      } else if (sourceHtmlContent) {
+        // 内容输入模式，使用srcdoc
+        iframe.style.display = 'block';
+        fallback.style.display = 'none';
+
+        const htmlContent = `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            ${sourceUrl ? `<base href="${sourceUrl}">` : ''}
+            <style>
+              body {
+                font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+                line-height: 1.6;
+                color: #333;
+                padding: 40px;
+                max-width: 800px;
+                margin: 0 auto;
+              }
+              img { max-width: 100%; height: auto; }
+              pre { background: #f4f4f4; padding: 1em; overflow-x: auto; }
+              code { background: #f4f4f4; padding: 0.2em 0.4em; }
+              blockquote { border-left: 4px solid #ddd; margin: 0; padding-left: 1em; color: #666; }
+            </style>
+          </head>
+          <body>
+            ${sourceHtmlContent}
+          </body>
+          </html>
+        `;
+        iframe.srcdoc = htmlContent;
+      } else if (sourceContent) {
+        // 纯文本降级方案
+        iframe.style.display = 'none';
+        fallback.style.display = 'block';
+        fallback.innerHTML = `<pre style="white-space: pre-wrap; font-family: sans-serif; line-height: 1.6;">${sourceContent}</pre>`;
+      } else {
+        iframe.style.display = 'block';
+        fallback.style.display = 'none';
+        iframe.srcdoc = '<div style="display: flex; align-items: center; justify-content: center; height: 100vh; color: #9ca3af;">🤖 智能体正在阅读文章...</div>';
+      }
+    }
+
+    // 修复图片路径
+    function fixImagePaths(html, baseUrl) {
+      if (!baseUrl) return html;
+
+      // 创建临时DOM来处理HTML
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = html;
+
+      // 修复所有img标签的src
+      const images = tempDiv.querySelectorAll('img');
+      images.forEach(img => {
+        const src = img.getAttribute('src');
+        if (src && !src.startsWith('http://') && !src.startsWith('https://') && !src.startsWith('data:')) {
+          // 相对路径，转换为绝对路径
+          if (src.startsWith('//')) {
+            img.setAttribute('src', 'https:' + src);
+          } else if (src.startsWith('/')) {
+            // 从URL提取域名
+            const urlObj = new URL(baseUrl);
+            img.setAttribute('src', urlObj.origin + src);
+          } else {
+            // 相对路径
+            const urlObj = new URL(baseUrl);
+            const basePath = urlObj.pathname.substring(0, urlObj.pathname.lastIndexOf('/'));
+            img.setAttribute('src', urlObj.origin + basePath + '/' + src);
+          }
+        }
+      });
+
+      return tempDiv.innerHTML;
+    }
+
+    // 刷新iframe
+    function refreshIframe() {
+      renderSourceContent();
+    }
+
+    // 高亮显示段落
+    function highlightParagraph(paraId) {
+      // 移除所有高亮
+      document.querySelectorAll('.source-paragraph').forEach(p => {
+        p.classList.remove('highlighted');
+      });
+
+      // 添加新高亮
+      const paragraph = document.getElementById(paraId);
+      if (paragraph) {
+        paragraph.classList.add('highlighted');
+        paragraph.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+    // 高亮显示文本片段
+    function highlightSegment(segId) {
+      // 移除所有活动状态
+      document.querySelectorAll('.source-content .segment').forEach(s => {
+        s.classList.remove('active');
+      });
+
+      // 添加活动状态
+      const segment = document.querySelector(`.source-content .segment[data-id="${segId}"]`);
+      if (segment) {
+        segment.classList.add('active');
+        segment.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+    // 溯源到原文
+    function navigateToSource(refId) {
+      // 打开原文面板
+      const sourcePanel = document.getElementById('sourcePanel');
+      const resultContainer = document.querySelector('.result-container');
+      const toggleBtn = document.getElementById('sourceToggleBtn');
+
+      sourcePanel.classList.remove('collapsed');
+      resultContainer.classList.remove('source-collapsed');
+
+      // 更新按钮文字
+      toggleBtn.querySelector('.icon').textContent = '📖';
+      toggleBtn.querySelector('span:last-child').textContent = '收起原文';
+
+      // 高亮对应的溯源角标
+      document.querySelectorAll('.source-ref').forEach(ref => {
+        ref.classList.remove('active');
+      });
+      const activeRef = document.querySelector(`.source-ref[data-ref-id="${refId}"]`);
+      if (activeRef) {
+        activeRef.classList.add('active');
+      }
+      activeRefId = refId;
+
+      // 根据refId定位到对应的段落或片段
+      // 这里简化处理，实际可以根据refId解析出段落索引
+      if (sourceSegments.length > 0) {
+        const paraIndex = parseInt(refId.split('_')[2]) || 0;
+        const paraId = `para_${paraIndex}`;
+        highlightParagraph(paraId);
+      }
+    }
+
+    // 切换原文面板
+    function toggleSourcePanel() {
+      const sourcePanel = document.getElementById('sourcePanel');
+      const resultContainer = document.querySelector('.result-container');
+      const toggleBtn = document.getElementById('sourceToggleBtn');
+
+      sourcePanel.classList.toggle('collapsed');
+      resultContainer.classList.toggle('source-collapsed');
+
+      if (sourcePanel.classList.contains('collapsed')) {
+        toggleBtn.querySelector('.icon').textContent = '📄';
+        toggleBtn.querySelector('span:last-child').textContent = '查看原文';
+      } else {
+        toggleBtn.querySelector('.icon').textContent = '📖';
+        toggleBtn.querySelector('span:last-child').textContent = '收起原文';
+      }
+    }
+
+    // 关闭原文面板
+    function closeSourcePanel() {
+      const sourcePanel = document.getElementById('sourcePanel');
+      const resultContainer = document.querySelector('.result-container');
+      const toggleBtn = document.getElementById('sourceToggleBtn');
+
+      sourcePanel.classList.add('collapsed');
+      resultContainer.classList.add('source-collapsed');
+      toggleBtn.querySelector('.icon').textContent = '📄';
+      toggleBtn.querySelector('span:last-child').textContent = '查看原文';
+    }
+
+    // 切换详细分析
+    function toggleDetail() {
+      const header = document.querySelector('.detail-header');
+      const content = document.getElementById('detailContent');
+
+      header.classList.toggle('expanded');
+      content.classList.toggle('show');
+    }
+
+    // 显示结果
+    function displayResult(evaluation) {
+      const resultSection = document.getElementById('resultSection');
+
+      // 分析器徽章
+      const analyzerBadge = document.getElementById('analyzerBadge');
+      analyzerBadge.textContent = evaluation.analyzer_type === 'saas' ? 'SaaS专业分析' : '通用商业分析';
+      analyzerBadge.className = 'analyzer-badge ' + evaluation.analyzer_type;
+
+      // 核心信息
+      document.getElementById('judgmentValue').textContent = evaluation.judgment;
+      document.getElementById('judgmentValue').className = 'value ' + evaluation.judgment;
+
+      document.getElementById('relevanceValue').textContent = evaluation.relevance;
+      document.getElementById('relevanceValue').className = 'value ' + evaluation.relevance;
+
+      document.getElementById('urgencyValue').textContent = evaluation.urgency;
+      document.getElementById('urgencyValue').className = 'value ' + evaluation.urgency;
+
+      // 摘要和紧迫性理由
+      document.getElementById('summaryValue').textContent = evaluation.summary || '-';
+      document.getElementById('urgencyReason').textContent = evaluation.urgency_reason || '-';
+
+      // 行动建议
+      const actionsList = document.getElementById('actionsList');
+      actionsList.innerHTML = '';
+      if (evaluation.strategic_actions && evaluation.strategic_actions.length > 0) {
+        evaluation.strategic_actions.forEach((action, index) => {
+          const actionItem = document.createElement('div');
+          actionItem.className = 'action-item';
+
+          // 添加溯源角标
+          const refId = `ref_action_${index}`;
+          const refBadge = `<span class="source-ref" data-ref-id="${refId}" onclick="event.stopPropagation(); navigateToSource('${refId}')">${index + 1}</span>`;
+
+          actionItem.innerHTML = `
+            <div class="priority-badge ${action.priority}">${action.priority}</div>
+            <div class="action-content">
+              <div class="action-title">${action.action}${refBadge}</div>
+              <div class="action-meta">
+                <div><span class="label">时间：</span>${action.timeline}</div>
+                <div><span class="label">理由：</span>${action.reason}</div>
+              </div>
+            </div>
+          `;
+          actionsList.appendChild(actionItem);
+        });
+      } else {
+        actionsList.innerHTML = '<div style="padding: 20px; color: #6b7280;">暂无行动建议</div>';
+      }
+
+      // 详细分析
+      document.getElementById('inputDiagnosis').textContent = evaluation.input_diagnosis || '-';
+      document.getElementById('macroBenchmark').textContent = evaluation.macro_benchmark || '-';
+      document.getElementById('blindSpotAlert').textContent = evaluation.blind_spot_alert || '-';
+
+      // 路由信息
+      const routeInfo = evaluation.route_info || {};
+      document.getElementById('routeAnalyzer').textContent = routeInfo.analyzer === 'saas' ? 'SaaS分析器' : '通用分析器';
+      document.getElementById('routeConfidence').textContent = getConfidenceText(routeInfo.confidence);
+      document.getElementById('routeBenchmark').textContent = evaluation.benchmark_match || '-';
+      document.getElementById('routeScore').textContent = routeInfo.confidenceScore ? (routeInfo.confidenceScore * 100).toFixed(0) + '%' : '-';
+
+      // 更新浏览器URL显示
+      if (sourceUrl) {
+        document.getElementById('browserUrl').textContent = sourceUrl;
+      }
+
+      // 渲染原文内容
+      renderSourceContent();
+
+      // 显示结果区域
+      resultSection.classList.add('show');
+
+      // 滚动到结果区域
+      resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // 置信度文本转换
+    function getConfidenceText(confidence) {
+      const map = {
+        'high': '高',
+        'medium': '中',
+        'low': '低',
+        'fallback': '兜底'
+      };
+      return map[confidence] || confidence;
+    }
+  </script>
+</body>
+</html>
