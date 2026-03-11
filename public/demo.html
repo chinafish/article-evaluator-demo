@@ -781,17 +781,16 @@
       display: block;
     }
 
-    /* 路由信息 */
-    .route-info {
+    /* 评估依据 */
+    .evaluation-basis {
       background: #f9fafb;
-      padding: 12px;
-      border-radius: 8px;
-      font-size: 0.85em;
-      color: #6b7280;
+      padding: 16px;
+      border-radius: 12px;
       margin-top: 20px;
+      border: 1px solid #e5e7eb;
     }
 
-    .route-header {
+    .basis-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -799,43 +798,285 @@
       user-select: none;
       font-weight: 600;
       padding: 4px 0;
+      margin-bottom: 0;
     }
 
-    .route-header:hover {
+    .basis-header:hover {
       color: #374151;
     }
 
-    .route-header .toggle-icon {
+    .basis-header .toggle-icon {
       transition: transform 0.2s;
       font-size: 0.8em;
     }
 
-    .route-header.expanded .toggle-icon {
+    .basis-header.expanded .toggle-icon {
       transform: rotate(180deg);
     }
 
-    .route-details {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 10px;
-      margin-top: 12px;
+    .basis-details {
+      display: none;
+      margin-top: 16px;
     }
 
-    .route-info .detail-item {
+    .basis-details.show {
+      display: block;
+    }
+
+    /* 分析框架卡片 */
+    .framework-card {
       background: white;
-      padding: 10px;
-      border-radius: 6px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      border-left: 4px solid #667eea;
     }
 
-    .route-info .detail-label {
-      font-size: 0.75em;
+    .framework-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 4px;
+    }
+
+    .framework-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      margin-right: 8px;
+    }
+
+    .framework-badge.industry {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .framework-badge.general {
+      background: #e5e7eb;
+      color: #374151;
+    }
+
+    /* 可点击的数据项 */
+    .data-link-item {
+      background: white;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid #e5e7eb;
+    }
+
+    .data-link-item:hover {
+      background: #f3f4f6;
+      border-color: #667eea;
+      transform: translateX(4px);
+    }
+
+    .data-link-item .item-info {
+      flex: 1;
+    }
+
+    .data-link-item .item-label {
+      font-size: 12px;
       color: #9ca3af;
-      margin-bottom: 3px;
+      margin-bottom: 4px;
+      font-weight: 500;
     }
 
-    .route-info .detail-value {
+    .data-link-item .item-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1f2937;
+    }
+
+    .data-link-item .item-icon {
+      font-size: 18px;
+      color: #667eea;
+      margin-left: 12px;
+    }
+
+    /* 弹窗样式 */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 16px;
+      max-width: 800px;
+      width: 90%;
+      max-height: 80vh;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      animation: modalSlideIn 0.3s ease;
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .modal-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .modal-close:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.1);
+    }
+
+    .modal-body {
+      padding: 24px;
+      overflow-y: auto;
+      max-height: calc(80vh - 80px);
+    }
+
+    .modal-body h4 {
+      color: #1f2937;
+      font-size: 16px;
+      font-weight: 600;
+      margin: 20px 0 12px 0;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    .modal-body h4:first-child {
+      margin-top: 0;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 14px;
+    }
+
+    .data-table th,
+    .data-table td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .data-table th {
+      background: #f9fafb;
       font-weight: 600;
       color: #374151;
+    }
+
+    .data-table td {
+      color: #4b5563;
+    }
+
+    .data-table tr:hover {
+      background: #f9fafb;
+    }
+
+    .data-source-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      background: #dbeafe;
+      color: #1e40af;
+      margin-left: 8px;
+    }
+
+    .report-section {
+      margin-bottom: 20px;
+    }
+
+    .report-section h5 {
+      color: #374151;
+      font-size: 14px;
+      font-weight: 600;
+      margin: 16px 0 8px 0;
+    }
+
+    .report-section p {
+      color: #4b5563;
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .report-section ul {
+      margin: 8px 0;
+      padding-left: 20px;
+      color: #4b5563;
+      line-height: 1.7;
+    }
+
+    .benchmark-metric {
+      background: #f9fafb;
+      padding: 12px;
+      border-radius: 8px;
+      margin: 8px 0;
+      border-left: 3px solid #667eea;
+    }
+
+    .benchmark-metric .metric-name {
+      font-weight: 600;
+      color: #1f2937;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .benchmark-metric .metric-value {
+      color: #4b5563;
+      font-size: 13px;
     }
 
     .route-info .detail-hint {
@@ -1172,20 +1413,50 @@
               </div>
             </div>
 
-            <!-- 路由信息（折叠） -->
-            <div class="route-info">
-              <div class="route-header" onclick="toggleRouteDetails()">
+            <!-- 评估依据 -->
+            <div class="evaluation-basis">
+              <div class="basis-header" onclick="toggleBasisDetails()">
                 <span>📊 评估依据</span>
                 <span class="toggle-icon">▼</span>
               </div>
-              <div class="route-details" id="routeDetails" style="display: none;">
-                <div class="detail-item">
-                  <div class="detail-label">分析框架</div>
-                  <div class="detail-value" id="routeBenchmark">-</div>
+              <div class="basis-details" id="basisDetails">
+                <!-- 分析框架卡片（不可点击） -->
+                <div class="framework-card">
+                  <div class="framework-name">
+                    <span class="framework-badge industry" id="frameworkType">行业认知基准</span>
+                    <span id="frameworkName">SaaS行业认知基准</span>
+                  </div>
+                  <div style="font-size: 12px; color: #6b7280; margin-top: 4px;">
+                    数据期间: <span id="frameworkPeriod">2024-Q3</span> |
+                    最后更新: <span id="frameworkUpdate">2024-10-15</span>
+                  </div>
                 </div>
-                <div class="detail-item">
-                  <div class="detail-label">匹配度</div>
-                  <div class="detail-value" id="routeScore">-</div>
+
+                <!-- 行业数据基准（可点击，打开弹窗） -->
+                <div class="data-link-item" onclick="showBenchmarkModal()">
+                  <div class="item-info">
+                    <div class="item-label">📊 行业数据基准</div>
+                    <div class="item-value">何志毅教授企业图谱数据（清华产业研究院）</div>
+                  </div>
+                  <div class="item-icon">→</div>
+                </div>
+
+                <!-- 行业研究报告（可点击，打开弹窗） -->
+                <div class="data-link-item" id="reportLinkItem" onclick="showReportModal()" style="display: none;">
+                  <div class="item-info">
+                    <div class="item-label">📋 行业研究报告</div>
+                    <div class="item-value" id="reportTitle">SaaS行业深度研究报告</div>
+                  </div>
+                  <div class="item-icon">→</div>
+                </div>
+
+                <!-- 通用基准说明（当没有行业基准时显示） -->
+                <div class="data-link-item" id="generalBenchmarkItem" onclick="showGeneralBenchmarkModal()" style="display: none;">
+                  <div class="item-info">
+                    <div class="item-label">📊 通用认知基准</div>
+                    <div class="item-value">基于通用商业知识的评估框架</div>
+                  </div>
+                  <div class="item-icon">→</div>
                 </div>
               </div>
             </div>
@@ -2041,5 +2312,200 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
       return map[confidence] || confidence;
     }
   </script>
+
+  <!-- 弹窗：行业数据基准 -->
+  <div class="modal-overlay" id="benchmarkModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>📊 行业数据基准</h3>
+        <button class="modal-close" onclick="closeModal('benchmarkModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <h4>何志毅教授企业图谱数据</h4>
+        <p style="color: #6b7280; margin-bottom: 16px;">数据来源：清华产业研究院</p>
+
+        <div class="benchmark-metric">
+          <div class="metric-name">数据期间</div>
+          <div class="metric-value">2024年第三季度（Q3）</div>
+        </div>
+
+        <div class="benchmark-metric">
+          <div class="metric-name">覆盖企业数量</div>
+          <div class="metric-value">SaaS行业领军企业 Top 50</div>
+        </div>
+
+        <h4 style="margin-top: 24px;">关键基准指标</h4>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>指标名称</th>
+              <th>行业平均值</th>
+              <th>Top 25%</th>
+              <th>数据来源</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>年度经常性收入增长率</td>
+              <td>35%</td>
+              <td>>50%</td>
+              <td><span class="data-source-tag">财报数据</span></td>
+            </tr>
+            <tr>
+              <td>客户流失率（Churn Rate）</td>
+              <td>8%</td>
+              <td><5%</td>
+              <td><span class="data-source-tag">企业调研</span></td>
+            </tr>
+            <tr>
+              <td>客户生命周期价值（LTV/CAC）</td>
+              <td>3.2x</td>
+              <td>>5x</td>
+              <td><span class="data-source-tag">行业报告</span></td>
+            </tr>
+            <tr>
+              <td>毛利率</td>
+              <td>72%</td>
+              <td>>80%</td>
+              <td><span class="data-source-tag">财报数据</span></td>
+            </tr>
+            <tr>
+              <td>研发投入占比</td>
+              <td>18%</td>
+              <td>>25%</td>
+              <td><span class="data-source-tag">企业年报</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="benchmark-metric" style="margin-top: 20px;">
+          <div class="metric-name">⚠️ 数据使用说明</div>
+          <div class="metric-value">
+            本基准数据基于公开财报、企业调研及行业报告整理，仅供参考。
+            实际企业表现因业务模式、目标市场、发展阶段等因素会有差异。
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 弹窗：行业研究报告 -->
+  <div class="modal-overlay" id="reportModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>📋 SaaS行业研究报告</h3>
+        <button class="modal-close" onclick="closeModal('reportModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="background: #f9fafb; padding: 12px; border-radius: 8px; margin-bottom: 20px;">
+          <div style="font-size: 12px; color: #6b7280;">报告期间：2024-Q3 | 生成时间：2024-10-15</div>
+        </div>
+
+        <div class="report-section">
+          <h4>行业概况</h4>
+          <p><strong>行业定义：</strong>SaaS（Software as a Service）即软件即服务，是通过互联网提供软件服务的模式。用户无需购买和安装软件，通过浏览器或API即可使用。</p>
+          <p><strong>市场规模：</strong>2024年中国SaaS市场规模约850亿元，年增长率22%。</p>
+          <p><strong>发展阶段：</strong>成长期。市场渗透率持续提升，企业数字化转型需求强劲。</p>
+        </div>
+
+        <div class="report-section">
+          <h4>竞争格局</h4>
+          <p><strong>市场集中度：</strong>中。头部企业市占率约35%，长尾厂商众多。</p>
+          <p><strong>Top领军企业：</strong></p>
+          <ul>
+            <li>Salesforce - 全球CRM领导者，市值$200B+</li>
+            <li>阿里云 - 中国公有云领导者，企业服务生态完善</li>
+            <li>腾讯企业服务 - 社交协同优势，企业微信用户破亿</li>
+            <li>用友网络 - 传统ERP转型云服务，大型企业客户基础</li>
+          </ul>
+        </div>
+
+        <div class="report-section">
+          <h4>发展趋势</h4>
+          <p><strong>技术趋势：</strong></p>
+          <ul>
+            <li>AI原生应用成为标配（ChatGPT集成、智能客服）</li>
+            <li>PaaS平台化，低代码/无代码普及</li>
+            <li>行业垂直化解决方案需求增加</li>
+          </ul>
+          <p><strong>商业模式趋势：</strong></p>
+          <ul>
+            <li>PLG（Product-Led Growth）成为主流增长模式</li>
+            <li>订阅制从年付向月付演进</li>
+            <li>反向MRR扩张（Upsell/Cross-sell）重要性提升</li>
+          </ul>
+        </div>
+
+        <div class="report-section">
+          <h4>关键挑战</h4>
+          <ul>
+            <li><strong>获客成本攀升：</strong>流量成本上涨，CAC从3年前的¥800增至¥1500+</li>
+            <li><strong>产品同质化：</strong>功能趋同，差异化竞争难度加大</li>
+            <li><strong>国际化挑战：</strong>出海面临本地化、合规、人才等多重挑战</li>
+          </ul>
+        </div>
+
+        <div class="report-section">
+          <h4>成功因素</h4>
+          <p><strong>关键成功要素：</strong></p>
+          <ul>
+            <li>强大的产品力和用户体验</li>
+            <li>高效的客户成功体系（Customer Success）</li>
+            <li>数据驱动的增长运营能力</li>
+            <li>清晰的行业定位和垂直深耕</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 弹窗：通用认知基准 -->
+  <div class="modal-overlay" id="generalBenchmarkModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>📊 通用认知基准</h3>
+        <button class="modal-close" onclick="closeModal('generalBenchmarkModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="report-section">
+          <h4>基准说明</h4>
+          <p>通用认知基准适用于无法匹配特定行业基准的文章评估。该基准基于通用商业知识框架，提供基础的逻辑一致性和决策价值评估。</p>
+        </div>
+
+        <div class="report-section">
+          <h4>评估维度</h4>
+          <div class="benchmark-metric">
+            <div class="metric-name">逻辑自洽性</div>
+            <div class="metric-value">文章论点是否逻辑清晰，前后一致</div>
+          </div>
+          <div class="benchmark-metric">
+            <div class="metric-name">事实准确性</div>
+            <div class="metric-value">引用的数据、案例是否真实可靠</div>
+          </div>
+          <div class="benchmark-metric">
+            <div class="metric-name">决策相关性</div>
+            <div class="metric-value">对高管决策是否有参考价值</div>
+          </div>
+          <div class="benchmark-metric">
+            <div class="metric-name">可执行性</div>
+            <div class="metric-value">建议是否具体可行，而非泛泛而谈</div>
+          </div>
+        </div>
+
+        <div class="report-section">
+          <h4>⚠️ 局限性</h4>
+          <p>由于缺乏行业特定数据，通用基准无法进行：</p>
+          <ul>
+            <li>行业数据的准确性验证</li>
+            <li>与行业标杆的对比分析</li>
+            <li>行业特定盲点的识别</li>
+          </ul>
+          <p style="margin-top: 12px; color: #dc2626; font-weight: 500;">
+            建议：对于行业专业文章，建议使用行业认知基准以获得更准确的评估。
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
