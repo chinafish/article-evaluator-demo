@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>文章评估智能体 Demo v1.2</title>
+  <title>认知智能体</title>
   <style>
     * {
       margin: 0;
@@ -670,6 +670,161 @@
 
     .action-meta .label {
       font-weight: 600;
+    }
+
+    /* 战略洞察卡片样式 - 新增 */
+    .opportunity-item, .risk-item {
+      padding: 16px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      gap: 12px;
+      transition: background 0.2s;
+    }
+
+    .opportunity-item:last-child, .risk-item:last-child {
+      border-bottom: none;
+    }
+
+    .opportunity-item:hover {
+      background: #f0fdf4;
+    }
+
+    .risk-item:hover {
+      background: #fef2f2;
+    }
+
+    .opportunity-badge, .risk-badge {
+      flex-shrink: 0;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .opportunity-badge {
+      background: #d1fae5;
+      color: #059669;
+    }
+
+    .risk-badge {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .opportunity-content, .risk-content {
+      flex: 1;
+    }
+
+    .opportunity-type, .risk-type {
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 6px;
+      line-height: 1.5;
+    }
+
+    .opportunity-meta, .risk-meta {
+      display: flex;
+      gap: 15px;
+      font-size: 0.85em;
+      color: #6b7280;
+      margin-top: 6px;
+    }
+
+    .opportunity-meta .meta-tag, .risk-meta .meta-tag {
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    .opportunity-meta .meta-tag.高 {
+      background: #d1fae5;
+      color: #059669;
+    }
+
+    .opportunity-meta .meta-tag.中 {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    .opportunity-meta .meta-tag.低 {
+      background: #e5e7eb;
+      color: #6b7280;
+    }
+
+    .risk-meta .meta-tag.高 {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .risk-meta .meta-tag.中 {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    .risk-meta .meta-tag.低 {
+      background: #e5e7eb;
+      color: #6b7280;
+    }
+
+    /* 竞品对标分析样式 */
+    .competitive-leader {
+      background: #f9fafb;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      border-left: 3px solid #667eea;
+    }
+
+    .competitive-leader .leader-name {
+      font-weight: 600;
+      color: #1f2937;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    .competitive-leader .leader-strengths {
+      font-size: 13px;
+      color: #4b5563;
+      margin: 6px 0;
+    }
+
+    .competitive-leader .leader-metrics {
+      display: flex;
+      gap: 12px;
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 6px;
+    }
+
+    .competitive-leader .leader-metric {
+      background: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    .comparison-list {
+      list-style: none;
+      padding: 0;
+      margin: 8px 0;
+    }
+
+    .comparison-list li {
+      padding: 6px 0;
+      font-size: 13px;
+      color: #4b5563;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .comparison-list li::before {
+      content: '•';
+      color: #667eea;
+      font-weight: bold;
     }
 
     /* 详细分析 */
@@ -1458,7 +1613,7 @@
   <div class="container">
     <div class="header">
       <h1>📊 文章评估智能体</h1>
-      <div class="subtitle">v1.2 P0优化版 - 智能路由 · 优先级判断 · 可溯源分析</div>
+      <div class="subtitle">v1.3 战略洞察版 - 市场机会 · 风险预警 · 竞品对标 · 投资建议</div>
       <div class="features">
         <div class="feature-badge">✅ 决策优先级判断</div>
         <div class="feature-badge">✅ 相关性评估</div>
@@ -1488,18 +1643,22 @@
             />
             <div class="example-hint">
               <div class="label">💡 示例链接（点击快速填入）:</div>
-              <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px;">
+              <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
                 <div>
-                  <span class="link" onclick="fillUrl('https://mp.weixin.qq.com/s/IwsxrQrLqspGVs40UnGnJQ')">36氪（SaaS行业分析）</span>
-                  <span class="hint-text">命中行业认知基准，深度专业分析</span>
+                  <span class="link" onclick="fillUrl('https://www.woshipm.com/it/5967220.html')">SaaS行业趋势（产品经理）</span>
+                  <span class="hint-text">命中【应用软件】行业认知基准</span>
                 </div>
                 <div>
-                  <span class="link" onclick="fillUrl('https://www.36dianping.com/dianping/5420580121')">36氪企服点评（企业服务）</span>
-                  <span class="hint-text">通用认知基准，逻辑分析与决策参考</span>
+                  <span class="link" onclick="fillUrl('https://www.woshipm.com/it/5953260.html')">光伏产业分析（产品经理）</span>
+                  <span class="hint-text">命中【电气设备】行业认知基准</span>
                 </div>
                 <div>
-                  <span class="link" onclick="fillUrl('https://www.36kr.com/p/2687691234888')">36氪（AI技术趋势）</span>
-                  <span class="hint-text">前沿科技洞察，行业趋势判断</span>
+                  <span class="link" onclick="fillUrl('http://www.news.cn/auto/20250110/ba4f5455223f4f2c90a8f9a4686e697d/c.html')">新能源汽车（新华网）</span>
+                  <span class="hint-text">命中【汽车零部件】行业认知基准</span>
+                </div>
+                <div>
+                  <span class="link" onclick="fillUrl('https://www.woshipm.com/zhuanche/5947845.html')">时间管理方法（36氪）</span>
+                  <span class="hint-text">命中通用认知基准（个人成长）</span>
                 </div>
               </div>
             </div>
@@ -1634,6 +1793,44 @@
               <div id="actionsList"></div>
             </div>
 
+            <!-- 战略洞察 - 新增 -->
+            <div id="strategicInsightsSection" style="display: none;">
+              <!-- 市场机会识别 -->
+              <div class="actions-section" style="margin-top: 20px;">
+                <div class="actions-header" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">🚀 市场机会</div>
+                <div id="opportunitiesList"></div>
+              </div>
+
+              <!-- 风险预警 -->
+              <div class="actions-section" style="margin-top: 20px;">
+                <div class="actions-header" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">⚠️ 风险预警</div>
+                <div id="risksList"></div>
+              </div>
+
+              <!-- 投资建议 -->
+              <div class="info-card" style="margin: 20px 0; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white;">
+                <div style="font-size: 14px; opacity: 0.9;">💼 投资建议</div>
+                <div style="font-size: 18px; font-weight: 600; margin-top: 4px;" id="investmentVerdict"></div>
+                <div style="font-size: 13px; opacity: 0.9; margin-top: 4px;" id="investmentRationale"></div>
+                <div style="font-size: 12px; opacity: 0.8; margin-top: 2px;" id="investmentTimeHorizon"></div>
+              </div>
+
+              <!-- 竞品对标分析 -->
+              <div class="detail-section" style="margin-top: 20px;">
+                <div class="detail-header" onclick="toggleCompetitiveAnalysis()">
+                  <span>🏢 竞品对标分析</span>
+                  <span class="toggle-icon">▼</span>
+                </div>
+                <div class="detail-content" id="competitiveAnalysisContent" style="display: none;">
+                  <div id="competitiveLeadersList"></div>
+                  <div class="detail-item" style="margin-top: 16px;">
+                    <div class="label">文章与对标企业对比</div>
+                    <div class="value" id="articleComparison"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- 详细分析 -->
             <div class="detail-section">
               <div class="detail-header" onclick="toggleDetail()">
@@ -1663,32 +1860,22 @@
                 <span class="toggle-icon">▼</span>
               </div>
               <div class="basis-details" id="basisDetails">
-                <!-- 分析框架卡片（不可点击） -->
+                <!-- 1. 当前命中的认知基准 -->
                 <div class="framework-card">
                   <div class="framework-name">
-                    <span class="framework-badge industry" id="frameworkType">行业认知基准</span>
-                    <span id="frameworkName">SaaS行业认知基准</span>
+                    <span class="framework-badge" id="frameworkType">行业认知基准</span>
+                    <span id="frameworkName">-</span>
                   </div>
                   <div style="font-size: 12px; color: #6b7280; margin-top: 4px;">
-                    数据期间: <span id="frameworkPeriod">2024-Q3</span> |
-                    最后更新: <span id="frameworkUpdate">2024-10-15</span>
+                    基准类型: <span id="benchmarkTypeName">-</span>
                   </div>
                 </div>
 
-                <!-- 行业数据基准（可点击，打开弹窗） -->
-                <div class="data-link-item" onclick="showBenchmarkModal()">
+                <!-- 2. 行业数据基准（可点击，打开弹窗） -->
+                <div class="data-link-item" id="benchmarkDataItem" onclick="showBenchmarkModal()" style="display: none;">
                   <div class="item-info">
                     <div class="item-label">📊 行业数据基准</div>
-                    <div class="item-value">何志毅教授企业图谱数据（清华产业研究院）</div>
-                  </div>
-                  <div class="item-icon">→</div>
-                </div>
-
-                <!-- 行业研究报告（可点击，打开弹窗） -->
-                <div class="data-link-item" id="reportLinkItem" onclick="showReportModal()" style="display: none;">
-                  <div class="item-info">
-                    <div class="item-label">📋 行业研究报告</div>
-                    <div class="item-value" id="reportTitle">SaaS行业深度研究报告</div>
+                    <div class="item-value" id="benchmarkDataValue">-</div>
                   </div>
                   <div class="item-icon">→</div>
                 </div>
@@ -1881,6 +2068,12 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
           })
         });
 
+        // 检查HTTP响应状态
+        if (!response.ok) {
+          console.error(`[HTTP错误] 状态码: ${response.status}`);
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
         const result = await response.json();
 
         if (!result.success) {
@@ -1906,8 +2099,15 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
         displayResult(result.evaluation);
 
       } catch (error) {
-        showError('网络错误，请检查连接后重试');
-        console.error('Error:', error);
+        console.error('[评估错误] 详细信息:', error);
+        console.error('[评估错误] 错误堆栈:', error.stack);
+
+        // 显示更详细的错误信息
+        let errorMsg = '网络错误，请检查连接后重试';
+        if (error.message) {
+          errorMsg = `${errorMsg} (${error.message})`;
+        }
+        showError(errorMsg);
       } finally {
         // 恢复按钮状态
         submitBtn.disabled = false;
@@ -1917,17 +2117,47 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
 
     // 显示错误
     function showError(message) {
+      console.error('[显示错误]', message);
       const errorMessage = document.getElementById('errorMessage');
+      if (!errorMessage) {
+        console.error('[显示错误] 找不到 errorMessage 元素');
+        alert('错误: ' + message); // 降级到 alert
+        return;
+      }
       errorMessage.textContent = '❌ ' + message;
       errorMessage.classList.add('show');
     }
 
     // 显示路由决策
     function showRouteDecision(result) {
+      console.log('[显示路由决策] 开始显示...', result);
+
       const routeDecision = document.getElementById('routeDecision');
       const decisionReason = document.getElementById('decisionReason');
       const decisionGics4 = document.getElementById('decisionGics4');
       const decisionActions = document.getElementById('decisionActions');
+
+      // 检查所有必需的元素是否存在
+      if (!routeDecision) {
+        console.error('[显示路由决策] 找不到 routeDecision 元素');
+        showError('页面元素缺失，请刷新页面后重试');
+        return;
+      }
+      if (!decisionReason) {
+        console.error('[显示路由决策] 找不到 decisionReason 元素');
+        showError('页面元素缺失，请刷新页面后重试');
+        return;
+      }
+      if (!decisionGics4) {
+        console.error('[显示路由决策] 找不到 decisionGics4 元素');
+        showError('页面元素缺失，请刷新页面后重试');
+        return;
+      }
+      if (!decisionActions) {
+        console.error('[显示路由决策] 找不到 decisionActions 元素');
+        showError('页面元素缺失，请刷新页面后重试');
+        return;
+      }
 
       // 设置内容
       decisionReason.textContent = result.route_decision.reason;
@@ -2003,6 +2233,12 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
             })
           });
 
+          // 检查HTTP响应状态
+          if (!response.ok) {
+            console.error(`[生成基准HTTP错误] 状态码: ${response.status}`);
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+
           const result = await response.json();
 
           if (!result.success) {
@@ -2045,8 +2281,14 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
           displayResult(result.evaluation);
 
         } catch (error) {
-          showError('网络错误，请检查连接后重试');
-          console.error('Error:', error);
+          console.error('[生成基准错误] 详细信息:', error);
+          console.error('[生成基准错误] 错误堆栈:', error.stack);
+
+          let errorMsg = '网络错误，请检查连接后重试';
+          if (error.message) {
+            errorMsg = `${errorMsg} (${error.message})`;
+          }
+          showError(errorMsg);
           generationProgress.style.display = 'none';
         }
 
@@ -2063,6 +2305,12 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
               option: 'use_general'
             })
           });
+
+          // 检查HTTP响应状态
+          if (!response.ok) {
+            console.error(`[使用通用基准HTTP错误] 状态码: ${response.status}`);
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
 
           const result = await response.json();
 
@@ -2083,8 +2331,14 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
           displayResult(result.evaluation);
 
         } catch (error) {
-          showError('网络错误，请检查连接后重试');
-          console.error('Error:', error);
+          console.error('[使用通用基准错误] 详细信息:', error);
+          console.error('[使用通用基准错误] 错误堆栈:', error.stack);
+
+          let errorMsg = '网络错误，请检查连接后重试';
+          if (error.message) {
+            errorMsg = `${errorMsg} (${error.message})`;
+          }
+          showError(errorMsg);
         }
       }
     }
@@ -2580,85 +2834,361 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
       details.style.display = details.style.display === 'none' ? 'grid' : 'none';
     }
 
+    function toggleBasisDetails() {
+      const header = document.querySelector('.basis-header');
+      const details = document.getElementById('basisDetails');
+
+      if (header && details) {
+        header.classList.toggle('expanded');
+        const icon = header.querySelector('.toggle-icon');
+        if (icon) {
+          icon.textContent = header.classList.contains('expanded') ? '▲' : '▼';
+        }
+        details.style.display = details.style.display === 'none' ? 'block' : 'none';
+      }
+    }
+
+    function toggleCompetitiveAnalysis() {
+      const header = document.querySelector('#strategicInsightsSection .detail-header');
+      const content = document.getElementById('competitiveAnalysisContent');
+
+      if (header && content) {
+        header.classList.toggle('expanded');
+        const icon = header.querySelector('.toggle-icon');
+        if (icon) {
+          icon.textContent = header.classList.contains('expanded') ? '▲' : '▼';
+        }
+        content.style.display = content.style.display === 'none' ? 'block' : 'none';
+      }
+    }
+
+    // 安全地设置元素文本内容
+    function safeSetText(elementId, text) {
+      const element = document.getElementById(elementId);
+      if (element) {
+        element.textContent = text;
+      } else {
+        console.warn(`[displayResult] 找不到元素: ${elementId}`);
+      }
+    }
+
     // 显示结果
     function displayResult(evaluation) {
+      console.log('[显示结果] 开始显示评估结果...', evaluation);
+
       const resultSection = document.getElementById('resultSection');
+      if (!resultSection) {
+        console.error('[显示结果] 找不到 resultSection 元素');
+        showError('页面元素缺失，请刷新页面后重试');
+        return;
+      }
 
       // 分析器徽章 - 根据route_info显示
       const analyzerBadge = document.getElementById('analyzerBadge');
-      const benchmarkName = evaluation.route_info?.benchmark_name || '认知基准';
-      analyzerBadge.textContent = benchmarkName;
-      analyzerBadge.className = 'analyzer-badge';
+      if (analyzerBadge) {
+        const benchmarkName = evaluation.route_info?.benchmark_name || '认知基准';
+        analyzerBadge.textContent = benchmarkName;
+        analyzerBadge.className = 'analyzer-badge';
 
-      // 根据基准类型设置样式
-      if (evaluation.route_info?.type === 'INDUSTRY_BENCHMARK') {
-        analyzerBadge.classList.add('industry');
+        // 根据基准类型设置样式
+        if (evaluation.route_info?.type === 'INDUSTRY_BENCHMARK') {
+          analyzerBadge.classList.add('industry');
+        } else {
+          analyzerBadge.classList.add('general');
+        }
       } else {
-        analyzerBadge.classList.add('general');
+        console.warn('[显示结果] 找不到 analyzerBadge 元素');
       }
 
       // 文章标题
-      document.getElementById('articleTitle').textContent = evaluation.article_title || '未知标题';
+      safeSetText('articleTitle', evaluation.article_title || '未知标题');
 
       // 显示内容警告（如果内容不完整）
       const warningBanner = document.getElementById('warningBanner');
-      if (evaluation.is_partial_content) {
-        warningBanner.style.display = 'flex';
-      } else {
-        warningBanner.style.display = 'none';
+      if (warningBanner) {
+        if (evaluation.is_partial_content) {
+          warningBanner.style.display = 'flex';
+        } else {
+          warningBanner.style.display = 'none';
+        }
       }
 
-      // 核心信息
-      document.getElementById('judgmentValue').textContent = evaluation.judgment;
-      document.getElementById('judgmentValue').className = 'value ' + evaluation.judgment;
+      // ===== 从新的数据结构映射到前端UI =====
 
-      document.getElementById('relevanceValue').textContent = evaluation.relevance;
-      document.getElementById('relevanceValue').className = 'value ' + evaluation.relevance;
+      // 1. 核心信息卡片 - 映射 overall_assessment 和 dimension_scores
+      const overall = evaluation.overall_assessment || {};
 
-      document.getElementById('urgencyValue').textContent = evaluation.urgency;
-      document.getElementById('urgencyValue').className = 'value ' + evaluation.urgency;
+      // 判断 (judgmentValue): 映射 overall_assessment.rating
+      const ratingMap = {
+        'excellent': '优秀',
+        'good': '良好',
+        'acceptable': '一般',
+        'poor': '较差'
+      };
+      const judgmentText = ratingMap[overall.rating] || '未知';
+      const judgmentClass = overall.rating || 'unknown';
+      safeSetText('judgmentValue', judgmentText);
+      const judgmentValueEl = document.getElementById('judgmentValue');
+      if (judgmentValueEl) {
+        judgmentValueEl.className = 'value ' + judgmentClass;
+      }
 
-      // 摘要和紧迫性理由
-      document.getElementById('summaryValue').textContent = evaluation.summary || '-';
-      document.getElementById('urgencyReason').textContent = evaluation.urgency_reason || '-';
+      // 与您相关 (relevanceValue): 映射 strategic_value.decision_relevance
+      const strategic = evaluation.dimension_scores?.strategic_value || {};
+      const relevanceText = strategic.decision_relevance || '中';
+      safeSetText('relevanceValue', relevanceText);
+      const relevanceValueEl = document.getElementById('relevanceValue');
+      if (relevanceValueEl) {
+        // 根据相关性设置样式
+        const relevanceClassMap = { '高': 'high', '中': 'medium', '低': 'low' };
+        relevanceValueEl.className = 'value ' + (relevanceClassMap[relevanceText] || 'medium');
+      }
 
-      // 行动建议（不再需要溯源角标）
+      // 是否需行动 (urgencyValue): 映射 strategic_value.actionability
+      const urgencyText = strategic.actionability || '中';
+      const urgencyClassMap = { '高': 'yes', '中': 'maybe', '低': 'no' };
+      safeSetText('urgencyValue', urgencyText === '高' ? '是' : urgencyText === '中' ? '可能' : '否');
+      const urgencyValueEl = document.getElementById('urgencyValue');
+      if (urgencyValueEl) {
+        urgencyValueEl.className = 'value ' + (urgencyClassMap[urgencyText] || 'maybe');
+      }
+
+      // 2. 核心价值摘要 (summaryValue): 映射 overall_assessment.one_sentence_summary
+      safeSetText('summaryValue', overall.one_sentence_summary || '-');
+
+      // 3. 为什么要行动 (urgencyReason): 映射 strategic_value.assessment 或 recommendations.for_readers
+      const urgencyReasonText = strategic.assessment ||
+        (evaluation.recommendations?.for_readers?.[0]?.rationale) ||
+        (evaluation.verdict?.reading_time_recommendation) ||
+        '-';
+      safeSetText('urgencyReason', urgencyReasonText);
+
+      // 4. 行动建议 (actionsList): 映射 recommendations.for_readers
       const actionsList = document.getElementById('actionsList');
-      actionsList.innerHTML = '';
-      if (evaluation.strategic_actions && evaluation.strategic_actions.length > 0) {
-        evaluation.strategic_actions.forEach((action, index) => {
-          const actionItem = document.createElement('div');
-          actionItem.className = 'action-item';
+      if (actionsList) {
+        actionsList.innerHTML = '';
+        const recommendations = evaluation.recommendations?.for_readers || [];
 
-          actionItem.innerHTML =
-            '<div class="priority-badge ' + action.priority + '">' + action.priority + '</div>' +
-            '<div class="action-content">' +
-              '<div class="action-title">' + action.action + '</div>' +
-              '<div class="action-meta">' +
-                '<div><span class="label">时间：</span>' + action.timeline + '</div>' +
-                '<div><span class="label">理由：</span>' + action.reason + '</div>' +
-              '</div>' +
-            '</div>';
+        if (recommendations.length > 0) {
+          recommendations.forEach((rec, index) => {
+            const actionItem = document.createElement('div');
+            actionItem.className = 'action-item';
 
-          actionsList.appendChild(actionItem);
-        });
-      } else {
-        actionsList.innerHTML = '<div style="padding: 20px; color: #6b7280;">暂无行动建议</div>';
+            const priorityClassMap = { '高': 'high', '中': 'medium', '低': 'low' };
+            const priorityClass = priorityClassMap[rec.priority] || 'medium';
+
+            actionItem.innerHTML =
+              '<div class="priority-badge ' + priorityClass + '">' + rec.priority + '</div>' +
+              '<div class="action-content">' +
+                '<div class="action-title">' + rec.recommendation + '</div>' +
+                '<div class="action-meta">' +
+                  '<div><span class="label">理由：</span>' + rec.rationale + '</div>' +
+                '</div>' +
+              '</div>';
+
+            actionsList.appendChild(actionItem);
+          });
+        } else {
+          // 如果没有for_readers，显示verdict
+          const verdict = evaluation.verdict || {};
+          actionsList.innerHTML = '<div style="padding: 20px; color: #6b7280;">' +
+            '<div style="margin-bottom: 10px;"><strong>可靠性：</strong>' + (verdict.is_reliable || '-') + '</div>' +
+            '<div style="margin-bottom: 10px;"><strong>价值：</strong>' + (verdict.is_valuable || '-') + '</div>' +
+            '<div style="margin-bottom: 10px;"><strong>建议：</strong>' + (verdict.reading_time_recommendation || '-') + '</div>' +
+          '</div>';
+        }
       }
 
-      // 详细分析（带溯源功能）
-      updateDetailWithQuote('inputDiagnosis', evaluation.input_diagnosis, evaluation.input_diagnosis_quote);
-      updateDetailWithQuote('macroBenchmark', evaluation.macro_benchmark, evaluation.macro_benchmark_quote);
-      updateDetailWithQuote('blindSpotAlert', evaluation.blind_spot_alert, evaluation.blind_spot_alert_quote);
+      // 5. 战略洞察 - 新增 (KR1优化)
+      const strategicInsightsSection = document.getElementById('strategicInsightsSection');
+      const opportunitiesList = document.getElementById('opportunitiesList');
+      const risksList = document.getElementById('risksList');
 
-      // 路由信息
+      if (strategic.opportunities && strategic.opportunities.length > 0) {
+        // 显示战略洞察区域
+        if (strategicInsightsSection) {
+          strategicInsightsSection.style.display = 'block';
+        }
+
+        // 显示机会列表
+        if (opportunitiesList) {
+          opportunitiesList.innerHTML = '';
+          strategic.opportunities.forEach(opp => {
+            const opportunityItem = document.createElement('div');
+            opportunityItem.className = 'opportunity-item';
+
+            const urgencyClass = opp.urgency || '中';
+            const impactClass = opp.potential_impact || '中';
+
+            opportunityItem.innerHTML =
+              '<div class="opportunity-badge">' + urgencyClass + '</div>' +
+              '<div class="opportunity-content">' +
+                '<div class="opportunity-type">' + opp.type + '：' + opp.description + '</div>' +
+                '<div class="opportunity-meta">' +
+                  '<span class="meta-tag ' + urgencyClass + '">紧急度：' + urgencyClass + '</span>' +
+                  '<span class="meta-tag ' + impactClass + '">影响：' + impactClass + '</span>' +
+                '</div>' +
+              '</div>';
+
+            opportunitiesList.appendChild(opportunityItem);
+          });
+        }
+      }
+
+      // 显示风险列表
+      if (strategic.risks && strategic.risks.length > 0) {
+        if (strategicInsightsSection) {
+          strategicInsightsSection.style.display = 'block';
+        }
+
+        if (risksList) {
+          risksList.innerHTML = '';
+          strategic.risks.forEach(risk => {
+            const riskItem = document.createElement('div');
+            riskItem.className = 'risk-item';
+
+            const probabilityClass = risk.probability || '中';
+
+            riskItem.innerHTML =
+              '<div class="risk-badge">' + probabilityClass + '</div>' +
+              '<div class="risk-content">' +
+                '<div class="risk-type">' + risk.type + '：' + risk.description + '</div>' +
+                '<div class="risk-meta">' +
+                  '<span class="meta-tag ' + probabilityClass + '">概率：' + probabilityClass + '</span>' +
+                  '<span style="color: #6b7280;">缓解措施：' + risk.mitigation + '</span>' +
+                '</div>' +
+              '</div>';
+
+            risksList.appendChild(riskItem);
+          });
+        }
+      }
+
+      // 显示投资建议
+      const investmentRec = strategic.investment_recommendation;
+      if (investmentRec) {
+        if (strategicInsightsSection) {
+          strategicInsightsSection.style.display = 'block';
+        }
+
+        safeSetText('investmentVerdict', investmentRec.verdict || '-');
+        safeSetText('investmentRationale', investmentRec.rationale || '');
+        safeSetText('investmentTimeHorizon', '时间周期：' + (investmentRec.time_horizon || '-'));
+      }
+
+      // 显示竞品对标分析
+      const competitive = evaluation.competitive_analysis || {};
+      const competitiveLeadersList = document.getElementById('competitiveLeadersList');
+      const articleComparisonEl = document.getElementById('articleComparison');
+
+      if (competitive.industry_leaders && competitive.industry_leaders.length > 0) {
+        if (strategicInsightsSection) {
+          strategicInsightsSection.style.display = 'block';
+        }
+
+        if (competitiveLeadersList) {
+          competitiveLeadersList.innerHTML = '';
+          competitive.industry_leaders.forEach(leader => {
+            const leaderDiv = document.createElement('div');
+            leaderDiv.className = 'competitive-leader';
+
+            const metrics = leader.financial_metrics || {};
+            leaderDiv.innerHTML =
+              '<div class="leader-name">' + leader.company + ' <span style="font-weight: normal; color: #6b7280;">' + leader.strategic_focus + '</span></div>' +
+              '<div class="leader-strengths">优势：' + (leader.strengths?.join('、') || '-') + '</div>' +
+              '<div class="leader-metrics">' +
+                '<span class="leader-metric">营收增长：' + (metrics.revenue_growth || '-') + '</span>' +
+                '<span class="leader-metric">利润率：' + (metrics.profit_margin || '-') + '</span>' +
+                '<span class="leader-metric">ROE：' + (metrics.roe || '-') + '</span>' +
+              '</div>';
+
+            competitiveLeadersList.appendChild(leaderDiv);
+          });
+        }
+
+        if (articleComparisonEl && competitive.article_comparison) {
+          const comp = competitive.article_comparison;
+          let comparisonHtml = '<ul class="comparison-list">';
+          if (comp.similarities && comp.similarities.length > 0) {
+            comparisonHtml += '<li><strong>相似点：</strong>' + comp.similarities.join('；') + '</li>';
+          }
+          if (comp.differences && comp.differences.length > 0) {
+            comparisonHtml += '<li><strong>差异点：</strong>' + comp.differences.join('；') + '</li>';
+          }
+          comparisonHtml += '</ul>';
+          if (comp.gap_analysis) {
+            comparisonHtml += '<div style="margin-top: 8px; font-size: 13px; color: #6b7280;"><strong>差距分析：</strong>' + comp.gap_analysis + '</div>';
+          }
+          articleComparisonEl.innerHTML = comparisonHtml;
+        }
+      }
+
+      // 6. 详细分析 - 映射 dimension_scores
+      const factual = evaluation.dimension_scores?.factual_accuracy || {};
+      updateDetailWithQuote('inputDiagnosis', factual.assessment || '-');
+
+      const benchmarkComp = evaluation.benchmark_comparison || {};
+      const benchmarkDetails = [];
+      if (benchmarkComp.above_benchmark?.length > 0) {
+        benchmarkDetails.push('【超出基准】' + benchmarkComp.above_benchmark.map(b => b.area).join('、'));
+      }
+      if (benchmarkComp.meets_benchmark?.length > 0) {
+        benchmarkDetails.push('【符合基准】' + benchmarkComp.meets_benchmark.map(b => b.area).join('、'));
+      }
+      if (benchmarkComp.below_benchmark?.length > 0) {
+        benchmarkDetails.push('【低于基准】' + benchmarkComp.below_benchmark.map(b => b.area + ': ' + b.improvement_suggestion).join('；'));
+      }
+      updateDetailWithQuote('macroBenchmark', benchmarkDetails.join('\n') || '暂无对比数据');
+
+      const blindSpots = evaluation.blind_spot_analysis || {};
+      const missingContext = blindSpots.critical_missing_context || [];
+      updateDetailWithQuote('blindSpotAlert',
+        missingContext.length > 0
+          ? '缺失关键背景：' + missingContext.join('；')
+          : (blindSpots.identified_blind_spots?.length > 0 ? '发现盲点：' + blindSpots.identified_blind_spots.map(s => s.spot).join('；') : '未发现明显盲点')
+      );
+
+      // 6. 更新评估依据信息
       const routeInfo = evaluation.route_info || {};
-      document.getElementById('routeBenchmark').textContent = evaluation.benchmark_match || '-';
-      document.getElementById('routeScore').textContent = routeInfo.confidenceScore ? (routeInfo.confidenceScore * 100).toFixed(0) + '%' : '-';
+      const benchmarkType = routeInfo.type || 'GENERAL_BENCHMARK';
+      const benchmarkName = routeInfo.benchmark_name || '认知基准';
 
-      // 更新浏览器URL显示
-      if (sourceUrl) {
-        document.getElementById('browserUrl').textContent = sourceUrl;
+      // 更新框架卡片（当前命中的认知基准）
+      const frameworkType = document.getElementById('frameworkType');
+      const frameworkName = document.getElementById('frameworkName');
+      const benchmarkTypeName = document.getElementById('benchmarkTypeName');
+
+      if (frameworkType && frameworkName && benchmarkTypeName) {
+        frameworkType.textContent = benchmarkType === 'INDUSTRY_BENCHMARK' ? '行业认知基准' : '通用认知基准';
+        frameworkType.className = 'framework-badge ' + (benchmarkType === 'INDUSTRY_BENCHMARK' ? 'industry' : 'general');
+        frameworkName.textContent = benchmarkName;
+        benchmarkTypeName.textContent = benchmarkType === 'INDUSTRY_BENCHMARK' ? '基于行业专业数据' : '基于通用商业知识';
+      }
+
+      // 更新行业数据基准卡片
+      const benchmarkDataItem = document.getElementById('benchmarkDataItem');
+      const benchmarkDataValue = document.getElementById('benchmarkDataValue');
+      const generalBenchmarkItem = document.getElementById('generalBenchmarkItem');
+
+      if (benchmarkType === 'INDUSTRY_BENCHMARK' && benchmarkDataItem && benchmarkDataValue) {
+        // 显示行业数据基准
+        benchmarkDataItem.style.display = 'flex';
+        benchmarkDataValue.textContent = benchmarkName;
+        if (generalBenchmarkItem) {
+          generalBenchmarkItem.style.display = 'none';
+        }
+      } else if (generalBenchmarkItem) {
+        // 显示通用基准说明
+        generalBenchmarkItem.style.display = 'flex';
+        if (benchmarkDataItem) {
+          benchmarkDataItem.style.display = 'none';
+        }
+      }
+
+      // 7. 更新浏览器URL显示
+      if (evaluation.article_url) {
+        safeSetText('browserUrl', evaluation.article_url);
+        sourceUrl = evaluation.article_url;
       }
 
       // 渲染原文内容
@@ -2668,18 +3198,26 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
       const sourcePanel = document.getElementById('sourcePanel');
       const resultContainer = document.querySelector('.result-container');
       const toggleBtn = document.getElementById('sourceToggleBtn');
-      if (!sourcePanel.classList.contains('collapsed')) {
-        sourcePanel.classList.add('collapsed');
-        resultContainer.classList.add('source-collapsed');
-        toggleBtn.querySelector('.icon').textContent = '📄';
-        toggleBtn.querySelector('span:last-child').textContent = '查看原文';
+
+      if (sourcePanel && resultContainer && toggleBtn) {
+        if (!sourcePanel.classList.contains('collapsed')) {
+          sourcePanel.classList.add('collapsed');
+          resultContainer.classList.add('source-collapsed');
+          const icon = toggleBtn.querySelector('.icon');
+          const textSpan = toggleBtn.querySelector('span:last-child');
+          if (icon) icon.textContent = '📄';
+          if (textSpan) textSpan.textContent = '查看原文';
+        }
       }
 
       // 显示结果区域
       resultSection.classList.add('show');
 
       // 显示浮动按钮
-      document.getElementById('floatingNewEvalBtn').classList.add('show');
+      const floatingNewEvalBtn = document.getElementById('floatingNewEvalBtn');
+      if (floatingNewEvalBtn) {
+        floatingNewEvalBtn.classList.add('show');
+      }
 
       // 滚动到结果区域
       resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -2691,12 +3229,18 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
       const inputSection = document.querySelector('.input-section');
       const floatingBtn = document.getElementById('floatingNewEvalBtn');
 
+      if (!inputSection) {
+        console.error('[返回输入] 找不到 inputSection 元素');
+        return;
+      }
+
       // 平滑滚动到输入区域
       inputSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
       // 聚焦到输入框
       setTimeout(() => {
-        const activeInput = currentTab === 'url' ? document.getElementById('urlInput') : document.getElementById('contentInput');
+        const activeInputId = currentTab === 'url' ? 'urlInput' : 'contentInput';
+        const activeInput = document.getElementById(activeInputId);
         if (activeInput) {
           activeInput.focus();
         }
@@ -2734,6 +3278,34 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
         'fallback': '兜底'
       };
       return map[confidence] || confidence;
+    }
+
+    // 显示行业数据基准弹窗
+    function showBenchmarkModal() {
+      const modal = document.getElementById('benchmarkModal');
+      if (modal) {
+        modal.style.display = 'flex';
+      }
+    }
+
+    // 显示通用基准弹窗
+    function showGeneralBenchmarkModal() {
+      alert(`📊 通用认知基准\n\n基于通用商业知识的评估框架，适用于无特定行业基准的文章。\n\n评估维度包括：\n• 事实准确性\n• 内容洞察力\n• 战略价值\n• 数据质量`);
+    }
+
+    // 关闭弹窗
+    function closeModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.style.display = 'none';
+      }
+    }
+
+    // 点击弹窗外部关闭
+    window.onclick = function(event) {
+      if (event.target.classList.contains('modal-overlay')) {
+        event.target.style.display = 'none';
+      }
     }
   </script>
 

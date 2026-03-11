@@ -73,9 +73,11 @@ class ModelRouter {
    * @returns {Object} 模型配置
    */
   getModelForTask(taskType) {
-    // 如果禁用了智能路由，使用默认模型（Kimi）
-    if (process.env.MODEL_ROUTING_ENABLED !== 'true') {
-      console.log(`[模型路由] 智能路由已禁用，使用默认模型: kimi`);
+    // 延迟检查环境变量，避免模块加载顺序问题
+    const routingEnabled = process.env.MODEL_ROUTING_ENABLED === 'true';
+
+    if (!routingEnabled) {
+      console.log(`[模型路由] 智能路由已禁用（MODEL_ROUTING_ENABLED=${process.env.MODEL_ROUTING_ENABLED}），使用默认模型: kimi`);
       return this.models.kimi;
     }
 

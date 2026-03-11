@@ -2,40 +2,17 @@
  * 行业研究报告生成服务
  *
  * 阶段1：基于GICS行业 + 基准数据 + 网络搜索，生成深度产业研究报告
+ *
+ * 使用 ModelRouter 进行智能模型路由：
+ * - 报告生成任务使用 qwen3.5-plus（强大生成能力）
  */
 
-const axios = require('axios');
+const ModelRouter = require('./ModelRouter');
 const benchmarkData = require('./benchmarkData');
 
 class IndustryResearchGenerator {
   constructor() {
-    const provider = process.env.AI_PROVIDER || 'kimi';
-    this.apiConfig = {
-      provider: provider,
-      apiKey: process.env.AI_API_KEY,
-      baseURL: this.getBaseURLForProvider(provider),
-      model: this.getModelForProvider(provider)
-    };
-  }
-
-  getBaseURLForProvider(provider) {
-    switch (provider) {
-      case 'openai': return 'https://api.openai.com/v1';
-      case 'qwen': return 'https://dashscope.aliyuncs.com/api/v1';
-      case 'wenxin': return 'https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop';
-      case 'kimi': return process.env.AI_BASE_URL || 'https://api.openai.com/v1';
-      default: return process.env.AI_BASE_URL || 'https://api.openai.com/v1';
-    }
-  }
-
-  getModelForProvider(provider) {
-    switch (provider) {
-      case 'openai': return process.env.AI_MODEL || 'gpt-3.5-turbo';
-      case 'qwen': return 'qwen-plus';
-      case 'wenxin': return 'ernie-bot';
-      case 'kimi': return process.env.AI_MODEL;
-      default: return process.env.AI_MODEL || 'gpt-3.5-turbo';
-    }
+    this.modelRouter = ModelRouter;
   }
 
   /**
@@ -69,7 +46,7 @@ class IndustryResearchGenerator {
     // 4. 构建Prompt
     const prompt = this.buildResearchPrompt(gics4, benchmarkText, latestNews);
 
-    // 5. 调用AI生成报告
+    // 5. 调用AI生成报告（使用ModelRouter，自动选择qwen3.5-plus）
     const reportContent = await this.callAI(prompt);
 
     // 6. 解析报告
@@ -235,47 +212,69 @@ ${latestNews || '暂无最新动态数据'}
   /**
    * 调用AI生成报告
    */
+  /**
+   * 调用AI生成报告
+   * 使用 ModelRouter 进行智能路由，自动选择 qwen3.5-plus
+   */
   async callAI(prompt) {
-    const baseURL = this.apiConfig.baseURL.replace(/\/$/, ''); // 移除末尾斜杠
-    const response = await axios.post(
-      `${baseURL}/chat/completions`,
-      {
-        model: this.apiConfig.model,
-        messages: [
-          { role: 'system', content: prompt.system },
-          { role: 'user', content: prompt.user }
-        ],
-        temperature: 0.7,
-        max_tokens: 8000
-      },
-      {
-        headers: {
-          'Authorization': `Bearer ${this.apiConfig.apiKey}`,
-          'Content-Type': 'application/json'
-        },
-        timeout: 120000  // 2分钟超时
-      }
-    );
+    console.log('[研究报告] 开始调用AI生成模型（qwen3.5-plus）...');
 
-    return response.data.choices[0].message.content;
+    try {
+      // 使用 ModelRouter，指定任务类型为 INDUSTRY_REPORT_GENERATION
+      // ModelRouter 会自动选择 qwen3.5-plus 模型
+      const response = await this.modelRouter.callAI('INDUSTRY_REPORT_GENERATION', prompt, {
+        temperature: 0.7,
+        maxTokens: 8000
+      });
+
+      console.log('[研究报告] AI调用成功');
+      return response;
+    } catch (error) {
+      console.error('[研究报告] AI调用失败:', error.message);
+      throw error;
+    }
   }
 
   /**
    * 解析AI返回的JSON
    */
   parseReport(content, gics4) {
+    console.log('[研究报告解析] 原始内容长度:', content.length);
+
     try {
       return JSON.parse(content);
     } catch (error) {
+      console.log('[研究报告解析] 直接JSON解析失败，尝试提取...');
+
       // 尝试提取JSON部分
-      const jsonMatch = content.match(/```json\s*([\s\S]*?)\s*```/);
+      let jsonMatch = content.match(/```json\s*([\s\S]*?)\s*```/);
       if (jsonMatch) {
-        return JSON.parse(jsonMatch[1]);
+        console.log('[研究报告解析] 找到 ```json 标记');
+        try {
+          return JSON.parse(jsonMatch[1]);
+        } catch (e) {
+          console.log('[研究报告解析] ```json 内的JSON解析失败');
+        }
       }
-      const jsonMatch2 = content.match(/\{[\s\S]*\}/);
-      if (jsonMatch2) {
-        return JSON.parse(jsonMatch2[0]);
+
+      // 尝试不带标记的JSON
+      jsonMatch = content.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        console.log('[研究报告解析] 找到JSON对象');
+        try {
+          return JSON.parse(jsonMatch[0]);
+        } catch (e) {
+          console.log('[研究报告解析] JSON对象解析失败，尝试清理...');
+          // 尝试清理常见的JSON错误
+          let cleaned = jsonMatch[0]
+            .replace(/,\s*}/g, '}')  // 移除尾随逗号
+            .replace(/,\s*]/g, ']')  // 移除数组尾随逗号
+            .replace(/[\x00-\x1F\x7F]/g, '');  // 移除控制字符
+          return JSON.parse(cleaned);
+        }
       }
+
+      console.error('[研究报告解析] 所有方法都失败');
       throw new Error('无法解析AI返回的报告');
     }
   }

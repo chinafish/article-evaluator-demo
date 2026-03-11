@@ -2,39 +2,16 @@
  * 行业判断基准生成服务
  *
  * 阶段2：基于产业研究报告 + 基线数据，生成行业判断基准
+ *
+ * 使用 ModelRouter 进行智能模型路由：
+ * - 基准生成任务使用 qwen3.5-plus（强大生成能力）
  */
 
-const axios = require('axios');
+const ModelRouter = require('./ModelRouter');
 
 class IndustryBenchmarkGenerator {
   constructor() {
-    const provider = process.env.AI_PROVIDER || 'kimi';
-    this.apiConfig = {
-      provider: provider,
-      apiKey: process.env.AI_API_KEY,
-      baseURL: this.getBaseURLForProvider(provider),
-      model: this.getModelForProvider(provider)
-    };
-  }
-
-  getBaseURLForProvider(provider) {
-    switch (provider) {
-      case 'openai': return 'https://api.openai.com/v1';
-      case 'qwen': return 'https://dashscope.aliyuncs.com/api/v1';
-      case 'wenxin': return 'https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop';
-      case 'kimi': return process.env.AI_BASE_URL || 'https://api.openai.com/v1';
-      default: return process.env.AI_BASE_URL || 'https://api.openai.com/v1';
-    }
-  }
-
-  getModelForProvider(provider) {
-    switch (provider) {
-      case 'openai': return process.env.AI_MODEL || 'gpt-3.5-turbo';
-      case 'qwen': return 'qwen-plus';
-      case 'wenxin': return 'ernie-bot';
-      case 'kimi': return process.env.AI_MODEL;
-      default: return process.env.AI_MODEL || 'gpt-3.5-turbo';
-    }
+    this.modelRouter = ModelRouter;
   }
 
   /**
@@ -59,7 +36,7 @@ class IndustryBenchmarkGenerator {
     // 2. 构建Prompt
     const prompt = this.buildBenchmarkPrompt(report);
 
-    // 3. 调用AI生成基准
+    // 3. 调用AI生成基准（使用ModelRouter，自动选择qwen3.5-plus）
     const benchmarkContent = await this.callAI(prompt);
 
     // 4. 解析基准
@@ -232,28 +209,27 @@ ${JSON.stringify(report.benchmark_data, null, 2)}
   /**
    * 调用AI生成基准
    */
+  /**
+   * 调用AI生成基准
+   * 使用 ModelRouter 进行智能路由，自动选择 qwen3.5-plus
+   */
   async callAI(prompt) {
-    const response = await axios.post(
-      `${this.apiConfig.baseURL}/chat/completions`,
-      {
-        model: this.apiConfig.model,
-        messages: [
-          { role: 'system', content: prompt.system },
-          { role: 'user', content: prompt.user }
-        ],
-        temperature: 0.7,
-        max_tokens: 6000
-      },
-      {
-        headers: {
-          'Authorization': `Bearer ${this.apiConfig.apiKey}`,
-          'Content-Type': 'application/json'
-        },
-        timeout: 90000
-      }
-    );
+    console.log('[判断基准] 开始调用AI生成模型（qwen3.5-plus）...');
 
-    return response.data.choices[0].message.content;
+    try {
+      // 使用 ModelRouter，指定任务类型为 BENCHMARK_GENERATION
+      // ModelRouter 会自动选择 qwen3.5-plus 模型
+      const response = await this.modelRouter.callAI('BENCHMARK_GENERATION', prompt, {
+        temperature: 0.7,
+        maxTokens: 6000
+      });
+
+      console.log('[判断基准] AI调用成功');
+      return response;
+    } catch (error) {
+      console.error('[判断基准] AI调用失败:', error.message);
+      throw error;
+    }
   }
 
   /**

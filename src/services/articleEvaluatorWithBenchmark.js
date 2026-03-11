@@ -2,39 +2,17 @@
  * 文章评估服务（基于行业判断基准）
  *
  * 阶段3：对比文章内容与行业判断基准，生成评估结果
+ *
+ * 使用 ModelRouter 进行智能模型路由：
+ * - 文章评估任务使用 qwen3.5-plus（强大生成能力）
  */
 
 const axios = require('axios');
+const ModelRouter = require('./ModelRouter');
 
 class ArticleEvaluatorWithBenchmark {
   constructor() {
-    const provider = process.env.AI_PROVIDER || 'kimi';
-    this.apiConfig = {
-      provider: provider,
-      apiKey: process.env.AI_API_KEY,
-      baseURL: this.getBaseURLForProvider(provider),
-      model: this.getModelForProvider(provider)
-    };
-  }
-
-  getBaseURLForProvider(provider) {
-    switch (provider) {
-      case 'openai': return 'https://api.openai.com/v1';
-      case 'qwen': return 'https://dashscope.aliyuncs.com/api/v1';
-      case 'wenxin': return 'https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop';
-      case 'kimi': return process.env.AI_BASE_URL || 'https://api.openai.com/v1';
-      default: return process.env.AI_BASE_URL || 'https://api.openai.com/v1';
-    }
-  }
-
-  getModelForProvider(provider) {
-    switch (provider) {
-      case 'openai': return process.env.AI_MODEL || 'gpt-3.5-turbo';
-      case 'qwen': return 'qwen-plus';
-      case 'wenxin': return 'ernie-bot';
-      case 'kimi': return process.env.AI_MODEL;
-      default: return process.env.AI_MODEL || 'gpt-3.5-turbo';
-    }
+    this.modelRouter = ModelRouter;
   }
 
   /**
@@ -50,7 +28,7 @@ class ArticleEvaluatorWithBenchmark {
     // 1. 构建评估Prompt
     const prompt = this.buildEvaluationPrompt(article, benchmark, report);
 
-    // 2. 调用AI评估
+    // 2. 调用AI评估（使用ModelRouter，自动选择qwen3.5-plus）
     const evaluationContent = await this.callAI(prompt);
 
     // 3. 解析评估结果
@@ -158,8 +136,29 @@ ${report.executive_summary}
       "score": "战略价值得分（0-100）",
       "assessment": "评估说明（150字以内）",
       "key_insights": ["关键洞察1", "关键洞察2"],
+      "opportunities": [
+        {
+          "type": "市场机会/技术机会/政策机会",
+          "description": "机会描述（100字以内）",
+          "urgency": "紧急程度（高/中/低）",
+          "potential_impact": "潜在影响（高/中/低）"
+        }
+      ],
+      "risks": [
+        {
+          "type": "市场风险/技术风险/政策风险",
+          "description": "风险描述（100字以内）",
+          "probability": "发生概率（高/中/低）",
+          "mitigation": "缓解措施"
+        }
+      ],
       "decision_relevance": "决策相关性（高/中/低）",
-      "actionability": "可执行性（高/中/低）"
+      "actionability": "可执行性（高/中/低）",
+      "investment_recommendation": {
+        "verdict": "建议（积极关注/谨慎观察/保持距离）",
+        "rationale": "理由说明",
+        "time_horizon": "时间周期（短期/中期/长期）"
+      }
     },
     "data_quality": {
       "score": "数据质量得分（0-100）",
@@ -192,6 +191,25 @@ ${report.executive_summary}
         "improvement_suggestion": "改进建议"
       }
     ]
+  },
+  "competitive_analysis": {
+    "industry_leaders": [
+      {
+        "company": "对标企业1",
+        "strengths": ["优势1", "优势2"],
+        "financial_metrics": {
+          "revenue_growth": "营收增长率",
+          "profit_margin": "利润率",
+          "roe": "ROE"
+        },
+        "strategic_focus": "战略重点"
+      }
+    ],
+    "article_comparison": {
+      "similarities": ["与对标企业的相似点1", "相似点2"],
+      "differences": ["差异点1", "差异点2"],
+      "gap_analysis": "差距分析"
+    }
   },
   "blind_spot_analysis": {
     "identified_blind_spots": [
@@ -253,29 +271,25 @@ ${report.executive_summary}
 
   /**
    * 调用AI评估
+   * 使用 ModelRouter 进行智能路由，自动选择 qwen3.5-plus
    */
   async callAI(prompt) {
-    const response = await axios.post(
-      `${this.apiConfig.baseURL}/chat/completions`,
-      {
-        model: this.apiConfig.model,
-        messages: [
-          { role: 'system', content: prompt.system },
-          { role: 'user', content: prompt.user }
-        ],
-        temperature: 0.7,
-        max_tokens: 6000
-      },
-      {
-        headers: {
-          'Authorization': `Bearer ${this.apiConfig.apiKey}`,
-          'Content-Type': 'application/json'
-        },
-        timeout: 90000
-      }
-    );
+    console.log('[AI评估] 开始调用AI评估模型（qwen3.5-plus）...');
 
-    return response.data.choices[0].message.content;
+    try {
+      // 使用 ModelRouter，指定任务类型为 ARTICLE_EVALUATION
+      // ModelRouter 会自动选择 qwen3.5-plus 模型
+      const response = await this.modelRouter.callAI('ARTICLE_EVALUATION', prompt, {
+        temperature: 0.7,
+        maxTokens: 8000
+      });
+
+      console.log('[AI评估] AI调用成功');
+      return response;
+    } catch (error) {
+      console.error('[AI评估] 调用失败:', error.message);
+      throw error;
+    }
   }
 
   /**
