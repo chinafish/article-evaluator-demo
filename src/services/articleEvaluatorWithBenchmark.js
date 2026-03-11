@@ -12,9 +12,29 @@ class ArticleEvaluatorWithBenchmark {
     this.apiConfig = {
       provider: provider,
       apiKey: process.env.AI_API_KEY,
-      baseURL: process.env.AI_BASE_URL,
-      model: process.env.AI_MODEL
+      baseURL: this.getBaseURLForProvider(provider),
+      model: this.getModelForProvider(provider)
     };
+  }
+
+  getBaseURLForProvider(provider) {
+    switch (provider) {
+      case 'openai': return 'https://api.openai.com/v1';
+      case 'qwen': return 'https://dashscope.aliyuncs.com/api/v1';
+      case 'wenxin': return 'https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop';
+      case 'kimi': return process.env.AI_BASE_URL || 'https://api.openai.com/v1';
+      default: return process.env.AI_BASE_URL || 'https://api.openai.com/v1';
+    }
+  }
+
+  getModelForProvider(provider) {
+    switch (provider) {
+      case 'openai': return process.env.AI_MODEL || 'gpt-3.5-turbo';
+      case 'qwen': return 'qwen-plus';
+      case 'wenxin': return 'ernie-bot';
+      case 'kimi': return process.env.AI_MODEL;
+      default: return process.env.AI_MODEL || 'gpt-3.5-turbo';
+    }
   }
 
   /**
