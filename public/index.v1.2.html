@@ -168,6 +168,98 @@
       display: block;
     }
 
+    /* 🆕 文章标题固定栏 */
+    .article-title-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 16px 20px;
+      border-radius: 12px 12px 0 0;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .article-title-bar .title-content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .article-title-bar .label {
+      background: rgba(255, 255, 255, 0.25);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-size: 14px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .article-title-bar .article-title {
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.4;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .close-result-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .close-result-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.1);
+    }
+
+    .card {
+      border-radius: 0 0 12px 12px;
+    }
+
+    /* 文章标题链接样式 */
+    .article-title-bar .title-link {
+      color: white;
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.5);
+      transition: all 0.2s;
+    }
+
+    .article-title-bar .title-link:hover {
+      border-bottom-style: solid;
+      opacity: 0.9;
+    }
+
+    /* 来源徽章 */
+    .source-badge {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      margin-left: 8px;
+      white-space: nowrap;
+    }
+
     /* 🆕 v1.2 核心信息区 */
     .core-info {
       background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
@@ -483,6 +575,15 @@
 
     <!-- 评估结果 -->
     <div class="result" id="result">
+      <!-- 文章标题固定栏 -->
+      <div class="article-title-bar" id="articleTitleBar">
+        <div class="title-content">
+          <div class="label">📄 评估文章</div>
+          <div class="article-title" id="articleTitleDisplay"></div>
+        </div>
+        <button class="close-result-btn" onclick="closeResult()">✕</button>
+      </div>
+
       <div class="card">
         <!-- 核心信息区 -->
         <div class="core-info">
@@ -610,8 +711,36 @@
       }
     });
 
+    // 关闭评估结果
+    function closeResult() {
+      const result = document.getElementById('result');
+      result.classList.remove('active');
+
+      // 清空表单
+      document.getElementById('urlInput').value = '';
+      document.getElementById('contentInput').value = '';
+
+      // 滚动回顶部
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
     // 渲染评估结果
     function renderEvaluation(data) {
+      // 设置文章标题
+      const articleTitle = data.article_title || '未知标题';
+      const articleSource = data.article_source || '';
+      const articleUrl = data.article_url || '';
+
+      const titleDisplay = document.getElementById('articleTitleDisplay');
+      if (articleUrl) {
+        titleDisplay.innerHTML = `<a href="${articleUrl}" target="_blank" class="title-link">${articleTitle}</a>`;
+        if (articleSource) {
+          titleDisplay.innerHTML += ` <span class="source-badge">来源：${articleSource}</span>`;
+        }
+      } else {
+        titleDisplay.textContent = articleTitle;
+      }
+
       // 判断徽章
       const judgmentBadge = document.getElementById('judgmentBadge');
       judgmentBadge.textContent = data.judgment === '认同' ? '✅ 认同' : '❌ 不认同';
