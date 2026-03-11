@@ -781,6 +781,212 @@
       display: block;
     }
 
+    /* 路由决策提示 */
+    .route-decision {
+      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+      border: 2px solid #3b82f6;
+      border-radius: 16px;
+      margin-top: 20px;
+      overflow: hidden;
+    }
+
+    .decision-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 20px 24px;
+      background: rgba(59, 130, 246, 0.1);
+      border-bottom: 1px solid #3b82f6;
+    }
+
+    .decision-icon {
+      font-size: 32px;
+    }
+
+    .decision-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #1e40af;
+    }
+
+    .decision-content {
+      padding: 24px;
+    }
+
+    .decision-reason {
+      font-size: 16px;
+      color: #374151;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      padding: 16px;
+      background: white;
+      border-radius: 8px;
+      border-left: 4px solid #3b82f6;
+    }
+
+    .decision-info {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .info-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+    }
+
+    .info-label {
+      color: #6b7280;
+      font-weight: 500;
+    }
+
+    .info-value {
+      color: #1f2937;
+      font-weight: 600;
+      background: #dbeafe;
+      padding: 4px 12px;
+      border-radius: 6px;
+    }
+
+    .decision-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .decision-option-btn {
+      flex: 1;
+      min-width: 280px;
+      padding: 20px;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: left;
+    }
+
+    .decision-option-btn:hover {
+      border-color: #3b82f6;
+      background: #eff6ff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+    }
+
+    .decision-option-btn.primary {
+      border-color: #3b82f6;
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      color: white;
+    }
+
+    .decision-option-btn.primary:hover {
+      border-color: #1d4ed8;
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    }
+
+    .option-label {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .option-description {
+      font-size: 14px;
+      opacity: 0.9;
+      line-height: 1.5;
+    }
+
+    /* 基准生成进度 */
+    .generation-progress {
+      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+      border: 2px solid #22c55e;
+      border-radius: 16px;
+      margin-top: 20px;
+      overflow: hidden;
+    }
+
+    .progress-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 20px 24px;
+      background: rgba(34, 197, 94, 0.1);
+      border-bottom: 1px solid #22c55e;
+    }
+
+    .progress-icon {
+      font-size: 32px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    .progress-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #166534;
+    }
+
+    .progress-content {
+      padding: 24px;
+    }
+
+    .progress-message {
+      font-size: 16px;
+      color: #374151;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
+    .progress-steps {
+      margin-bottom: 20px;
+    }
+
+    .progress-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      margin-bottom: 8px;
+      background: white;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .progress-step.completed {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .progress-step.in-progress {
+      background: #fef9c3;
+      color: #854d0e;
+    }
+
+    .step-status {
+      font-size: 18px;
+    }
+
+    .step-name {
+      flex: 1;
+      font-weight: 500;
+    }
+
+    .progress-spinner {
+      display: flex;
+      justify-content: center;
+      padding: 20px 0;
+    }
+
     /* 评估依据 */
     .evaluation-basis {
       background: #f9fafb;
@@ -1323,6 +1529,43 @@
         </form>
 
         <div class="error-message" id="errorMessage"></div>
+
+        <!-- 路由决策提示 -->
+        <div class="route-decision" id="routeDecision" style="display: none;">
+          <div class="decision-header">
+            <div class="decision-icon">🤔</div>
+            <div class="decision-title">需要您的选择</div>
+          </div>
+          <div class="decision-content">
+            <p class="decision-reason" id="decisionReason"></p>
+            <div class="decision-info">
+              <div class="info-item">
+                <span class="info-label">识别行业:</span>
+                <span class="info-value" id="decisionGics4">-</span>
+              </div>
+            </div>
+            <div class="decision-actions" id="decisionActions">
+              <!-- 动态生成选项按钮 -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 基准生成进度 -->
+        <div class="generation-progress" id="generationProgress" style="display: none;">
+          <div class="progress-header">
+            <div class="progress-icon">⚙️</div>
+            <div class="progress-title">正在生成行业认知基准</div>
+          </div>
+          <div class="progress-content">
+            <div class="progress-message" id="progressMessage">正在初始化...</div>
+            <div class="progress-steps" id="progressSteps">
+              <!-- 动态生成步骤列表 -->
+            </div>
+            <div class="progress-spinner">
+              <div class="spinner"></div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- 结果区域 -->
@@ -1645,6 +1888,12 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
           return;
         }
 
+        // 检查是否需要用户操作（路由决策）
+        if (result.requires_user_action) {
+          showRouteDecision(result);
+          return;
+        }
+
         // 如果是URL模式，保存返回的原文内容
         if (currentTab === 'url' && result.evaluation) {
           sourceTitle = result.evaluation.article_title || '';
@@ -1671,6 +1920,173 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
       const errorMessage = document.getElementById('errorMessage');
       errorMessage.textContent = '❌ ' + message;
       errorMessage.classList.add('show');
+    }
+
+    // 显示路由决策
+    function showRouteDecision(result) {
+      const routeDecision = document.getElementById('routeDecision');
+      const decisionReason = document.getElementById('decisionReason');
+      const decisionGics4 = document.getElementById('decisionGics4');
+      const decisionActions = document.getElementById('decisionActions');
+
+      // 设置内容
+      decisionReason.textContent = result.route_decision.reason;
+      decisionGics4.textContent = result.route_decision.gics4 || '未知';
+
+      // 清空并生成选项按钮
+      decisionActions.innerHTML = '';
+
+      result.route_decision.options.forEach(option => {
+        const btn = document.createElement('div');
+        btn.className = 'decision-option-btn';
+
+        // 根据选项类型设置样式
+        if (option.type === 'generate_benchmark') {
+          btn.classList.add('primary');
+        }
+
+        btn.innerHTML = `
+          <div class="option-label">
+            ${option.type === 'generate_benchmark' ? '⚙️' : '📊'}
+            ${option.label}
+          </div>
+          <div class="option-description">${option.description}</div>
+        `;
+
+        btn.onclick = () => handleUserChoice(result.task_id, option.type);
+        decisionActions.appendChild(btn);
+      });
+
+      // 显示路由决策面板
+      routeDecision.style.display = 'block';
+    }
+
+    // 处理用户选择
+    async function handleUserChoice(taskId, option) {
+      const routeDecision = document.getElementById('routeDecision');
+      const generationProgress = document.getElementById('generationProgress');
+      const progressMessage = document.getElementById('progressMessage');
+      const progressSteps = document.getElementById('progressSteps');
+
+      // 隐藏路由决策面板
+      routeDecision.style.display = 'none';
+
+      if (option === 'generate_benchmark') {
+        // 显示生成进度面板
+        generationProgress.style.display = 'block';
+        progressMessage.textContent = '正在生成行业认知基准，请稍候...';
+        progressSteps.innerHTML = `
+          <div class="progress-step in-progress">
+            <span class="step-status">🔄</span>
+            <span class="step-name">正在生成产业研究报告...</span>
+          </div>
+          <div class="progress-step">
+            <span class="step-status">⏳</span>
+            <span class="step-name">正在生成行业认知基准...</span>
+          </div>
+          <div class="progress-step">
+            <span class="step-status">⏳</span>
+            <span class="step-name">正在进行文章评估...</span>
+          </div>
+        `;
+
+        try {
+          // 调用选择选项API
+          const response = await fetch('/api/evaluate/choose-option', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              task_id: taskId,
+              option: 'generate_benchmark'
+            })
+          });
+
+          const result = await response.json();
+
+          if (!result.success) {
+            showError(result.error?.message || '生成失败，请重试');
+            generationProgress.style.display = 'none';
+            return;
+          }
+
+          // 更新进度
+          progressSteps.innerHTML = `
+            <div class="progress-step completed">
+              <span class="step-status">✅</span>
+              <span class="step-name">已完成生成产业研究报告</span>
+            </div>
+            <div class="progress-step completed">
+              <span class="step-status">✅</span>
+              <span class="step-name">已完成生成行业认知基准</span>
+            </div>
+            <div class="progress-step in-progress">
+              <span class="step-status">🔄</span>
+              <span class="step-name">正在进行文章评估...</span>
+            </div>
+          `;
+
+          // 等待一下让用户看到进度
+          await new Promise(resolve => setTimeout(resolve, 800));
+
+          // 隐藏进度面板
+          generationProgress.style.display = 'none';
+
+          // 保存原文内容
+          if (result.evaluation) {
+            sourceTitle = result.evaluation.article_title || '';
+            sourceContent = result.evaluation.article_content || '';
+            sourceHtmlContent = result.evaluation.article_html || '';
+            sourceUrl = result.evaluation.article_url || '';
+          }
+
+          // 显示评估结果
+          displayResult(result.evaluation);
+
+        } catch (error) {
+          showError('网络错误，请检查连接后重试');
+          console.error('Error:', error);
+          generationProgress.style.display = 'none';
+        }
+
+      } else if (option === 'use_general') {
+        // 使用通用基准，直接调用API
+        try {
+          const response = await fetch('/api/evaluate/choose-option', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              task_id: taskId,
+              option: 'use_general'
+            })
+          });
+
+          const result = await response.json();
+
+          if (!result.success) {
+            showError(result.error?.message || '评估失败，请重试');
+            return;
+          }
+
+          // 保存原文内容
+          if (result.evaluation) {
+            sourceTitle = result.evaluation.article_title || '';
+            sourceContent = result.evaluation.article_content || '';
+            sourceHtmlContent = result.evaluation.article_html || '';
+            sourceUrl = result.evaluation.article_url || '';
+          }
+
+          // 显示评估结果
+          displayResult(result.evaluation);
+
+        } catch (error) {
+          showError('网络错误，请检查连接后重试');
+          console.error('Error:', error);
+        }
+      }
     }
 
     // 处理原文内容，生成可溯源的段落
@@ -2168,10 +2584,18 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
     function displayResult(evaluation) {
       const resultSection = document.getElementById('resultSection');
 
-      // 分析器徽章
+      // 分析器徽章 - 根据route_info显示
       const analyzerBadge = document.getElementById('analyzerBadge');
-      analyzerBadge.textContent = evaluation.analyzer_type === 'saas' ? '行业认知基准（SaaS）' : '通用认知基准';
-      analyzerBadge.className = 'analyzer-badge ' + evaluation.analyzer_type;
+      const benchmarkName = evaluation.route_info?.benchmark_name || '认知基准';
+      analyzerBadge.textContent = benchmarkName;
+      analyzerBadge.className = 'analyzer-badge';
+
+      // 根据基准类型设置样式
+      if (evaluation.route_info?.type === 'INDUSTRY_BENCHMARK') {
+        analyzerBadge.classList.add('industry');
+      } else {
+        analyzerBadge.classList.add('general');
+      }
 
       // 文章标题
       document.getElementById('articleTitle').textContent = evaluation.article_title || '未知标题';
