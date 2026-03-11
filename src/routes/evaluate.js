@@ -229,14 +229,8 @@ router.post('/evaluate/choose-option', async (req, res) => {
         });
       }
 
-      // 使用新生成的基准进行评估
-      const evaluation = await CognitiveOrchestrator.evaluateWithIndustryBenchmark(
-        article,
-        {
-          gics4: routeDecision.gics4,
-          benchmark: generationResult.benchmark
-        }
-      );
+      // 基准生成后，重新评估文章（此时会找到缓存的基准）
+      const result = await CognitiveOrchestrator.evaluate(article);
 
       // 清理任务
       pendingTasks.delete(task_id);
@@ -244,7 +238,7 @@ router.post('/evaluate/choose-option', async (req, res) => {
       return res.json({
         success: true,
         evaluation: {
-          ...evaluation,
+          ...result,
           article_title: article.title || '',
           article_content: article.content,
           article_html: article.htmlContent || '',
@@ -257,10 +251,15 @@ router.post('/evaluate/choose-option', async (req, res) => {
       // 选项2: 使用通用基准
       console.log('[用户选择] 使用通用认知基准');
 
-      const evaluation = await CognitiveOrchestrator.evaluateWithGeneralBenchmark(
-        article,
-        routeDecision
-      );
+      // 修改路由决策，强制使用通用基准
+      const modifiedRouteDecision = {
+        ...routeDecision,
+        resultType: 'GENERAL_BENCHMARK',
+        forceGeneral: true
+      };
+
+      // 使用通用基准评估
+      const result = await CognitiveOrchestrator.handleRoute(article, modifiedRouteDecision);
 
       // 清理任务
       pendingTasks.delete(task_id);
@@ -268,7 +267,7 @@ router.post('/evaluate/choose-option', async (req, res) => {
       return res.json({
         success: true,
         evaluation: {
-          ...evaluation,
+          ...result,
           article_title: article.title || '',
           article_content: article.content,
           article_html: article.htmlContent || '',
