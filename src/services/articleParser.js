@@ -386,13 +386,19 @@ class ArticleParser {
    * 使用 axios + Readability 解析（快速模式）
    */
   async parseWithAxios(url) {
+    // 特殊处理：微信公众号 - 使用专门的解析逻辑
+    if (url.includes('mp.weixin.qq.com')) {
+      return await this.parseWeChatOfficialAccount(url);
+    }
+
     const response = await axios.get(url, {
       timeout: 8000,  // 8秒超时，留出2秒给Readability解析
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
         'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
-        'Referer': 'https://www.google.com/'
+        'Referer': 'https://www.google.com/',
+        'Accept-Encoding': 'gzip, deflate, br'
       }
     });
 
@@ -459,6 +465,78 @@ class ArticleParser {
       excerpt: article.excerpt || '',
       url: url
     };
+  }
+
+  /**
+   * 专门处理微信公众号文章
+   */
+  async parseWeChatOfficialAccount(url) {
+    console.log('[微信公众号] 使用专门解析逻辑...');
+
+    try {
+      const response = await axios.get(url, {
+        timeout: 10000,
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700203C) NetType/WIFI Windows/10 WeChat/arm64 We2.0',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+          'Accept-Language': 'zh-CN,zh;q=0.9',
+          'Accept-Encoding': 'gzip, deflate, br',
+          'Referer': 'https://mp.weixin.qq.com/',
+          'Cache-Control': 'max-age=0'
+        }
+      });
+
+      const dom = new JSDOM(response.data, { url });
+      const document = dom.window.document;
+
+      // 提取标题
+      const title = document.querySelector('#activity-name')?.textContent?.trim() ||
+                    document.querySelector('.rich_media_title')?.textContent?.trim() ||
+                    document.querySelector('meta[property="og:title"]')?.getAttribute('content') ||
+                    this.extractTitle(document);
+
+      // 提取内容
+      const contentDiv = document.querySelector('#js_content') ||
+                         document.querySelector('.rich_media_content');
+
+      if (!contentDiv) {
+        throw new Error('未找到文章内容，可能需要登录或文章已删除');
+      }
+
+      const rawContent = contentDiv.textContent || '';
+
+      // 检测是否是验证码页面或加载中
+      if (rawContent.includes('验证') || rawContent.includes('请输入') ||
+          rawContent.includes('点击') && rawContent.length < 500) {
+        throw new Error('文章需要验证码才能访问');
+      }
+
+      // 检测内容是否过短
+      if (rawContent.length < 200) {
+        throw new Error(`提取内容过短 (${rawContent.length}字)，可能未正确加载`);
+      }
+
+      const content = this.cleanText(rawContent);
+
+      return {
+        title: title,
+        content: content,
+        htmlContent: contentDiv.innerHTML,
+        source: '微信公众号',
+        excerpt: content.substring(0, 200),
+        url: url,
+        isPartialContent: content.length < 500
+      };
+
+    } catch (error) {
+      if (error.response && error.response.status === 403) {
+        throw new Error('微信公众号限制了访问，请稍后重试或复制文章内容进行评估');
+      }
+      if (error.code === 'ECONNABORTED') {
+        throw new Error('微信公众号响应超时，建议复制文章内容进行评估');
+      }
+      throw error;
+    }
   }
 
   /**
