@@ -1,7 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const articleParser = require('../services/articleParser');
-const coordinator = require('../services/coordinator');
+const CognitiveOrchestrator = require('../services/CognitiveOrchestrator');
+
+// 存储待处理的评估任务（用于用户选择后的后续处理）
+const pendingTasks = new Map();
 
 /**
  * POST /api/evaluate
@@ -80,19 +83,53 @@ router.post('/evaluate', async (req, res) => {
 
     console.log(`[评估请求] 类型: ${type}, 标题: ${article.title}`);
 
-    // 协调器进行评估
-    const evaluation = await coordinator.analyze(article);
+    // 认知智能体进行评估
+    const result = await CognitiveOrchestrator.evaluate(article);
 
-    // 返回结果，包含原文内容用于溯源
+    // 如果返回的是路由决策（需要用户选择），返回决策信息
+    if (result.routeDecision) {
+      const taskId = `task_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+
+      // 保存任务信息
+      pendingTasks.set(taskId, {
+        article,
+        routeDecision: result.routeDecision,
+        createdAt: Date.now()
+      });
+
+      // 清理过期任务（1小时）
+      setTimeout(() => {
+        pendingTasks.delete(taskId);
+      }, 60 * 60 * 1000);
+
+      return res.json({
+        success: true,
+        requires_user_action: true,
+        task_id: taskId,
+        route_decision: {
+          type: result.routeDecision.resultType,
+          reason: result.routeDecision.reason,
+          gics4: result.routeDecision.gics4,
+          options: result.routeDecision.options
+        },
+        article_info: {
+          title: article.title,
+          source: article.source,
+          url: article.url
+        }
+      });
+    }
+
+    // 直接返回评估结果
     res.json({
       success: true,
       evaluation: {
-        ...evaluation,
-        article_title: article.title || '',  // 文章标题
-        article_content: article.content,  // 纯文本内容
-        article_html: article.htmlContent || '',  // HTML内容（保持排版）
-        article_url: article.url || data,  // 原文URL
-        is_partial_content: article.isPartialContent || false  // 是否为部分内容
+        ...result,
+        article_title: article.title || '',
+        article_content: article.content,
+        article_html: article.htmlContent || '',
+        article_url: article.url || data,
+        is_partial_content: article.isPartialContent || false
       }
     });
 
@@ -136,6 +173,156 @@ router.post('/evaluate', async (req, res) => {
       error: {
         code: 'EVALUATION_FAILED',
         message: '评估失败，请稍后重试'
+      }
+    });
+  }
+});
+
+/**
+ * POST /api/evaluate/choose-option
+ * 用户选择路由选项后的处理
+ */
+router.post('/evaluate/choose-option', async (req, res) => {
+  try {
+    const { task_id, option } = req.body;
+
+    // 验证输入
+    if (!task_id || !option) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'INVALID_INPUT',
+          message: '缺少必要参数: task_id 和 option'
+        }
+      });
+    }
+
+    // 获取待处理任务
+    const task = pendingTasks.get(task_id);
+    if (!task) {
+      return res.status(404).json({
+        success: false,
+        error: {
+          code: 'TASK_NOT_FOUND',
+          message: '任务不存在或已过期'
+        }
+      });
+    }
+
+    const { article, routeDecision } = task;
+
+    // 处理用户选择
+    if (option === 'generate_benchmark') {
+      // 选项1: 生成行业认知基准
+      console.log(`[用户选择] 生成行业认知基准: ${routeDecision.gics4}`);
+
+      // 启动异步生成任务
+      const generationResult = await CognitiveOrchestrator.generateIndustryBenchmark(routeDecision.gics4);
+
+      if (generationResult.status === 'failed') {
+        return res.status(500).json({
+          success: false,
+          error: {
+            code: 'GENERATION_FAILED',
+            message: `认知基准生成失败: ${generationResult.error}`
+          }
+        });
+      }
+
+      // 使用新生成的基准进行评估
+      const evaluation = await CognitiveOrchestrator.evaluateWithIndustryBenchmark(
+        article,
+        {
+          gics4: routeDecision.gics4,
+          benchmark: generationResult.benchmark
+        }
+      );
+
+      // 清理任务
+      pendingTasks.delete(task_id);
+
+      return res.json({
+        success: true,
+        evaluation: {
+          ...evaluation,
+          article_title: article.title || '',
+          article_content: article.content,
+          article_html: article.htmlContent || '',
+          article_url: article.url,
+          is_partial_content: article.isPartialContent || false
+        }
+      });
+
+    } else if (option === 'use_general') {
+      // 选项2: 使用通用基准
+      console.log('[用户选择] 使用通用认知基准');
+
+      const evaluation = await CognitiveOrchestrator.evaluateWithGeneralBenchmark(
+        article,
+        routeDecision
+      );
+
+      // 清理任务
+      pendingTasks.delete(task_id);
+
+      return res.json({
+        success: true,
+        evaluation: {
+          ...evaluation,
+          article_title: article.title || '',
+          article_content: article.content,
+          article_html: article.htmlContent || '',
+          article_url: article.url,
+          is_partial_content: article.isPartialContent || false
+        }
+      });
+
+    } else {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'INVALID_OPTION',
+          message: `无效的选项: ${option}`
+        }
+      });
+    }
+
+  } catch (error) {
+    console.error('[选项处理错误]', error.message);
+
+    res.status(500).json({
+      success: false,
+      error: {
+        code: 'OPTION_HANDLING_FAILED',
+        message: '处理用户选择失败，请稍后重试'
+      }
+    });
+  }
+});
+
+/**
+ * GET /api/evaluate/stats
+ * 获取模型使用统计
+ */
+router.get('/evaluate/stats', (req, res) => {
+  try {
+    const stats = CognitiveOrchestrator.getModelUsageStats();
+
+    res.json({
+      success: true,
+      stats: {
+        total_calls: stats.totalCalls,
+        total_tokens: stats.totalTokens,
+        models: stats.models
+      }
+    });
+  } catch (error) {
+    console.error('[统计错误]', error.message);
+    res.status(500).json({
+      success: false,
+      error: {
+        code: 'STATS_FAILED',
+        message: '获取统计信息失败'
       }
     });
   }
