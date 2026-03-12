@@ -256,16 +256,56 @@ ${report.executive_summary}
     "article_sources": ["文章来源1", "文章来源2"],
     "verification_sources": ["验证来源1", "验证来源2"],
     "benchmark_source": "何志毅教授企业图谱数据（清华产业研究院）"
+  },
+  "confidence_and_trust": {
+    "overall_confidence": {
+      "score": "总体置信度（0-100）",
+      "level": "置信度等级（高/中/低）",
+      "explanation": "置信度说明（为何有此置信度）"
+    },
+    "data_quality_score": {
+      "overall": "数据质量总分（0-100）",
+      "completeness": "数据完整性评分（0-100）",
+      "credibility": "数据可信度评分（0-100）",
+      "recency": "数据时效性评分（0-100）",
+      "quantification": "数据量化程度评分（0-100）"
+    },
+    "evaluation_traceability": {
+      "assessment_basis": [
+        {
+          "aspect": "评估维度（如：事实准确性）",
+          "score": "评分",
+          "evidence": "评分依据（具体证据）",
+          "source": "数据来源"
+        }
+      ],
+      "uncertainty_areas": [
+        {
+          "area": "不确定领域",
+          "reason": "不确定原因",
+          "impact": "对评估结果的影响",
+          "suggested_verification": "建议验证方式"
+        }
+      ],
+      "key_data_points_verified": [
+        {
+          "claim": "文章声称",
+          "verified_value": "验证值",
+          "source": "验证来源",
+          "confidence": "验证置信度（高/中/低）"
+        }
+      ]
+    }
   }
 }
 \`\`\`
 
 评估要点：
 1. 严格对照基准标准进行评分
-2. 每个判断都要有证据支撑
-3. 明确指出文章的优缺点
-4. 提供具体可行的建议
-5. 帮助读者判断文章的可靠性`
+2. 每个判断都要有证据支撑，明确标注来源
+3. 诚实标注不确定领域，不要过度自信
+4. 提供数据质量评分，帮助用户判断可信度
+5. 可溯源：每个关键判断都能追溯到具体依据`
     };
   }
 

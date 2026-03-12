@@ -827,6 +827,199 @@
       font-weight: bold;
     }
 
+    /* 置信度和溯源样式 - 新增 */
+    .confidence-card {
+      background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+      color: white;
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+
+    .confidence-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .confidence-score {
+      font-size: 32px;
+      font-weight: 700;
+    }
+
+    .confidence-level {
+      padding: 4px 12px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.2);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .confidence-explanation {
+      font-size: 14px;
+      opacity: 0.95;
+      line-height: 1.5;
+    }
+
+    .data-quality-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .quality-item {
+      background: rgba(255,255,255,0.15);
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .quality-item .quality-label {
+      font-size: 11px;
+      opacity: 0.9;
+      margin-bottom: 4px;
+    }
+
+    .quality-item .quality-score {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .traceability-section {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .traceability-header {
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 12px;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .traceability-item {
+      padding: 12px;
+      background: #f9fafb;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      border-left: 3px solid #8b5cf6;
+    }
+
+    .traceability-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .traceability-aspect {
+      font-weight: 600;
+      color: #1f2937;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .traceability-evidence {
+      font-size: 13px;
+      color: #4b5563;
+      margin-bottom: 4px;
+    }
+
+    .traceability-source {
+      font-size: 12px;
+      color: #8b5cf6;
+      font-weight: 500;
+    }
+
+    .uncertainty-alert {
+      background: #fef3c7;
+      border-left: 3px solid #f59e0b;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .uncertainty-alert .uncertainty-title {
+      font-weight: 600;
+      color: #92400e;
+      font-size: 14px;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .uncertainty-alert .uncertainty-detail {
+      font-size: 13px;
+      color: #78716c;
+      margin-bottom: 4px;
+    }
+
+    .uncertainty-alert .uncertainty-verification {
+      font-size: 12px;
+      color: #0f766e;
+      font-weight: 500;
+    }
+
+    .verified-data-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .verified-data-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .verified-data-item:last-child {
+      border-bottom: none;
+    }
+
+    .verified-data-claim {
+      font-size: 13px;
+      color: #1f2937;
+      flex: 1;
+    }
+
+    .verified-data-meta {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .verified-data-source {
+      font-size: 11px;
+      color: #8b5cf6;
+      background: #f3e8ff;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .verified-data-confidence {
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .verified-data-confidence.高 {
+      color: #059669;
+    }
+
+    .verified-data-confidence.中 {
+      color: #d97706;
+    }
+
+    .verified-data-confidence.低 {
+      color: #dc2626;
+    }
+
     /* 详细分析 */
     .detail-section {
       background: white;
@@ -1613,7 +1806,7 @@
   <div class="container">
     <div class="header">
       <h1>📊 文章评估智能体</h1>
-      <div class="subtitle">v1.3 战略洞察版 - 市场机会 · 风险预警 · 竞品对标 · 投资建议</div>
+      <div class="subtitle">v1.4 信任机制版 - 置信度显示 · 数据溯源 · 不确定性标注 · 质量评分</div>
       <div class="features">
         <div class="feature-badge">✅ 决策优先级判断</div>
         <div class="feature-badge">✅ 相关性评估</div>
@@ -1887,6 +2080,75 @@
                     <div class="item-value">基于通用商业知识的评估框架</div>
                   </div>
                   <div class="item-icon">→</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 置信度和数据质量 - 新增 -->
+            <div id="confidenceSection" style="display: none;">
+              <!-- 总体置信度卡片 -->
+              <div class="confidence-card">
+                <div class="confidence-header">
+                  <div>
+                    <div style="font-size: 14px; opacity: 0.9; margin-bottom: 4px;">🎯 评估置信度</div>
+                    <div class="confidence-score" id="overallConfidenceScore">-</div>
+                  </div>
+                  <div class="confidence-level" id="overallConfidenceLevel">-</div>
+                </div>
+                <div class="confidence-explanation" id="overallConfidenceExplanation">-</div>
+
+                <!-- 数据质量评分 -->
+                <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.2);">
+                  <div style="font-size: 13px; opacity: 0.9; margin-bottom: 10px;">数据质量评分</div>
+                  <div class="data-quality-grid">
+                    <div class="quality-item">
+                      <div class="quality-label">完整性</div>
+                      <div class="quality-score" id="qualityCompleteness">-</div>
+                    </div>
+                    <div class="quality-item">
+                      <div class="quality-label">可信度</div>
+                      <div class="quality-score" id="qualityCredibility">-</div>
+                    </div>
+                    <div class="quality-item">
+                      <div class="quality-label">时效性</div>
+                      <div class="quality-score" id="qualityRecency">-</div>
+                    </div>
+                    <div class="quality-item">
+                      <div class="quality-label">量化度</div>
+                      <div class="quality-score" id="qualityQuantification">-</div>
+                    </div>
+                    <div class="quality-item">
+                      <div class="quality-label">总分</div>
+                      <div class="quality-score" id="qualityOverall">-</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 评估溯源 - 可折叠 -->
+              <div class="detail-section" style="margin-top: 20px;">
+                <div class="detail-header" onclick="toggleTraceability()">
+                  <span>🔍 评估溯源</span>
+                  <span class="toggle-icon">▼</span>
+                </div>
+                <div class="detail-content" id="traceabilityContent" style="display: none;">
+                  <!-- 评估依据 -->
+                  <div style="margin-bottom: 16px;">
+                    <div class="traceability-header" style="font-size: 14px;">📋 评估依据</div>
+                    <div id="assessmentBasisList"></div>
+                  </div>
+
+                  <!-- 不确定领域 -->
+                  <div style="margin-bottom: 16px;">
+                    <div class="traceability-header" style="font-size: 14px;">⚠️ 不确定领域</div>
+                    <div id="uncertaintyList"></div>
+                  </div>
+
+                  <!-- 关键数据点验证 -->
+                  <div>
+                    <div class="traceability-header" style="font-size: 14px;">✅ 关键数据点验证</div>
+                    <div id="verifiedDataList"></div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -2862,6 +3124,21 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
       }
     }
 
+    function toggleTraceability() {
+      const confidenceSection = document.getElementById('confidenceSection');
+      const header = confidenceSection?.querySelector('.detail-header');
+      const content = document.getElementById('traceabilityContent');
+
+      if (header && content) {
+        header.classList.toggle('expanded');
+        const icon = header.querySelector('.toggle-icon');
+        if (icon) {
+          icon.textContent = header.classList.contains('expanded') ? '▲' : '▼';
+        }
+        content.style.display = content.style.display === 'none' ? 'block' : 'none';
+      }
+    }
+
     // 安全地设置元素文本内容
     function safeSetText(elementId, text) {
       const element = document.getElementById(elementId);
@@ -3123,7 +3400,110 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
         }
       }
 
-      // 6. 详细分析 - 映射 dimension_scores
+      // 6. 置信度和数据质量 - 新增
+      const confidenceTrust = evaluation.confidence_and_trust || {};
+      const confidenceSection = document.getElementById('confidenceSection');
+
+      if (confidenceTrust.overall_confidence) {
+        if (confidenceSection) {
+          confidenceSection.style.display = 'block';
+        }
+
+        const overallConf = confidenceTrust.overall_confidence || {};
+        safeSetText('overallConfidenceScore', (overallConf.score || 0) + '%');
+        safeSetText('overallConfidenceLevel', overallConf.level || '-');
+        safeSetText('overallConfidenceExplanation', overallConf.explanation || '-');
+      }
+
+      // 数据质量评分
+      const dataQuality = confidenceTrust.data_quality_score || {};
+      if (dataQuality.overall) {
+        if (confidenceSection) {
+          confidenceSection.style.display = 'block';
+        }
+
+        safeSetText('qualityCompleteness', (dataQuality.completeness || 0) + '%');
+        safeSetText('qualityCredibility', (dataQuality.credibility || 0) + '%');
+        safeSetText('qualityRecency', (dataQuality.recency || 0) + '%');
+        safeSetText('qualityQuantification', (dataQuality.quantification || 0) + '%');
+        safeSetText('qualityOverall', (dataQuality.overall || 0) + '%');
+      }
+
+      // 评估溯源
+      const traceability = confidenceTrust.evaluation_traceability || {};
+      const assessmentBasisList = document.getElementById('assessmentBasisList');
+      const uncertaintyList = document.getElementById('uncertaintyList');
+      const verifiedDataList = document.getElementById('verifiedDataList');
+
+      // 评估依据列表
+      if (traceability.assessment_basis && traceability.assessment_basis.length > 0) {
+        if (confidenceSection) {
+          confidenceSection.style.display = 'block';
+        }
+
+        if (assessmentBasisList) {
+          assessmentBasisList.innerHTML = '';
+          traceability.assessment_basis.forEach(basis => {
+            const basisDiv = document.createElement('div');
+            basisDiv.className = 'traceability-item';
+            basisDiv.innerHTML =
+              '<div class="traceability-aspect">' + basis.aspect + ' <span style="font-weight: normal; color: #667eea; margin-left: 8px;">评分: ' + basis.score + '</span></div>' +
+              '<div class="traceability-evidence">依据: ' + basis.evidence + '</div>' +
+              '<div class="traceability-source">📍 来源: ' + basis.source + '</div>';
+            assessmentBasisList.appendChild(basisDiv);
+          });
+        }
+      }
+
+      // 不确定领域列表
+      if (traceability.uncertainty_areas && traceability.uncertainty_areas.length > 0) {
+        if (confidenceSection) {
+          confidenceSection.style.display = 'block';
+        }
+
+        if (uncertaintyList) {
+          uncertaintyList.innerHTML = '';
+          traceability.uncertainty_areas.forEach(uncertainty => {
+            const uncertaintyDiv = document.createElement('div');
+            uncertaintyDiv.className = 'uncertainty-alert';
+            uncertaintyDiv.innerHTML =
+              '<div class="uncertainty-title">⚠️ ' + uncertainty.area + '</div>' +
+              '<div class="uncertainty-detail">原因: ' + uncertainty.reason + '</div>' +
+              '<div class="uncertainty-detail">影响: ' + uncertainty.impact + '</div>' +
+              '<div class="uncertainty-verification">✓ 建议验证: ' + uncertainty.suggested_verification + '</div>';
+            uncertaintyList.appendChild(uncertaintyDiv);
+          });
+        }
+      } else {
+        if (uncertaintyList) {
+          uncertaintyList.innerHTML = '<div style="padding: 12px; color: #059669; font-size: 14px;">✅ 未发现明显不确定因素</div>';
+        }
+      }
+
+      // 关键数据点验证列表
+      if (traceability.key_data_points_verified && traceability.key_data_points_verified.length > 0) {
+        if (confidenceSection) {
+          confidenceSection.style.display = 'block';
+        }
+
+        if (verifiedDataList) {
+          verifiedDataList.innerHTML = '<ul class="verified-data-list">';
+          traceability.key_data_points_verified.forEach(data => {
+            const confidenceClass = data.confidence || '中';
+            verifiedDataList.innerHTML +=
+              '<li class="verified-data-item">' +
+                '<div class="verified-data-claim">' + data.claim + '</div>' +
+                '<div class="verified-data-meta">' +
+                  '<span class="verified-data-source">' + data.source + '</span>' +
+                  '<span class="verified-data-confidence ' + confidenceClass + '">' + confidenceClass + '</span>' +
+                '</div>' +
+              '</li>';
+          });
+          verifiedDataList.innerHTML += '</ul>';
+        }
+      }
+
+      // 7. 详细分析 - 映射 dimension_scores
       const factual = evaluation.dimension_scores?.factual_accuracy || {};
       updateDetailWithQuote('inputDiagnosis', factual.assessment || '-');
 
