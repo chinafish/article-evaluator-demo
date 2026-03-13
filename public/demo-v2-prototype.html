@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文章评估智能体 v2.0 - 战略决策版原型</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      font-size: 2em;
+      margin-bottom: 8px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .header .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.9em;
+      margin-top: 8px;
+    }
+
+    .main-card {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+
+    /* 文章标题卡片 */
+    .article-title-card {
+      background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%);
+      backdrop-filter: blur(10px);
+      padding: 20px 30px;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .article-title-card .meta {
+      font-size: 0.85em;
+      color: #6b7280;
+      margin-bottom: 8px;
+    }
+
+    .article-title-card .title {
+      font-size: 1.3em;
+      font-weight: 700;
+      color: #1f2937;
+      line-height: 1.4;
+    }
+
+    /* 决策仪表盘 */
+    .decision-dashboard {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 30px;
+      color: white;
+    }
+
+    .dashboard-title {
+      font-size: 1.2em;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .score-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .score-card {
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 15px;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .score-card .label {
+      font-size: 0.8em;
+      opacity: 0.9;
+      margin-bottom: 8px;
+    }
+
+    .score-card .value {
+      font-size: 1.8em;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .score-card .description {
+      font-size: 0.75em;
+      opacity: 0.85;
+    }
+
+    .score-card.strategic-value .value {
+      color: #fbbf24;
+    }
+
+    .score-card.scarcity .value {
+      color: #f87171;
+    }
+
+    .action-meta {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      background: rgba(255,255,255,0.1);
+      padding: 15px 20px;
+      border-radius: 10px;
+      font-size: 0.9em;
+    }
+
+    .action-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* 核心洞察 */
+    .section {
+      padding: 30px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .section-title {
+      font-size: 1.3em;
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .insight-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .insight-card {
+      background: white;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 20px;
+      transition: all 0.3s;
+    }
+
+    .insight-card:hover {
+      border-color: #667eea;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .insight-card.opportunity {
+      border-left: 4px solid #10b981;
+    }
+
+    .insight-card.risk {
+      border-left: 4px solid #ef4444;
+    }
+
+    .insight-card .icon {
+      font-size: 2em;
+      margin-bottom: 10px;
+    }
+
+    .insight-card .title {
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 10px;
+    }
+
+    .insight-card .content {
+      color: #6b7280;
+      font-size: 0.95em;
+      line-height: 1.6;
+    }
+
+    .strategic-recommendations {
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+      border-radius: 12px;
+      padding: 20px;
+      border-left: 4px solid #0ea5e9;
+    }
+
+    .strategic-recommendations .title {
+      font-weight: 700;
+      color: #0c4a6e;
+      margin-bottom: 12px;
+    }
+
+    .strategic-recommendations ul {
+      list-style: none;
+    }
+
+    .strategic-recommendations li {
+      padding: 8px 0;
+      color: #0c4a6e;
+      font-size: 0.95em;
+    }
+
+    /* 竞争对手动态 */
+    .competitor-card {
+      background: white;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 15px;
+    }
+
+    .competitor-card:hover {
+      border-color: #f59e0b;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+    }
+
+    .competitor-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .competitor-name {
+      font-size: 1.1em;
+      font-weight: 700;
+      color: #1f2937;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .competitor-mentions {
+      background: #fef3c7;
+      color: #92400e;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.8em;
+      font-weight: 600;
+    }
+
+    .competitor-details .detail-item {
+      margin-bottom: 12px;
+    }
+
+    .detail-item .label {
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 5px;
+      font-size: 0.9em;
+    }
+
+    .detail-item .content {
+      color: #6b7280;
+      font-size: 0.95em;
+      padding-left: 15px;
+    }
+
+    .detail-item .content ul {
+      list-style: disc;
+    }
+
+    .market-alert {
+      background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+      border: 2px solid #fca5a5;
+      border-radius: 12px;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    .market-alert .icon {
+      font-size: 1.5em;
+    }
+
+    .market-alert .text {
+      color: #991b1b;
+      font-weight: 600;
+      font-size: 0.95em;
+    }
+
+    /* 紧迫行动建议 */
+    .action-section {
+      padding: 30px;
+      background: #f9fafb;
+    }
+
+    .priority-group {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-left: 4px solid;
+    }
+
+    .priority-group.high {
+      border-left-color: #ef4444;
+    }
+
+    .priority-group.medium {
+      border-left-color: #f59e0b;
+    }
+
+    .priority-group.low {
+      border-left-color: #10b981;
+    }
+
+    .priority-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+      font-weight: 700;
+      font-size: 1.1em;
+    }
+
+    .priority-header.high {
+      color: #dc2626;
+    }
+
+    .priority-header.medium {
+      color: #d97706;
+    }
+
+    .priority-header.low {
+      color: #059669;
+    }
+
+    .action-item {
+      background: #f9fafb;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 12px;
+      border-left: 3px solid #e5e7eb;
+    }
+
+    .action-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .action-title {
+      font-weight: 600;
+      color: #1f2937;
+      flex: 1;
+    }
+
+    .action-meta-badges {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .action-badge {
+      background: #e5e7eb;
+      color: #374151;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.8em;
+      font-weight: 600;
+    }
+
+    .action-badge.timeline {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .action-badge.owner {
+      background: #fce7f3;
+      color: #9f1239;
+    }
+
+    .action-reason {
+      color: #6b7280;
+      font-size: 0.9em;
+      margin-top: 8px;
+      padding-left: 20px;
+    }
+
+    .action-reason::before {
+      content: '🎯 ';
+    }
+
+    /* 详细分析（折叠） */
+    .detailed-analysis {
+      padding: 30px;
+      background: white;
+    }
+
+    .analysis-item {
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      overflow: hidden;
+    }
+
+    .analysis-header {
+      background: #f9fafb;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .analysis-header:hover {
+      background: #f3f4f6;
+    }
+
+    .analysis-title {
+      font-weight: 600;
+      color: #1f2937;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .analysis-content {
+      padding: 0 20px;
+      max-height: 0;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .analysis-content.expanded {
+      padding: 20px;
+      max-height: 1000px;
+    }
+
+    .analysis-content p {
+      color: #6b7280;
+      line-height: 1.7;
+      margin-bottom: 15px;
+    }
+
+    /* 响应式 */
+    @media (max-width: 768px) {
+      .score-cards {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .insight-cards {
+        grid-template-columns: 1fr;
+      }
+
+      .action-meta {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .section, .action-section, .detailed-analysis {
+        padding: 20px;
+      }
+    }
+
+    /* 原型标注 */
+    .prototype-badge {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #1f2937;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 0.85em;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1>🎯 文章评估智能体 v2.0</h1>
+      <div class="badge">战略决策版原型 | 面向企业战略决策者</div>
+    </div>
+
+    <!-- Main Card -->
+    <div class="main-card">
+      <!-- 文章标题卡片 -->
+      <div class="article-title-card">
+        <div class="meta">
+          <span>📅 2025-03-13</span>
+          <span>•</span>
+          <span>🔗 36氪</span>
+          <span>•</span>
+          <span>⏱️ 阅读时间 5分钟</span>
+        </div>
+        <div class="title">AI+SaaS风口再起：巨头加码布局，中小企业如何突围？</div>
+      </div>
+
+      <!-- 决策仪表盘 -->
+      <div class="decision-dashboard">
+        <div class="dashboard-title">
+          🎯 决策仪表盘
+          <span style="font-size: 0.7em; opacity: 0.8; font-weight: 400;">（一眼判断文章价值）</span>
+        </div>
+
+        <div class="score-cards">
+          <div class="score-card strategic-value">
+            <div class="label">战略价值</div>
+            <div class="value">⭐⭐⭐⭐</div>
+            <div class="description">4.2/5</div>
+          </div>
+
+          <div class="score-card scarcity">
+            <div class="label">信息稀缺度</div>
+            <div class="value">🔥 高</div>
+            <div class="description">独家观点</div>
+          </div>
+
+          <div class="score-card">
+            <div class="label">可靠性</div>
+            <div class="value">4.5/5</div>
+            <div class="description">可信源</div>
+          </div>
+
+          <div class="score-card">
+            <div class="label">关注时效</div>
+            <div class="value">本季度</div>
+            <div class="description">窗口期</div>
+          </div>
+        </div>
+
+        <div class="action-meta">
+          <div class="action-meta-item">
+            <span>📊</span>
+            <span><strong>决策类型：</strong>市场进入</span>
+          </div>
+          <div class="action-meta-item">
+            <span>👥</span>
+            <span><strong>资源投入：</strong>2-3人团队</span>
+          </div>
+          <div class="action-meta-item">
+            <span>✅</span>
+            <span><strong>可执行性：</strong>直接行动</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 核心洞察 -->
+      <div class="section">
+        <div class="section-title">
+          💡 核心洞察
+          <span style="font-size: 0.7em; color: #6b7280; font-weight: 400;">（1分钟快速了解）</span>
+        </div>
+
+        <div class="insight-cards">
+          <div class="insight-card opportunity">
+            <div class="icon">🚀</div>
+            <div class="title">关键机会</div>
+            <div class="content">
+              AI+垂直SaaS领域未来3年市场增长300%，技术渗透率仅35%，进入窗口期已开启
+            </div>
+          </div>
+
+          <div class="insight-card risk">
+            <div class="icon">⚠️</div>
+            <div class="title">重大风险</div>
+            <div class="content">
+              监管趋严，合规成本预计上升40%；数据安全审查加强，需提前布局
+            </div>
+          </div>
+        </div>
+
+        <div class="strategic-recommendations">
+          <div class="title">🎯 战略建议</div>
+          <ul>
+            <li>✅ 优先关注AI技术应用场景成熟的细分领域</li>
+            <li>⚠️ 谨慎进入已形成寡头格局的赛道</li>
+            <li>🚀 抓住东南亚等新兴市场的窗口期</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 竞争对手动态 -->
+      <div class="section">
+        <div class="section-title">
+          ⚔️ 竞争对手动态
+          <span style="font-size: 0.7em; color: #6b7280; font-weight: 400;">（战略决策者最关心）</span>
+        </div>
+
+        <div class="competitor-card">
+          <div class="competitor-header">
+            <div class="competitor-name">
+              🏢 字节跳动
+            </div>
+            <div class="competitor-mentions">提及 3 次</div>
+          </div>
+
+          <div class="competitor-details">
+            <div class="detail-item">
+              <div class="label">📌 关键动向</div>
+              <div class="content">
+                <ul>
+                  <li>推出AI创作工具，布局B端市场</li>
+                  <li>收购垂直SaaS企业，加强产业互联网</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="detail-item">
+              <div class="label">🚨 战略信号</div>
+              <div class="content">从C端向B端转型，值得关注</div>
+            </div>
+
+            <div class="detail-item">
+              <div class="label">📅 建议行动</div>
+              <div class="content">竞对团队在2周内完成深度调研</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="competitor-card">
+          <div class="competitor-header">
+            <div class="competitor-name">
+              🏢 腾讯云
+            </div>
+            <div class="competitor-mentions">提及 2 次</div>
+          </div>
+
+          <div class="competitor-details">
+            <div class="detail-item">
+              <div class="label">📌 关键动向</div>
+              <div class="content">
+                <ul>
+                  <li>发布SaaS生态扶持计划，投入10亿</li>
+                  <li>加大AI基础设施投入</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="detail-item">
+              <div class="label">🚨 战略信号</div>
+              <div class="content">生态化竞争，中小企业需选边站队</div>
+            </div>
+
+            <div class="detail-item">
+              <div class="label">📅 建议行动</div>
+              <div class="content">评估是否加入腾讯云生态，1个月内决策</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="market-alert">
+          <div class="icon">📊</div>
+          <div class="text">多家巨头加码AI+SaaS赛道，竞争加剧</div>
+        </div>
+      </div>
+
+      <!-- 紧迫行动建议 -->
+      <div class="action-section">
+        <div class="section-title">
+          🚨 紧迫行动建议
+          <span style="font-size: 0.7em; color: #6b7280; font-weight: 400;">（按优先级排序）</span>
+        </div>
+
+        <div class="priority-group high">
+          <div class="priority-header high">
+            🔴 高优先级 - 需要立即关注
+          </div>
+
+          <div class="action-item">
+            <div class="action-item-header">
+              <div class="action-title">✅ 评估竞品AI功能对我们的影响</div>
+              <div class="action-meta-badges">
+                <span class="action-badge timeline">⏰ 2周内</span>
+                <span class="action-badge owner">💪 产品总监</span>
+              </div>
+            </div>
+            <div class="action-reason">直接竞品，可能改变竞争格局</div>
+          </div>
+
+          <div class="action-item">
+            <div class="action-item-header">
+              <div class="action-title">✅ 启动AI+SaaS赛道深度调研</div>
+              <div class="action-meta-badges">
+                <span class="action-badge timeline">⏰ 本月内</span>
+                <span class="action-badge owner">💪 战略部</span>
+              </div>
+            </div>
+            <div class="action-reason">窗口期，错过先发优势</div>
+          </div>
+        </div>
+
+        <div class="priority-group medium">
+          <div class="priority-header medium">
+            🟡 中优先级 - 可以规划关注
+          </div>
+
+          <div class="action-item">
+            <div class="action-item-header">
+              <div class="action-title">✅ 研究PLG模式在细分市场的应用</div>
+              <div class="action-meta-badges">
+                <span class="action-badge timeline">⏰ Q2完成</span>
+                <span class="action-badge owner">💪 增长团队</span>
+              </div>
+            </div>
+            <div class="action-reason">趋势性机会，需要深入验证</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 详细分析（可折叠） -->
+      <div class="detailed-analysis">
+        <div class="section-title">
+          💡 详细分析
+          <span style="font-size: 0.7em; color: #6b7280; font-weight: 400;">（点击展开查看）</span>
+        </div>
+
+        <div class="analysis-item">
+          <div class="analysis-header" onclick="toggleAnalysis(this)">
+            <div class="analysis-title">📊 行业认知基准</div>
+            <span style="font-size: 0.8em; color: #6b7280;">▼ 点击展开</span>
+          </div>
+          <div class="analysis-content">
+            <p>基于何志毅产业研究四步式范式，从定位、解构、诊断、展望四个维度深度分析AI+SaaS行业...</p>
+            <p><strong>定位：</strong>AI+SaaS是人工智能技术与SaaS商业模式深度融合的新业态，正处于快速成长期...</p>
+            <p><strong>解构：</strong>产业链上游为AI技术提供商，中游为垂直SaaS厂商，下游为企业客户...</p>
+            <p><strong>诊断：</strong>当前行业面临技术壁垒高、获客成本高、同质化竞争等挑战...</p>
+            <p><strong>展望：</strong>预计未来3年市场将迎来爆发式增长，但需警惕泡沫风险...</p>
+          </div>
+        </div>
+
+        <div class="analysis-item">
+          <div class="analysis-header" onclick="toggleAnalysis(this)">
+            <div class="analysis-title">🚨 盲区警告</div>
+            <span style="font-size: 0.8em; color: #6b7280;">▼ 点击展开</span>
+          </div>
+          <div class="analysis-content">
+            <p><strong>缺失的关键维度：</strong>文章未提及AI技术的伦理风险和数据安全问题，这在当前监管环境下至关重要...</p>
+            <p><strong>认知偏差识别：</strong>存在幸存者偏差，只关注成功案例，忽略了大量失败案例...</p>
+            <p><strong>因果推理问题：</strong>混淆了相关性和因果性，AI技术普及不等于SaaS企业必然成功...</p>
+          </div>
+        </div>
+
+        <div class="analysis-item">
+          <div class="analysis-header" onclick="toggleAnalysis(this)">
+            <div class="analysis-title">🔍 输入诊断</div>
+            <span style="font-size: 0.8em; color: #6b7280;">▼ 点击展开</span>
+          </div>
+          <div class="analysis-content">
+            <p><strong>事实准确性：</strong>引用的数据（如"市场增长300%"）来源可靠，计算方法正确...</p>
+            <p><strong>逻辑严密性：</strong>论证结构完整，从市场趋势到竞争格局到行动建议，逻辑链条清晰...</p>
+            <p><strong>信息来源：</strong>引用了Gartner、IDC等权威机构报告，数据来源可信...</p>
+          </div>
+        </div>
+
+        <div class="analysis-item">
+          <div class="analysis-header" onclick="toggleAnalysis(this)">
+            <div class="analysis-title">🎯 相关性判断</div>
+            <span style="font-size: 0.8em; color: #6b7280;">▼ 点击展开</span>
+          </div>
+          <div class="analysis-content" style="max-height: none; padding: 20px;">
+            <p><strong>相关性：</strong>高</p>
+            <p><strong>适用场景：</strong></p>
+            <ul style="margin-left: 20px; color: #6b7280;">
+              <li>SaaS企业战略部门</li>
+              <li>投资机构（关注企业服务赛道）</li>
+              <li>财务顾问（FA）</li>
+              <li>企业数字化转型负责人</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 原型标注 -->
+    <div class="prototype-badge">
+      🎨 设计原型 v2.0 | 基于"决策价值优先"原则
+    </div>
+  </div>
+
+  <script>
+    function toggleAnalysis(header) {
+      const content = header.nextElementSibling;
+      const expanded = content.classList.contains('expanded');
+
+      if (expanded) {
+        content.classList.remove('expanded');
+        header.querySelector('span:last-child').textContent = '▼ 点击展开';
+      } else {
+        content.classList.add('expanded');
+        header.querySelector('span:last-child').textContent = '▲ 点击收起';
+      }
+    }
+
+    // 评分动画效果
+    document.addEventListener('DOMContentLoaded', function() {
+      // 模拟评分从0滚动到实际分数的效果
+      const scoreValues = document.querySelectorAll('.score-card .value');
+
+      scoreValues.forEach(card => {
+        const originalText = card.textContent;
+
+        // 如果是星级评分，不做动画
+        if (originalText.includes('⭐')) {
+          return;
+        }
+
+        card.style.opacity = '0';
+        setTimeout(() => {
+          card.style.transition = 'opacity 0.5s';
+          card.style.opacity = '1';
+        }, 300);
+      });
+    });
+  </script>
+</body>
+</html>
