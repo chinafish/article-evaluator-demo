@@ -107,10 +107,33 @@ class BenchmarkDataService {
 
   /**
    * 根据GICS四级分类查询基准数据
+   * 支持精确匹配和模糊匹配
    */
   async getByGics4(gics4) {
     await this.loadData();
-    return this.index.byGics4[gics4] || [];
+
+    // 1. 尝试精确匹配
+    if (this.index.byGics4[gics4]) {
+      return this.index.byGics4[gics4];
+    }
+
+    // 2. 模糊匹配：查找包含关键词的GICS分类
+    const keywords = gics4.replace(/行业|领域|分类/g, '').split(/[,，、\s]+/);
+    for (const keyword of keywords) {
+      if (keyword.length < 2) continue;
+
+      // 查找包含关键词的GICS分类
+      for (const gics4Name in this.index.byGics4) {
+        if (gics4Name.includes(keyword) || keyword.includes(gics4Name)) {
+          console.log(`[基准数据] 模糊匹配: "${gics4}" -> "${gics4Name}"`);
+          return this.index.byGics4[gics4Name];
+        }
+      }
+    }
+
+    // 3. 未找到匹配
+    console.log(`[基准数据] 未找到匹配: ${gics4}`);
+    return [];
   }
 
   /**

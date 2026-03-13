@@ -21,6 +21,12 @@ app.get('/demo', (req, res) => {
 
 // API路由
 app.use('/api', require('./routes/evaluate'));
+app.use('/api/admin', require('./routes/admin'));
+
+// 管理员页面
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'admin.html'));
+});
 
 // 代理路由：用于iframe跨域加载内容
 app.get('/api/proxy', async (req, res) => {

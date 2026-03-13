@@ -1308,6 +1308,7 @@
       background: white;
       border-radius: 8px;
       font-size: 14px;
+      position: relative;
     }
 
     .progress-step.completed {
@@ -1322,11 +1323,131 @@
 
     .step-status {
       font-size: 18px;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 图标样式 - 使用CSS绘制 */
+    .icon-circle {
+      width: 24px;
+      height: 24px;
+      border: 2px solid currentColor;
+      border-radius: 50%;
+      position: relative;
+    }
+
+    .icon-check {
+      width: 24px;
+      height: 24px;
+      position: relative;
+    }
+
+    .icon-check::before,
+    .icon-check::after {
+      content: '';
+      position: absolute;
+      background: currentColor;
+      border-radius: 1px;
+    }
+
+    .icon-check::before {
+      width: 3px;
+      height: 12px;
+      left: 8px;
+      top: 4px;
+      transform: rotate(45deg);
+    }
+
+    .icon-check::after {
+      width: 3px;
+      height: 7px;
+      left: 5px;
+      top: 8px;
+      transform: rotate(-45deg);
+    }
+
+    .icon-spinner {
+      width: 24px;
+      height: 24px;
+      border: 2px solid currentColor;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .icon-clock {
+      width: 24px;
+      height: 24px;
+      border: 2px solid currentColor;
+      border-radius: 50%;
+      position: relative;
+    }
+
+    .icon-clock::before {
+      content: '';
+      position: absolute;
+      width: 2px;
+      height: 8px;
+      background: currentColor;
+      left: 50%;
+      top: 3px;
+      transform: translateX(-50%);
+      transform-origin: bottom center;
+    }
+
+    .icon-clock::after {
+      content: '';
+      position: absolute;
+      width: 2px;
+      height: 5px;
+      background: currentColor;
+      left: 50%;
+      top: 3px;
+      transform: translateX(-50%) rotate(90deg);
+      transform-origin: bottom center;
     }
 
     .step-name {
       flex: 1;
       font-weight: 500;
+    }
+
+    .step-percentage {
+      font-size: 12px;
+      font-weight: 600;
+      opacity: 0.8;
+    }
+
+    /* 总体进度条 */
+    .progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background: #e5e7eb;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 16px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
+      transition: width 0.3s ease;
+      border-radius: 3px;
+    }
+
+    .progress-percentage-text {
+      text-align: center;
+      margin-top: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #166534;
     }
 
     .progress-spinner {
@@ -1805,14 +1926,14 @@
 <body>
   <div class="container">
     <div class="header">
-      <h1>📊 文章评估智能体</h1>
+      <h1>认知智能体</h1>
       <div class="subtitle">v1.4 信任机制版 - 置信度显示 · 数据溯源 · 不确定性标注 · 质量评分</div>
       <div class="features">
-        <div class="feature-badge">✅ 决策优先级判断</div>
-        <div class="feature-badge">✅ 相关性评估</div>
-        <div class="feature-badge">✅ 紧迫性判断</div>
-        <div class="feature-badge">✅ 可执行建议</div>
-        <div class="feature-badge">🔍 智能溯源</div>
+        <div class="feature-badge">决策优先级判断</div>
+        <div class="feature-badge">相关性评估</div>
+        <div class="feature-badge">紧迫性判断</div>
+        <div class="feature-badge">可执行建议</div>
+        <div class="feature-badge">智能溯源</div>
       </div>
     </div>
 
@@ -1820,8 +1941,8 @@
       <!-- 输入区域 -->
       <div class="input-section">
         <div class="tabs">
-          <button class="tab active" data-tab="url">🔗 URL链接</button>
-          <button class="tab" data-tab="content">📝 文章内容</button>
+          <button class="tab active" data-tab="url">URL链接</button>
+          <button class="tab" data-tab="content">文章内容</button>
         </div>
 
         <form id="evaluationForm">
@@ -1835,7 +1956,7 @@
               placeholder="https://example.com/article"
             />
             <div class="example-hint">
-              <div class="label">💡 示例链接（点击快速填入）:</div>
+              <div class="label">示例链接（点击快速填入）:</div>
               <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
                 <div>
                   <span class="link" onclick="fillUrl('https://www.woshipm.com/it/5967220.html')">SaaS行业趋势（产品经理）</span>
@@ -1866,7 +1987,7 @@
               placeholder="请粘贴文章内容..."
             ></textarea>
             <div class="example-hint">
-              <div class="label">💡 示例内容（点击快速填入）:</div>
+              <div class="label">示例内容（点击快速填入）:</div>
               <div>
                 <span class="link" onclick="fillContent('saas')">SaaS行业示例</span> |
                 <span class="link" onclick="fillContent('ai')">AI助手示例</span> |
@@ -1876,7 +1997,7 @@
           </div>
 
           <button type="submit" class="submit-btn" id="submitBtn">
-            <span class="btn-text">🚀 开始评估</span>
+            <span class="btn-text">开始评估</span>
           </button>
         </form>
 
@@ -1885,7 +2006,7 @@
         <!-- 路由决策提示 -->
         <div class="route-decision" id="routeDecision" style="display: none;">
           <div class="decision-header">
-            <div class="decision-icon">🤔</div>
+            <div class="decision-icon">?</div>
             <div class="decision-title">需要您的选择</div>
           </div>
           <div class="decision-content">
@@ -1905,7 +2026,7 @@
         <!-- 基准生成进度 -->
         <div class="generation-progress" id="generationProgress" style="display: none;">
           <div class="progress-header">
-            <div class="progress-icon">⚙️</div>
+            <div class="progress-icon">⚙</div>
             <div class="progress-title">正在生成行业认知基准</div>
           </div>
           <div class="progress-content">
@@ -1913,6 +2034,55 @@
             <div class="progress-steps" id="progressSteps">
               <!-- 动态生成步骤列表 -->
             </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" id="generationProgressBar" style="width: 0%"></div>
+            </div>
+            <div class="progress-percentage-text" id="generationProgressPercentage">总进度: 0%</div>
+            <div class="progress-spinner">
+              <div class="spinner"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 评估进度 -->
+        <div class="generation-progress" id="evaluationProgress" style="display: none;">
+          <div class="progress-header">
+            <div class="progress-icon">⚙</div>
+            <div class="progress-title">正在评估文章</div>
+          </div>
+          <div class="progress-content">
+            <div class="progress-message" id="evaluationProgressMessage">AI大模型正在分析文章内容，请稍候...</div>
+            <div class="progress-steps" id="evaluationProgressSteps">
+              <div class="progress-step in-progress" data-step="1" data-percentage="10">
+                <span class="step-status"><span class="icon-spinner"></span></span>
+                <span class="step-name">正在解析文章内容...</span>
+                <span class="step-percentage">0%</span>
+              </div>
+              <div class="progress-step" data-step="2" data-percentage="20">
+                <span class="step-status"><span class="icon-clock"></span></span>
+                <span class="step-name">正在识别行业分类...</span>
+                <span class="step-percentage">0%</span>
+              </div>
+              <div class="progress-step" data-step="3" data-percentage="40">
+                <span class="step-status"><span class="icon-clock"></span></span>
+                <span class="step-name">正在进行多维评估...</span>
+                <span class="step-percentage">0%</span>
+              </div>
+              <div class="progress-step" data-step="4" data-percentage="70">
+                <span class="step-status"><span class="icon-clock"></span></span>
+                <span class="step-name">正在生成战略洞察...</span>
+                <span class="step-percentage">0%</span>
+              </div>
+              <div class="progress-step" data-step="5" data-percentage="90">
+                <span class="step-status"><span class="icon-clock"></span></span>
+                <span class="step-name">正在生成置信度报告...</span>
+                <span class="step-percentage">0%</span>
+              </div>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" id="evaluationProgressBar" style="width: 0%"></div>
+            </div>
+            <div class="progress-percentage-text" id="evaluationProgressPercentage">总进度: 0%</div>
             <div class="progress-spinner">
               <div class="spinner"></div>
             </div>
@@ -1927,13 +2097,13 @@
           <div class="sticky-header-bar">
             <div class="header-content">
               <div class="article-info">
-                <div class="article-label">📄 文章标题</div>
+                <div class="article-label">DOC 文章标题</div>
                 <div class="article-title" id="articleTitle">-</div>
               </div>
               <div class="header-actions">
                 <span class="analyzer-badge" id="analyzerBadge">行业认知基准（SaaS）</span>
                 <button class="source-toggle-btn" id="sourceToggleBtn" onclick="toggleSourcePanel()">
-                  <span class="icon">📄</span>
+                  <span class="icon">DOC</span>
                   <span>查看原文</span>
                 </button>
               </div>
@@ -1946,7 +2116,7 @@
             <div class="result-panel">
               <!-- 内容警告横幅 -->
               <div class="warning-banner" id="warningBanner" style="display: none;">
-                <span class="warning-icon">⚠️</span>
+                <span class="warning-icon">!</span>
                 <span class="warning-text">文章内容可能不完整，建议手动补充或点击"查看原文"确认</span>
               </div>
 
@@ -1970,7 +2140,7 @@
 
             <!-- 摘要 -->
             <div class="summary-card">
-              <div class="label">💡 核心价值</div>
+              <div class="label">核心价值</div>
               <div class="value" id="summaryValue"></div>
             </div>
 
@@ -1982,7 +2152,7 @@
 
             <!-- 行动建议 -->
             <div class="actions-section">
-              <div class="actions-header">🎯 行动建议</div>
+              <div class="actions-header">行动建议</div>
               <div id="actionsList"></div>
             </div>
 
@@ -1990,13 +2160,13 @@
             <div id="strategicInsightsSection" style="display: none;">
               <!-- 市场机会识别 -->
               <div class="actions-section" style="margin-top: 20px;">
-                <div class="actions-header" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">🚀 市场机会</div>
+                <div class="actions-header" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">市场机会</div>
                 <div id="opportunitiesList"></div>
               </div>
 
               <!-- 风险预警 -->
               <div class="actions-section" style="margin-top: 20px;">
-                <div class="actions-header" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">⚠️ 风险预警</div>
+                <div class="actions-header" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">风险预警</div>
                 <div id="risksList"></div>
               </div>
 
@@ -2027,7 +2197,7 @@
             <!-- 详细分析 -->
             <div class="detail-section">
               <div class="detail-header" onclick="toggleDetail()">
-                <span>📋 详细分析</span>
+                <span>详细分析</span>
                 <span class="toggle-icon">▼</span>
               </div>
               <div class="detail-content" id="detailContent">
@@ -2049,7 +2219,7 @@
             <!-- 评估依据 -->
             <div class="evaluation-basis">
               <div class="basis-header" onclick="toggleBasisDetails()">
-                <span>📊 评估依据</span>
+                <span>评估依据</span>
                 <span class="toggle-icon">▼</span>
               </div>
               <div class="basis-details" id="basisDetails">
@@ -2064,10 +2234,19 @@
                   </div>
                 </div>
 
+                <!-- 1.1 行业研究报告（可点击，打开弹窗） -->
+                <div class="data-link-item" id="reportItem" onclick="showReportModal()" style="display: none;">
+                  <div class="item-info">
+                    <div class="item-label">行业研究报告</div>
+                    <div class="item-value" id="reportValue">-</div>
+                  </div>
+                  <div class="item-icon">→</div>
+                </div>
+
                 <!-- 2. 行业数据基准（可点击，打开弹窗） -->
                 <div class="data-link-item" id="benchmarkDataItem" onclick="showBenchmarkModal()" style="display: none;">
                   <div class="item-info">
-                    <div class="item-label">📊 行业数据基准</div>
+                    <div class="item-label">行业数据基准</div>
                     <div class="item-value" id="benchmarkDataValue">-</div>
                   </div>
                   <div class="item-icon">→</div>
@@ -2076,7 +2255,7 @@
                 <!-- 通用基准说明（当没有行业基准时显示） -->
                 <div class="data-link-item" id="generalBenchmarkItem" onclick="showGeneralBenchmarkModal()" style="display: none;">
                   <div class="item-info">
-                    <div class="item-label">📊 通用认知基准</div>
+                    <div class="item-label">通用认知基准</div>
                     <div class="item-value">基于通用商业知识的评估框架</div>
                   </div>
                   <div class="item-icon">→</div>
@@ -2090,7 +2269,7 @@
               <div class="confidence-card">
                 <div class="confidence-header">
                   <div>
-                    <div style="font-size: 14px; opacity: 0.9; margin-bottom: 4px;">🎯 评估置信度</div>
+                    <div style="font-size: 14px; opacity: 0.9; margin-bottom: 4px;">评估置信度</div>
                     <div class="confidence-score" id="overallConfidenceScore">-</div>
                   </div>
                   <div class="confidence-level" id="overallConfidenceLevel">-</div>
@@ -2128,25 +2307,25 @@
               <!-- 评估溯源 - 可折叠 -->
               <div class="detail-section" style="margin-top: 20px;">
                 <div class="detail-header" onclick="toggleTraceability()">
-                  <span>🔍 评估溯源</span>
+                  <span>评估溯源</span>
                   <span class="toggle-icon">▼</span>
                 </div>
                 <div class="detail-content" id="traceabilityContent" style="display: none;">
                   <!-- 评估依据 -->
                   <div style="margin-bottom: 16px;">
-                    <div class="traceability-header" style="font-size: 14px;">📋 评估依据</div>
+                    <div class="traceability-header" style="font-size: 14px;">评估依据</div>
                     <div id="assessmentBasisList"></div>
                   </div>
 
                   <!-- 不确定领域 -->
                   <div style="margin-bottom: 16px;">
-                    <div class="traceability-header" style="font-size: 14px;">⚠️ 不确定领域</div>
+                    <div class="traceability-header" style="font-size: 14px;">不确定领域</div>
                     <div id="uncertaintyList"></div>
                   </div>
 
                   <!-- 关键数据点验证 -->
                   <div>
-                    <div class="traceability-header" style="font-size: 14px;">✅ 关键数据点验证</div>
+                    <div class="traceability-header" style="font-size: 14px;">关键数据点验证</div>
                     <div id="verifiedDataList"></div>
                   </div>
                 </div>
@@ -2186,7 +2365,7 @@
 
   <!-- 浮动按钮：评估新文章 -->
   <button id="floatingNewEvalBtn" class="floating-new-eval-btn" onclick="backToInput()">
-    <span class="icon">📝</span>
+    <span class="icon">Note</span>
     <span>评估新文章</span>
   </button>
 
@@ -2278,6 +2457,101 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
       document.getElementById('contentInput').value = examples[type];
     }
 
+    // 更新评估进度
+    function updateEvaluationProgress(stepIndex, percentage) {
+      const steps = document.querySelectorAll('#evaluationProgressSteps .progress-step');
+      const progressBar = document.getElementById('evaluationProgressBar');
+      const progressPercentage = document.getElementById('evaluationProgressPercentage');
+
+      // 更新每个步骤的状态
+      steps.forEach((step, index) => {
+        const statusIcon = step.querySelector('.step-status');
+        const percentageText = step.querySelector('.step-percentage');
+
+        if (index < stepIndex) {
+          // 已完成的步骤
+          step.classList.remove('in-progress');
+          step.classList.add('completed');
+          if (statusIcon) {
+            statusIcon.innerHTML = '<span class="icon-check"></span>';
+          }
+          if (percentageText) {
+            percentageText.textContent = '100%';
+          }
+        } else if (index === stepIndex) {
+          // 当前步骤
+          step.classList.remove('completed');
+          step.classList.add('in-progress');
+          if (statusIcon) {
+            statusIcon.innerHTML = '<span class="icon-spinner"></span>';
+          }
+          if (percentageText) {
+            percentageText.textContent = percentage + '%';
+          }
+        } else {
+          // 未开始的步骤
+          step.classList.remove('completed', 'in-progress');
+          if (statusIcon) {
+            statusIcon.innerHTML = '<span class="icon-clock"></span>';
+          }
+          if (percentageText) {
+            percentageText.textContent = '0%';
+          }
+        }
+      });
+
+      // 更新总体进度条
+      if (progressBar) {
+        progressBar.style.width = percentage + '%';
+      }
+      if (progressPercentage) {
+        progressPercentage.textContent = `总进度: ${percentage}%`;
+      }
+    }
+
+    // 更新生成基准进度
+    function updateGenerationProgress(stepIndex, percentage) {
+      const steps = document.querySelectorAll('#progressSteps .progress-step');
+      const progressBar = document.getElementById('generationProgressBar');
+      const progressPercentage = document.getElementById('generationProgressPercentage');
+
+      // 更新每个步骤的状态
+      steps.forEach((step, index) => {
+        const statusIcon = step.querySelector('.step-status');
+        const percentageText = step.querySelector('.step-percentage');
+
+        if (index < stepIndex) {
+          // 已完成的步骤
+          step.classList.remove('in-progress');
+          step.classList.add('completed');
+          if (statusIcon) {
+            statusIcon.innerHTML = '<span class="icon-check"></span>';
+          }
+          if (percentageText) {
+            percentageText.textContent = '100%';
+          }
+        } else if (index === stepIndex) {
+          // 当前步骤
+          step.classList.remove('completed');
+          step.classList.add('in-progress');
+          if (statusIcon) {
+            statusIcon.innerHTML = '<span class="icon-spinner"></span>';
+          }
+          if (percentageText) {
+            percentageText.textContent = percentage + '%';
+          }
+        }
+      });
+
+      // 更新总体进度条
+      if (progressBar) {
+        progressBar.style.width = percentage + '%';
+      }
+      if (progressPercentage) {
+        progressPercentage.textContent = `总进度: ${percentage}%`;
+      }
+    }
+
     // 提交表单
     document.getElementById('evaluationForm').addEventListener('submit', async function(e) {
       e.preventDefault();
@@ -2285,6 +2559,7 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
       const submitBtn = document.getElementById('submitBtn');
       const errorMessage = document.getElementById('errorMessage');
       const resultSection = document.getElementById('resultSection');
+      const evaluationProgress = document.getElementById('evaluationProgress');
 
       // 获取输入
       let data = '';
@@ -2317,6 +2592,38 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<div class="spinner"></div><span class="btn-text">分析中...</span>';
 
+      // 显示评估进度条
+      if (evaluationProgress) {
+        evaluationProgress.style.display = 'block';
+        // 重置进度
+        updateEvaluationProgress(0, 0);
+      }
+
+      // 模拟进度更新（使用更合理的时间分配）
+      const progressSimulation = (() => {
+        let timeouts = [];
+
+        const updateSteps = [
+          { step: 0, percentage: 10, delay: 2000 },   // 步骤1: 解析文章 - 2秒
+          { step: 1, percentage: 25, delay: 4000 },   // 步骤2: 识别行业 - 4秒
+          { step: 2, percentage: 50, delay: 8000 },   // 步骤3: 多维评估 - 8秒
+          { step: 3, percentage: 75, delay: 12000 },  // 步骤4: 战略洞察 - 12秒
+          { step: 4, percentage: 90, delay: 15000 },  // 步骤5: 置信度报告 - 15秒
+          { step: 5, percentage: 95, delay: 20000 }   // 等待完成 - 20秒
+        ];
+
+        updateSteps.forEach(({ step, percentage, delay }) => {
+          const timeoutId = setTimeout(() => {
+            updateEvaluationProgress(step, percentage);
+          }, delay);
+          timeouts.push(timeoutId);
+        });
+
+        return () => {
+          timeouts.forEach(id => clearTimeout(id));
+        };
+      })();
+
       try {
         // 发送请求
         const response = await fetch('/api/evaluate', {
@@ -2345,6 +2652,14 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
 
         // 检查是否需要用户操作（路由决策）
         if (result.requires_user_action) {
+          // 清除进度模拟
+          clearInterval(progressSimulation);
+          // 更新到100%
+          updateEvaluationProgress(5, 100);
+          // 隐藏评估进度条
+          if (evaluationProgress) {
+            evaluationProgress.style.display = 'none';
+          }
           showRouteDecision(result);
           return;
         }
@@ -2357,10 +2672,27 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
           sourceUrl = result.evaluation.article_url || data;
         }
 
+        // 清除进度模拟
+        clearInterval(progressSimulation);
+        // 更新到100%
+        updateEvaluationProgress(5, 100);
+
+        // 隐藏评估进度条
+        if (evaluationProgress) {
+          evaluationProgress.style.display = 'none';
+        }
+
         // 显示结果
         displayResult(result.evaluation);
 
       } catch (error) {
+        // 清除进度模拟
+        clearInterval(progressSimulation);
+        // 隐藏评估进度条
+        if (evaluationProgress) {
+          evaluationProgress.style.display = 'none';
+        }
+
         console.error('[评估错误] 详细信息:', error);
         console.error('[评估错误] 错误堆栈:', error.stack);
 
@@ -2371,9 +2703,14 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
         }
         showError(errorMsg);
       } finally {
+        // 确保隐藏评估进度条
+        if (evaluationProgress) {
+          evaluationProgress.style.display = 'none';
+        }
+
         // 恢复按钮状态
         submitBtn.disabled = false;
-        submitBtn.innerHTML = '<span class="btn-text">🚀 开始评估</span>';
+        submitBtn.innerHTML = '<span class="btn-text">开始评估</span>';
       }
     });
 
@@ -2439,7 +2776,7 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
 
         btn.innerHTML = `
           <div class="option-label">
-            ${option.type === 'generate_benchmark' ? '⚙️' : '📊'}
+            <span style="font-size: 18px;">${option.type === 'generate_benchmark' ? '⚙' : '□'}</span>
             ${option.label}
           </div>
           <div class="option-description">${option.description}</div>
@@ -2468,19 +2805,27 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
         generationProgress.style.display = 'block';
         progressMessage.textContent = '正在生成行业认知基准，请稍候...';
         progressSteps.innerHTML = `
-          <div class="progress-step in-progress">
-            <span class="step-status">🔄</span>
+          <div class="progress-step in-progress" data-step="1">
+            <span class="step-status"><span class="icon-spinner"></span></span>
             <span class="step-name">正在生成产业研究报告...</span>
+            <span class="step-percentage">0%</span>
           </div>
-          <div class="progress-step">
-            <span class="step-status">⏳</span>
+          <div class="progress-step" data-step="2">
+            <span class="step-status"><span class="icon-clock"></span></span>
             <span class="step-name">正在生成行业认知基准...</span>
+            <span class="step-percentage">0%</span>
           </div>
-          <div class="progress-step">
-            <span class="step-status">⏳</span>
+          <div class="progress-step" data-step="3">
+            <span class="step-status"><span class="icon-clock"></span></span>
             <span class="step-name">正在进行文章评估...</span>
+            <span class="step-percentage">0%</span>
           </div>
         `;
+        // 重置进度条
+        const progressBar = document.getElementById('generationProgressBar');
+        const progressPercentage = document.getElementById('generationProgressPercentage');
+        if (progressBar) progressBar.style.width = '0%';
+        if (progressPercentage) progressPercentage.textContent = '总进度: 0%';
 
         try {
           // 调用选择选项API
@@ -2512,18 +2857,26 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
           // 更新进度
           progressSteps.innerHTML = `
             <div class="progress-step completed">
-              <span class="step-status">✅</span>
+              <span class="step-status"><span class="icon-check"></span></span>
               <span class="step-name">已完成生成产业研究报告</span>
+              <span class="step-percentage">100%</span>
             </div>
             <div class="progress-step completed">
-              <span class="step-status">✅</span>
+              <span class="step-status"><span class="icon-check"></span></span>
               <span class="step-name">已完成生成行业认知基准</span>
+              <span class="step-percentage">100%</span>
             </div>
             <div class="progress-step in-progress">
-              <span class="step-status">🔄</span>
+              <span class="step-status"><span class="icon-spinner"></span></span>
               <span class="step-name">正在进行文章评估...</span>
+              <span class="step-percentage">50%</span>
             </div>
           `;
+          // 更新进度条到67%
+          const progressBar = document.getElementById('generationProgressBar');
+          const progressPercentage = document.getElementById('generationProgressPercentage');
+          if (progressBar) progressBar.style.width = '67%';
+          if (progressPercentage) progressPercentage.textContent = '总进度: 67%';
 
           // 等待一下让用户看到进度
           await new Promise(resolve => setTimeout(resolve, 800));
@@ -3053,7 +3406,7 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
         // 收起面板
         sourcePanel.classList.add('collapsed');
         resultContainer.classList.add('source-collapsed');
-        toggleBtn.querySelector('.icon').textContent = '📄';
+        toggleBtn.querySelector('.icon').textContent = 'DOC';
         toggleBtn.querySelector('span:last-child').textContent = '查看原文';
       }
     }
@@ -3159,6 +3512,11 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
         showError('页面元素缺失，请刷新页面后重试');
         return;
       }
+
+      // 保存行业数据和报告（供弹窗使用）
+      window.currentIndustryData = evaluation.industry_data || null;
+      window.currentIndustryReport = evaluation.industry_report || null;
+      window.currentGics4 = evaluation.route_info?.gics4 || '';
 
       // 分析器徽章 - 根据route_info显示
       const analyzerBadge = document.getElementById('analyzerBadge');
@@ -3467,7 +3825,7 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
             const uncertaintyDiv = document.createElement('div');
             uncertaintyDiv.className = 'uncertainty-alert';
             uncertaintyDiv.innerHTML =
-              '<div class="uncertainty-title">⚠️ ' + uncertainty.area + '</div>' +
+              '<div class="uncertainty-title">!' + uncertainty.area + '</div>' +
               '<div class="uncertainty-detail">原因: ' + uncertainty.reason + '</div>' +
               '<div class="uncertainty-detail">影响: ' + uncertainty.impact + '</div>' +
               '<div class="uncertainty-verification">✓ 建议验证: ' + uncertainty.suggested_verification + '</div>';
@@ -3476,7 +3834,7 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
         }
       } else {
         if (uncertaintyList) {
-          uncertaintyList.innerHTML = '<div style="padding: 12px; color: #059669; font-size: 14px;">✅ 未发现明显不确定因素</div>';
+          uncertaintyList.innerHTML = '<div style="padding: 12px; color: #059669; font-size: 14px;">✓ 未发现明显不确定因素</div>';
         }
       }
 
@@ -3549,6 +3907,8 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
       const benchmarkDataItem = document.getElementById('benchmarkDataItem');
       const benchmarkDataValue = document.getElementById('benchmarkDataValue');
       const generalBenchmarkItem = document.getElementById('generalBenchmarkItem');
+      const reportItem = document.getElementById('reportItem');
+      const reportValue = document.getElementById('reportValue');
 
       if (benchmarkType === 'INDUSTRY_BENCHMARK' && benchmarkDataItem && benchmarkDataValue) {
         // 显示行业数据基准
@@ -3557,11 +3917,20 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
         if (generalBenchmarkItem) {
           generalBenchmarkItem.style.display = 'none';
         }
+        // 显示行业研究报告（仅对行业基准显示）
+        if (reportItem && reportValue) {
+          reportItem.style.display = 'flex';
+          reportValue.textContent = benchmarkName + '研究报告';
+        }
       } else if (generalBenchmarkItem) {
         // 显示通用基准说明
         generalBenchmarkItem.style.display = 'flex';
         if (benchmarkDataItem) {
           benchmarkDataItem.style.display = 'none';
+        }
+        // 隐藏行业研究报告（通用基准不显示）
+        if (reportItem) {
+          reportItem.style.display = 'none';
         }
       }
 
@@ -3585,7 +3954,7 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
           resultContainer.classList.add('source-collapsed');
           const icon = toggleBtn.querySelector('.icon');
           const textSpan = toggleBtn.querySelector('span:last-child');
-          if (icon) icon.textContent = '📄';
+          if (icon) icon.textContent = 'DOC';
           if (textSpan) textSpan.textContent = '查看原文';
         }
       }
@@ -3642,7 +4011,7 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
       // 如果有quote，添加溯源角标
       if (quote) {
         const refId = 'ref_' + elementId;
-        const refBadge = '<span class="source-ref" data-ref-id="' + refId + '" data-quote="' + quote.replace(/"/g, '&quot;') + '" onclick="event.stopPropagation(); navigateToSource(\'' + refId + '\')" style="margin-left: 8px;">📄</span>';
+        const refBadge = '<span class="source-ref" data-ref-id="' + refId + '" data-quote="' + quote.replace(/"/g, '&quot;') + '" onclick="event.stopPropagation(); navigateToSource(\'' + refId + '\')" style="margin-left: 8px;">Ref</span>';
         element.innerHTML = content + refBadge;
       } else {
         element.textContent = content;
@@ -3663,14 +4032,181 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
     // 显示行业数据基准弹窗
     function showBenchmarkModal() {
       const modal = document.getElementById('benchmarkModal');
-      if (modal) {
-        modal.style.display = 'flex';
+      if (!modal) return;
+
+      // 更新弹窗标题
+      const titleElement = modal.querySelector('.modal-header h3');
+      if (titleElement && window.currentGics4) {
+        titleElement.textContent = `${window.currentGics4}行业数据基准`;
       }
+
+      // 如果有行业数据，动态生成内容
+      if (window.currentIndustryData && window.currentIndustryData.length > 0) {
+        const data = window.currentIndustryData[0];
+        const modalBody = modal.querySelector('.modal-body');
+
+        if (modalBody && data) {
+          const globalChampion = data.global_champion;
+          let championInfo = '';
+          if (globalChampion && globalChampion.name) {
+            const metrics = globalChampion.metrics || {};
+            championInfo = `
+            <div class="benchmark-metric" style="margin-top: 24px;">
+              <div class="metric-name">全球领军企业</div>
+              <div class="metric-value">${globalChampion.name}</div>
+            </div>
+
+            <h4 style="margin-top: 24px;">关键基准指标</h4>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>指标名称</th>
+                  <th>数值</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${metrics.市值 ? `<tr><td>市值</td><td>${metrics.市值}</td></tr>` : ''}
+                ${metrics.营收 ? `<tr><td>营收</td><td>${metrics.营收}</td></tr>` : ''}
+                ${metrics.利润 ? `<tr><td>利润</td><td>${metrics.利润}</td></tr>` : ''}
+                ${metrics.净资产 ? `<tr><td>净资产</td><td>${metrics.净资产}</td></tr>` : ''}
+                ${metrics.ROE ? `<tr><td>ROE</td><td>${metrics.ROE}</td></tr>` : ''}
+                ${metrics.营收利润率 ? `<tr><td>营收利润率</td><td>${metrics.营收利润率}</td></tr>` : ''}
+                ${metrics.研发强度 ? `<tr><td>研发强度</td><td>${metrics.研发强度}</td></tr>` : ''}
+              </tbody>
+            </table>`;
+          }
+
+          modalBody.innerHTML = `
+            <h4>何志毅教授企业图谱数据</h4>
+            <p style="color: #6b7280; margin-bottom: 16px;">数据来源：清华产业研究院</p>
+
+            <div class="benchmark-metric">
+              <div class="metric-name">GICS分类</div>
+              <div class="metric-value">${data.gics1 || ''} > ${data.gics2 || ''} > ${data.gics3 || ''} > ${data.gics4 || ''}</div>
+            </div>
+
+            <div class="benchmark-metric">
+              <div class="metric-name">数据期间</div>
+              <div class="metric-value">${data.data_period || '2024年第三季度（Q3）'}</div>
+            </div>
+
+            ${championInfo}
+
+            <div class="benchmark-metric" style="margin-top: 20px;">
+              <div class="metric-name">数据使用说明</div>
+              <div class="metric-value">
+                本基准数据基于公开财报、企业调研及行业报告整理，仅供参考。
+                实际企业表现因业务模式、目标市场、发展阶段等因素会有差异。
+              </div>
+            </div>
+          `;
+        }
+      }
+
+      modal.style.display = 'flex';
     }
 
     // 显示通用基准弹窗
     function showGeneralBenchmarkModal() {
-      alert(`📊 通用认知基准\n\n基于通用商业知识的评估框架，适用于无特定行业基准的文章。\n\n评估维度包括：\n• 事实准确性\n• 内容洞察力\n• 战略价值\n• 数据质量`);
+      alert(`通用认知基准\n\n基于通用商业知识的评估框架，适用于无特定行业基准的文章。\n\n评估维度包括：\n• 事实准确性\n• 内容洞察力\n• 战略价值\n• 数据质量`);
+    }
+
+    // 显示行业研究报告弹窗
+    function showReportModal() {
+      const modal = document.getElementById('reportModal');
+      if (!modal) return;
+
+      // 更新弹窗标题
+      const titleElement = modal.querySelector('.modal-header h3');
+      if (titleElement && window.currentGics4) {
+        titleElement.textContent = `${window.currentGics4}行业研究报告`;
+      }
+
+      // 如果有行业报告，动态生成内容
+      if (window.currentIndustryReport) {
+        const report = window.currentIndustryReport;
+        const modalBody = modal.querySelector('.modal-body');
+
+        if (modalBody) {
+          const generatedDate = report.generated_date ? new Date(report.generated_date).toLocaleDateString('zh-CN') : new Date().toLocaleDateString('zh-CN');
+
+          let reportHTML = `
+            <div style="background: #f9fafb; padding: 12px; border-radius: 8px; margin-bottom: 20px;">
+              <div style="font-size: 12px; color: #6b7280;">报告期间：${report.reporting_period || '2024-Q3'} | 生成时间：${generatedDate}</div>
+            </div>
+          `;
+
+          // 行业概况
+          if (report.industry_overview) {
+            reportHTML += `
+            <div class="report-section">
+              <h4>行业概况</h4>
+              ${report.industry_overview.industry_definition ? `<p><strong>行业定义：</strong>${report.industry_overview.industry_definition}</p>` : ''}
+              ${report.industry_overview.market_size ? `<p><strong>市场规模：</strong>${report.industry_overview.market_size}</p>` : ''}
+              ${report.industry_overview.development_stage ? `<p><strong>发展阶段：</strong>${report.industry_overview.development_stage}</p>` : ''}
+            </div>
+            `;
+          }
+
+          // 竞争格局
+          if (report.competitive_landscape) {
+            reportHTML += `
+            <div class="report-section">
+              <h4>竞争格局</h4>
+              ${report.competitive_landscape.market_concentration ? `<p><strong>市场集中度：</strong>${report.competitive_landscape.market_concentration}</p>` : ''}
+              ${report.competitive_landscape.leading_companies && report.competitive_landscape.leading_companies.length > 0 ? `<p><strong>领军企业：</strong>${report.competitive_landscape.leading_companies.join('、')}</p>` : ''}
+              ${report.competitive_landscape.competition_trend ? `<p><strong>竞争趋势：</strong>${report.competitive_landscape.competition_trend}</p>` : ''}
+            </div>
+            `;
+          }
+
+          // 发展趋势
+          if (report.development_trends && report.development_trends.length > 0) {
+            reportHTML += `
+            <div class="report-section">
+              <h4>发展趋势</h4>
+            `;
+            report.development_trends.forEach(trend => {
+              reportHTML += `<p><strong>${trend.trend || trend.name}：</strong>${trend.description || trend.content}</p>`;
+            });
+            reportHTML += `</div>`;
+          }
+
+          // 投资机会
+          if (report.investment_opportunities && report.investment_opportunities.length > 0) {
+            reportHTML += `
+            <div class="report-section">
+              <h4>投资机会</h4>
+            `;
+            report.investment_opportunities.forEach(opp => {
+              reportHTML += `<p><strong>${opp.opportunity || opp.name}：</strong>${opp.description || opp.content}</p>`;
+            });
+            reportHTML += `</div>`;
+          }
+
+          modalBody.innerHTML = reportHTML;
+        }
+      } else {
+        // 如果没有报告，显示提示信息
+        const modalBody = modal.querySelector('.modal-body');
+        if (modalBody) {
+          modalBody.innerHTML = `
+            <div style="padding: 40px; text-align: center;">
+              <div style="font-size: 48px; margin-bottom: 16px;">📋</div>
+              <h3 style="color: #374151; margin-bottom: 12px;">暂无${window.currentGics4 || ''}行业研究报告</h3>
+              <p style="color: #6b7280; margin-bottom: 8px;">当前使用的是缓存的认知基准，未包含完整的研究报告。</p>
+              <p style="color: #6b7280; font-size: 14px; margin-bottom: 24px;">如需查看最新的行业研究报告，建议重新生成认知基准。</p>
+              <div style="background: #fef3c7; padding: 12px; border-radius: 8px; display: inline-block;">
+                <p style="color: #92400e; font-size: 14px; margin: 0;">
+                  <strong>提示：</strong>您可以重新评估该文章，系统会生成最新的行业研究报告
+                </p>
+              </div>
+            </div>
+          `;
+        }
+      }
+
+      modal.style.display = 'flex';
     }
 
     // 关闭弹窗
@@ -3693,8 +4229,8 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
   <div class="modal-overlay" id="benchmarkModal">
     <div class="modal-content">
       <div class="modal-header">
-        <h3>📊 行业数据基准</h3>
-        <button class="modal-close" onclick="closeModal('benchmarkModal')">✕</button>
+        <h3>行业数据基准</h3>
+        <button class="modal-close" onclick="closeModal('benchmarkModal')">×</button>
       </div>
       <div class="modal-body">
         <h4>何志毅教授企业图谱数据</h4>
@@ -3755,7 +4291,7 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
         </table>
 
         <div class="benchmark-metric" style="margin-top: 20px;">
-          <div class="metric-name">⚠️ 数据使用说明</div>
+          <div class="metric-name">数据使用说明</div>
           <div class="metric-value">
             本基准数据基于公开财报、企业调研及行业报告整理，仅供参考。
             实际企业表现因业务模式、目标市场、发展阶段等因素会有差异。
@@ -3769,8 +4305,8 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
   <div class="modal-overlay" id="reportModal">
     <div class="modal-content">
       <div class="modal-header">
-        <h3>📋 SaaS行业研究报告</h3>
-        <button class="modal-close" onclick="closeModal('reportModal')">✕</button>
+        <h3>SaaS行业研究报告</h3>
+        <button class="modal-close" onclick="closeModal('reportModal')">×</button>
       </div>
       <div class="modal-body">
         <div style="background: #f9fafb; padding: 12px; border-radius: 8px; margin-bottom: 20px;">
@@ -3839,8 +4375,8 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
   <div class="modal-overlay" id="generalBenchmarkModal">
     <div class="modal-content">
       <div class="modal-header">
-        <h3>📊 通用认知基准</h3>
-        <button class="modal-close" onclick="closeModal('generalBenchmarkModal')">✕</button>
+        <h3>通用认知基准</h3>
+        <button class="modal-close" onclick="closeModal('generalBenchmarkModal')">×</button>
       </div>
       <div class="modal-body">
         <div class="report-section">
@@ -3869,7 +4405,7 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
         </div>
 
         <div class="report-section">
-          <h4>⚠️ 局限性</h4>
+          <h4>局限性</h4>
           <p>由于缺乏行业特定数据，通用基准无法进行：</p>
           <ul>
             <li>行业数据的准确性验证</li>

@@ -9,7 +9,7 @@
 
 const ModelRouter = require('./ModelRouter');
 const industryBenchmarkGenerator = require('./industryBenchmarkGenerator');
-const industryResearchGenerator = require('./industryResearchGenerator');
+const comprehensiveResearchGenerator = require('./comprehensiveResearchGenerator');
 const articleEvaluatorWithBenchmark = require('./articleEvaluatorWithBenchmark');
 const benchmarkData = require('./benchmarkData');
 
@@ -72,19 +72,32 @@ class CognitiveOrchestrator {
     const prompt = {
       system: `你是一位专业的行业分类专家，熟悉GICS（全球行业分类标准）四级分类体系。
 
-你的任务是：根据文章内容，识别文章所属的GICS四级分类。
+你的任务是：根据文章内容，从以下163个GICS四级分类中选择最准确的一个。
 
-GICS四级分类示例：
-- 信息技术 → 软件 → 应用软件 → 企业应用软件
-- 信息技术 → 软件 → 应用软件 → 垂直应用软件
-- 非日常生活消费品 → 汽车 → 汽车零部件 → 轮胎
+重要：gics4必须是以下分类之一，不能自己编造！
+
+常见GICS四级分类示例：
+【信息技术】
+- 应用软件、系统软件、信息技术咨询、互联网服务与基础架构
+
+【医疗健康】
+- 医疗健康技术、医疗健康设备、医疗健康服务、制药
+
+【金融】
+- 综合金融服务、区域性银行、特殊金融服务
+
+【汽车】
+- 新能源汽车、汽车制造、汽车零件与设备、汽车零售
+
+【其他】
+- 光伏产品材料与设备、互动媒体与服务、人力资源与就业服务
 
 请输出JSON格式：
 {
   "gics1": "GICS一级分类",
   "gics2": "GICS二级分类",
   "gics3": "GICS三级分类",
-  "gics4": "GICS四级分类",
+  "gics4": "GICS四级分类（必须从数据中存在的分类选择）",
   "confidence": 0.0-1.0,
   "reason": "判断依据"
 }`,
@@ -93,6 +106,8 @@ GICS四级分类示例：
 标题：${article.title}
 来源：${article.source || '未知'}
 内容：${article.content.substring(0, 2000)}
+
+重要：请从现有的GICS四级分类中选择最匹配的，特别是新能源汽车相关文章应选择"新能源汽车"分类。
 
 输出JSON格式的分类结果。`
     };
@@ -298,6 +313,10 @@ GICS四级分类示例：
   async evaluateWithIndustryBenchmark(article, routeDecision) {
     console.log('[评估] 使用行业认知基准进行评估...');
 
+    // 获取行业基准数据和研究报告
+    const industryData = await benchmarkData.getByGics4(routeDecision.gics4);
+    const industryReport = routeDecision.benchmark.industry_research_report || null;
+
     const evaluation = await articleEvaluatorWithBenchmark.evaluate(
       article,
       routeDecision.benchmark
@@ -309,7 +328,10 @@ GICS四级分类示例：
         type: 'INDUSTRY_BENCHMARK',
         gics4: routeDecision.gics4,
         benchmark_name: `${routeDecision.gics4}行业认知基准`
-      }
+      },
+      // 添加行业数据和报告，供前端弹窗使用
+      industry_data: industryData,
+      industry_report: industryReport
     };
   }
 
@@ -354,10 +376,12 @@ GICS四级分类示例：
     };
 
     try {
-      // 步骤1: 生成产业研究报告
-      progress.steps.push({ step: 1, name: '生成产业研究报告', status: 'in_progress' });
+      // 步骤1: 生成综合产业研究报告（使用何志毅研究范式）
+      progress.steps.push({ step: 1, name: '生成综合产业研究报告', status: 'in_progress' });
 
-      const report = await industryResearchGenerator.generateReport(gics4);
+      const report = await comprehensiveResearchGenerator.generateComprehensiveReport(gics4, {
+        enableSearch: true // 启用网络搜索获取最新数据
+      });
 
       progress.steps[0].status = 'completed';
       progress.steps.push({ step: 2, name: '生成行业认知基准', status: 'in_progress' });

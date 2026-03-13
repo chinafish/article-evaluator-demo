@@ -119,7 +119,7 @@ class ModelRouter {
             'Authorization': `Bearer ${model.apiKey}`,
             'Content-Type': 'application/json'
           },
-          timeout: options.timeout || 90000
+          timeout: options.timeout || 180000  // 默认180秒（3分钟）
         }
       );
 

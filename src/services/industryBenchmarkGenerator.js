@@ -21,7 +21,15 @@ class IndustryBenchmarkGenerator {
    * @returns {Promise<Object>} 行业判断基准
    */
   async generateBenchmark(report, options = {}) {
+    if (!report || typeof report !== 'object') {
+      throw new Error('无效的报告对象');
+    }
+
     const gics4 = report.gics4;
+    if (!gics4) {
+      throw new Error('报告中缺少 gics4 字段');
+    }
+
     console.log(`[判断基准] 开始生成: ${gics4}`);
 
     // 1. 检查缓存
@@ -47,7 +55,10 @@ class IndustryBenchmarkGenerator {
     benchmark.gics4 = gics4;
     benchmark.report_version = report.generated_at;
 
-    // 6. 缓存基准
+    // 6. 将研究报告也保存到基准中
+    benchmark.industry_research_report = report;
+
+    // 7. 缓存基准
     await this.cacheBenchmark(gics4, benchmark);
 
     console.log(`[判断基准] 生成完成: ${gics4}`);
