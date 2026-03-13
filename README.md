@@ -55,20 +55,28 @@ article-evaluator-demo/
 ├── src/
 │   ├── server.js              # 服务器入口
 │   ├── routes/                # 路由模块
-│   │   └── evaluate.js        # 评估接口
+│   │   ├── evaluate.js        # 评估接口
+│   │   └── admin.js           # 管理后台接口
 │   ├── services/              # 服务模块
 │   │   ├── articleParser.js   # 文章解析
 │   │   ├── industryRouter.js  # 行业路由
 │   │   ├── saasAnalyzer.js    # SaaS解析器
 │   │   ├── generalAnalyzer.js # 通用解析器
-│   │   └── coordinator.js     # 解析器协调
+│   │   ├── coordinator.js     # 解析器协调
+│   │   ├── comprehensiveResearchGenerator.js # 研究报告生成器
+│   │   └── industryBenchmarkGenerator.js # 基准生成器
 │   └── prompts/               # 提示词
 │       ├── saasPrompt.v1.2.js    # SaaS提示词 v1.2
 │       └── generalPrompt.v1.2.js # 通用提示词 v1.2
 ├── public/
-│   └── index.v1.2.html        # 前端页面 v1.2
+│   ├── demo.html             # 主界面 v1.2
+│   └── admin.html            # 管理后台
+├── cache/
+│   ├── industry_benchmarks/  # 行业基准数据
+│   └── industry_reports/     # 行业研究报告
 ├── package.json
 ├── .env.example
+├── PROJECT_HISTORY.md       # 项目开发历史
 └── README.md
 ```
 
@@ -77,12 +85,12 @@ article-evaluator-demo/
 - **后端**: Node.js + Express
 - **前端**: HTML + CSS + JavaScript（原生）
 - **AI服务**: OpenAI API / 通义千问 / 文心一言
-- **文章解析**: Mozilla Readability
+- **文章解析**: Mozilla Readability + Puppeteer
+- **数据源**: Tavily搜索API
 
 ## API接口
 
 ### POST /api/evaluate
-
 评估文章内容
 
 **请求**:
@@ -117,6 +125,12 @@ article-evaluator-demo/
   }
 }
 ```
+
+### 管理后台接口
+- GET /api/admin/benchmarks - 获取基准列表
+- GET /api/admin/benchmarks/:filename - 获取基准详情
+- POST /api/admin/benchmarks/regenerate - 重新生成基准
+- DELETE /api/admin/benchmarks/:filename - 删除基准
 
 ## 测试验证
 
@@ -154,9 +168,12 @@ A: 优化提示词工程，调整输出格式
 - 团队对齐模式（生成讨论引导）
 - 对比评估功能（多篇文章对比）
 - 待办清单功能（一键添加行动建议）
+- 批量更新基准功能
+- 版本历史对比
 
 ## 版本历史
 
+- **v1.3** (2026-03-13) - 管理后台优化：行业研究报告 + 重新生成功能
 - **v1.2** (2026-03-04) - P0优化版：决策优先级判断 + 优化卡片呈现
 - **v1.1** (2026-03-04) - LLM智能路由
 - **v1.0** (2026-03-04) - 初始版本
