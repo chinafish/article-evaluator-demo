@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const articleParser = require('../services/articleParser');
+const CognitiveOrchestrator = require('../services/CognitiveOrchestrator');
 
 router.get('/', async (req, res) => {
   // 设置 SSE 响应头
@@ -35,8 +36,17 @@ router.get('/', async (req, res) => {
       content: article.content?.substring(0, 200) + '...'
     });
 
-    // 测试：发送完成信号
-    sendProgress('complete', 100, '🎉 解析完成', { article });
+    // 步骤2: GICS分类 (10-30%)
+    sendProgress('gics', 15, '正在进行 GICS 行业分类...', {});
+    const gicsResult = await CognitiveOrchestrator.classifyGICS(article);
+    sendProgress('gics', 30, '✅ GICS 分类完成', {
+      gics4: gicsResult.gics4,
+      confidence: gicsResult.confidence,
+      industryName: gicsResult.industryName
+    });
+
+    // 继续测试...
+    sendProgress('complete', 100, '🎉 分类完成', { article, gicsResult });
     res.end();
 
   } catch (error) {

@@ -2475,6 +2475,11 @@
           alert(`文章解析成功：${data.data.title}`);
         }
 
+        if (data.step === 'gics' && data.progress === 30) {
+          console.log('[GICS Classified]', data.data);
+          alert(`GICS 分类：${data.data.industryName} (${data.data.gics4})\n置信度：${data.data.confidence}`);
+        }
+
         if (data.step === 'complete' || data.step === 'error') {
           setTimeout(() => eventSource.close(), 1000);
         }
