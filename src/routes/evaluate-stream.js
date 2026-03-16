@@ -31,6 +31,7 @@ router.get('/', async (req, res) => {
     }
 
     // 步骤1: 解析文章 (0-10%)
+    sendProgress('parsing', 0, '准备评估...', {});
     sendProgress('parsing', 5, '正在解析文章...', {});
     const article = await articleParser.parse(url || content);
     sendProgress('parsing', 10, '✅ 文章解析完成', {
@@ -39,7 +40,7 @@ router.get('/', async (req, res) => {
     });
 
     // 步骤2: GICS分类 (10-30%)
-    sendProgress('gics', 15, '正在进行 GICS 行业分类...', {});
+    sendProgress('gics', 15, 'GICS 行业分类中... (正在分析 163 个行业)', {});
     const gicsResult = await CognitiveOrchestrator.classifyGICS(article);
     sendProgress('gics', 30, '✅ GICS 分类完成', {
       gics4: gicsResult.gics4,
@@ -48,7 +49,7 @@ router.get('/', async (req, res) => {
     });
 
     // 步骤3: AI评估 (30-80%)
-    sendProgress('ai-eval', 35, '正在进行 AI 评估分析...', {});
+    sendProgress('ai-eval', 35, 'AI 评估分析中... (这是最大头的步骤，请稍候)', {});
 
     // 获取行业基准（简化版）
     const industryBenchmark = await benchmarkData.getByGics4(gicsResult.gics4);
@@ -65,7 +66,12 @@ router.get('/', async (req, res) => {
       (internalProgress) => {
         // AI评估内部进度回调 (35%-80%)
         const adjustedProgress = 35 + (internalProgress * 0.45);
-        sendProgress('ai-eval', Math.round(adjustedProgress), 'AI 评估分析中...', {});
+        const message = internalProgress < 50
+          ? 'AI 评估分析中... (这是最大头的步骤，请稍候)'
+          : internalProgress < 80
+          ? 'AI 评估分析中... (已完成一半)'
+          : 'AI 评估分析中... (即将完成)';
+        sendProgress('ai-eval', Math.round(adjustedProgress), message, {});
       }
     );
 
