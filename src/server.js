@@ -22,6 +22,7 @@ app.get('/demo', (req, res) => {
 // API路由
 app.use('/api', require('./routes/evaluate'));
 app.use('/api/admin', require('./routes/admin'));
+app.use('/api/evaluate-stream', require('./routes/evaluate-stream'));
 
 // 管理员页面
 app.get('/admin', (req, res) => {
@@ -101,7 +102,36 @@ app.get('/api/proxy', async (req, res) => {
   }
 });
 
-// 404处理
+// 性能报告API
+app.get('/api/performance/report', (req, res) => {
+  try {
+    const perfTracker = require('./utils/performanceTracker');
+    const report = perfTracker.getLatestReport();
+
+    if (!report) {
+      return res.json({
+        success: false,
+        error: {
+          message: '暂无性能报告，请先进行一次评估'
+        }
+      });
+    }
+
+    res.json({
+      success: true,
+      report
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: {
+        message: '获取性能报告失败: ' + error.message
+      }
+    });
+  }
+});
+
+// 404处理（必须放在最后）
 app.use((req, res) => {
   res.status(404).json({
     success: false,
