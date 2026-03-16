@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>认知智能体</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * {
       margin: 0;
@@ -289,8 +290,7 @@
       padding: 40px;
       background: #f9fafb;
       border-right: 1px solid #e5e7eb;
-      overflow-y: auto;
-      max-height: 800px;
+      /* 移除内部滚动，让整个页面自然滚动 */
     }
 
     /* 当原文面板收起时，移除右边框 */
@@ -1921,10 +1921,63 @@
     .floating-new-eval-btn .icon {
       font-size: 1.1em;
     }
+
+    /* 进度条样式 */
+    .progress-header {
+      position: sticky;
+      top: 0;
+      background: white;
+      padding: 16px 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      z-index: 1000;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+      transition: width 0.3s ease;
+    }
+
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: 14px;
+    }
+
+    .progress-text {
+      color: #64748b;
+    }
+
+    .progress-percentage {
+      font-weight: bold;
+      color: #3b82f6;
+    }
   </style>
 </head>
 <body>
   <div class="container">
+    <!-- 顶部进度条 -->
+    <div class="progress-header" id="progressHeader" style="display: none;">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+      </div>
+      <div class="progress-info">
+        <span class="progress-text" id="progressText">准备评估...</span>
+        <span class="progress-percentage" id="progressPercentage">0%</span>
+      </div>
+    </div>
+
     <div class="header">
       <h1>认知智能体</h1>
       <div class="subtitle">v1.4 信任机制版 - 置信度显示 · 数据溯源 · 不确定性标注 · 质量评分</div>
@@ -1998,6 +2051,9 @@
 
           <button type="submit" class="submit-btn" id="submitBtn">
             <span class="btn-text">开始评估</span>
+          </button>
+          <button type="button" onclick="testSSEConnection()" style="margin-top: 10px; padding: 10px 20px; background: #10b981; color: white; border: none; border-radius: 8px; cursor: pointer;">
+            🧪 测试 SSE 连接
           </button>
         </form>
 
@@ -2097,13 +2153,13 @@
           <div class="sticky-header-bar">
             <div class="header-content">
               <div class="article-info">
-                <div class="article-label">DOC 文章标题</div>
+                <div class="article-label"><i class="fas fa-file-alt"></i> 文章标题</div>
                 <div class="article-title" id="articleTitle">-</div>
               </div>
               <div class="header-actions">
                 <span class="analyzer-badge" id="analyzerBadge">行业认知基准（SaaS）</span>
                 <button class="source-toggle-btn" id="sourceToggleBtn" onclick="toggleSourcePanel()">
-                  <span class="icon">DOC</span>
+                  <i class="fas fa-file-alt"></i>
                   <span>查看原文</span>
                 </button>
               </div>
@@ -2237,19 +2293,19 @@
                 <!-- 1.1 行业研究报告（可点击，打开弹窗） -->
                 <div class="data-link-item" id="reportItem" onclick="showReportModal()" style="display: none;">
                   <div class="item-info">
-                    <div class="item-label">行业研究报告</div>
+                    <div class="item-label">📄 行业研究报告</div>
                     <div class="item-value" id="reportValue">-</div>
                   </div>
-                  <div class="item-icon">→</div>
+                  <div class="item-icon">🔍</div>
                 </div>
 
                 <!-- 2. 行业数据基准（可点击，打开弹窗） -->
                 <div class="data-link-item" id="benchmarkDataItem" onclick="showBenchmarkModal()" style="display: none;">
                   <div class="item-info">
-                    <div class="item-label">行业数据基准</div>
+                    <div class="item-label">📊 行业数据基准</div>
                     <div class="item-value" id="benchmarkDataValue">-</div>
                   </div>
-                  <div class="item-icon">→</div>
+                  <div class="item-icon">🔍</div>
                 </div>
 
                 <!-- 通用基准说明（当没有行业基准时显示） -->
@@ -2365,7 +2421,7 @@
 
   <!-- 浮动按钮：评估新文章 -->
   <button id="floatingNewEvalBtn" class="floating-new-eval-btn" onclick="backToInput()">
-    <span class="icon">Note</span>
+    <i class="fas fa-pen-to-square"></i>
     <span>评估新文章</span>
   </button>
 
@@ -2386,6 +2442,48 @@
       get sourceHtmlContent() { return sourceHtmlContent; },
       get sourceContent() { return sourceContent; }
     };
+
+    // 测试 SSE 连接
+    function testSSEConnection() {
+      const progressHeader = document.getElementById('progressHeader');
+      const progressFill = document.getElementById('progressFill');
+      const progressText = document.getElementById('progressText');
+      const progressPercentage = document.getElementById('progressPercentage');
+
+      // 显示进度条
+      progressHeader.style.display = 'block';
+      progressText.textContent = '正在连接...';
+
+      // 创建 SSE 连接
+      const eventSource = new EventSource('/api/evaluate-stream');
+
+      // 监听消息
+      eventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+
+        console.log('[SSE Received]', data);
+
+        // 更新进度条
+        progressFill.style.width = `${data.progress}%`;
+        progressText.textContent = data.message;
+        progressPercentage.textContent = `${data.progress}%`;
+
+        // 完成时关闭连接
+        if (data.step === 'complete' || data.step === 'error') {
+          setTimeout(() => {
+            eventSource.close();
+            alert('SSE 测试完成！');
+          }, 1000);
+        }
+      };
+
+      // 错误处理
+      eventSource.onerror = (error) => {
+        console.error('SSE Error:', error);
+        eventSource.close();
+        progressText.textContent = '❌ 连接失败';
+      };
+    }
 
     // 示例内容
     const examples = {
@@ -2572,13 +2670,33 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
 
       // 验证输入
       if (!data) {
-        showError('请输入URL或文章内容');
+        const errorMsg = currentTab === 'url'
+          ? '⚠️ 请输入文章URL'
+          : '⚠️ 请输入文章内容';
+        showError(errorMsg);
         return;
       }
 
-      if (currentTab === 'content' && data.length < 50) {
-        showError('内容过少，请至少输入50字');
-        return;
+      // URL格式验证
+      if (currentTab === 'url') {
+        try {
+          new URL(data);
+        } catch (e) {
+          showError('⚠️ URL格式不正确，请输入完整的URL（如：https://36kr.com/p/123456）');
+          return;
+        }
+      }
+
+      // 内容长度验证
+      if (currentTab === 'content') {
+        if (data.length < 50) {
+          showError(`⚠️ 内容过少（当前${data.length}字），请至少输入50字`);
+          return;
+        }
+        if (data.length > 10000) {
+          showError(`⚠️ 内容过多（当前${data.length}字），建议控制在5000字以内`);
+          return;
+        }
       }
 
       // 隐藏错误和结果
@@ -2640,13 +2758,18 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
         // 检查HTTP响应状态
         if (!response.ok) {
           console.error(`[HTTP错误] 状态码: ${response.status}`);
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+
+          // 尝试获取后端返回的详细错误信息
+          const errorData = await response.json().catch(() => null);
+          const errorMsg = errorData?.error?.message || `HTTP ${response.status}: ${response.statusText}`;
+          throw new Error(errorMsg);
         }
 
         const result = await response.json();
 
         if (!result.success) {
-          showError(result.error?.message || '评估失败，请重试');
+          const errorMsg = result.error?.message || '评估失败，请重试';
+          showError(`⚠️ ${errorMsg}`);
           return;
         }
 
@@ -4160,27 +4283,143 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
             `;
           }
 
-          // 发展趋势
-          if (report.development_trends && report.development_trends.length > 0) {
+          // 发展趋势（完整显示，与管理后台一致）
+          if (report.development_trends) {
+            const dt = report.development_trends;
             reportHTML += `
-            <div class="report-section">
-              <h4>发展趋势</h4>
+              <div class="report-section">
+                <h4>📈 发展趋势</h4>
             `;
-            report.development_trends.forEach(trend => {
-              reportHTML += `<p><strong>${trend.trend || trend.name}：</strong>${trend.description || trend.content}</p>`;
-            });
+
+            // 技术趋势
+            if (dt.technology_trends && dt.technology_trends.length > 0) {
+              reportHTML += `<p><strong>技术趋势：</strong></p><ul>`;
+              dt.technology_trends.forEach(t => {
+                reportHTML += `<li><strong>${t.trend}</strong>（${t.timeframe}）: ${t.description}</li>`;
+              });
+              reportHTML += `</ul>`;
+            }
+
+            // 商业模式趋势
+            if (dt.business_model_trends && dt.business_model_trends.length > 0) {
+              reportHTML += `<p><strong>商业模式趋势：</strong></p><ul>`;
+              dt.business_model_trends.forEach(t => {
+                reportHTML += `<li><strong>${t.trend}</strong>（${t.timeframe}）: ${t.description}</li>`;
+              });
+              reportHTML += `</ul>`;
+            }
+
+            // 市场趋势
+            if (dt.market_trends && dt.market_trends.length > 0) {
+              reportHTML += `<p><strong>市场趋势：</strong></p><ul>`;
+              dt.market_trends.forEach(t => {
+                reportHTML += `<li><strong>${t.trend}</strong>（${t.timeframe}）: ${t.description}</li>`;
+              });
+              reportHTML += `</ul>`;
+            }
+
+            // 政策影响
+            if (dt.policy_impact) {
+              reportHTML += `<p><strong>政策影响：</strong>${dt.policy_impact}</p>`;
+            }
+
             reportHTML += `</div>`;
           }
 
-          // 投资机会
-          if (report.investment_opportunities && report.investment_opportunities.length > 0) {
+          // 关键挑战
+          if (report.key_challenges && report.key_challenges.challenges) {
             reportHTML += `
-            <div class="report-section">
-              <h4>投资机会</h4>
+              <div class="report-section">
+                <h4>⚠️ 关键挑战</h4>
+                <ul>
             `;
-            report.investment_opportunities.forEach(opp => {
-              reportHTML += `<p><strong>${opp.opportunity || opp.name}：</strong>${opp.description || opp.content}</p>`;
+            report.key_challenges.challenges.forEach(c => {
+              reportHTML += `<li><strong>${c.area}</strong>（影响程度: ${c.impact_level}）: ${c.description}</li>`;
             });
+            reportHTML += `
+                </ul>
+              </div>
+            `;
+          }
+
+          // 发展机遇
+          if (report.opportunities && report.opportunities.opportunities) {
+            reportHTML += `
+              <div class="report-section">
+                <h4>💡 发展机遇</h4>
+                <ul>
+            `;
+            report.opportunities.opportunities.forEach(o => {
+              reportHTML += `<li><strong>${o.area}</strong>（潜力: ${o.potential}）: ${o.description}</li>`;
+            });
+            reportHTML += `
+                </ul>
+              </div>
+            `;
+          }
+
+          // 成功要素
+          if (report.success_factors) {
+            const sf = report.success_factors;
+            reportHTML += `
+              <div class="report-section">
+                <h4>🏆 成功要素</h4>
+            `;
+
+            // 关键成功要素
+            if (sf.critical_success_factors && sf.critical_success_factors.length > 0) {
+              reportHTML += `<p><strong>关键成功要素：</strong></p><ul>`;
+              sf.critical_success_factors.forEach(f => {
+                reportHTML += `<li>${f}</li>`;
+              });
+              reportHTML += `</ul>`;
+            }
+
+            // 竞争优势
+            if (sf.competitive_advantages && sf.competitive_advantages.length > 0) {
+              reportHTML += `<p><strong>竞争优势：</strong></p><ul>`;
+              sf.competitive_advantages.forEach(a => {
+                reportHTML += `<li>${a}</li>`;
+              });
+              reportHTML += `</ul>`;
+            }
+
+            reportHTML += `</div>`;
+          }
+
+          // 投资洞察
+          if (report.investment_insights) {
+            const ii = report.investment_insights;
+            reportHTML += `
+              <div class="report-section">
+                <h4>💰 投资洞察</h4>
+                ${ii.attractiveness ? `<p><strong>投资吸引力：</strong>${ii.attractiveness}</p>` : ''}
+                ${ii.investment_thesis ? `<p><strong>投资论点：</strong>${ii.investment_thesis}</p>` : ''}
+                ${ii.key_metrics && ii.key_metrics.length > 0 ? `<p><strong>关键指标：</strong>${ii.key_metrics.join('、')}</p>` : ''}
+                ${ii.risk_factors ? `<p><strong>风险因素：</strong>${ii.risk_factors}</p>` : ''}
+                ${ii.focus_areas && ii.focus_areas.length > 0 ? `<p><strong>重点领域：</strong>${ii.focus_areas.join('、')}</p>` : ''}
+              </div>
+            `;
+          }
+
+          // 产业链分析
+          if (report.industry_chain) {
+            const ic = report.industry_chain;
+            reportHTML += `
+              <div class="report-section">
+                <h4>🔗 产业链分析</h4>
+            `;
+
+            if (ic.upstream) {
+              reportHTML += `<p><strong>上游：</strong>${ic.upstream}</p>`;
+            }
+            if (ic.midstream) {
+              reportHTML += `<p><strong>中游：</strong>${ic.midstream}</p>`;
+            }
+            if (ic.downstream) {
+              reportHTML += `<p><strong>下游：</strong>${ic.downstream}</p>`;
+            }
+
             reportHTML += `</div>`;
           }
 
