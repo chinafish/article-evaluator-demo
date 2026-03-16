@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const articleParser = require('../services/articleParser');
 
 router.get('/', async (req, res) => {
   // 设置 SSE 响应头
@@ -21,18 +22,26 @@ router.get('/', async (req, res) => {
   try {
     const { url, content } = req.query;
 
-    // 测试：发送初始进度
-    sendProgress('test', 0, 'SSE 连接成功', { timestamp: Date.now() });
+    if (!url && !content) {
+      sendProgress('error', 0, '❌ 请提供文章 URL 或内容', {});
+      return res.end();
+    }
 
-    // 等待 3 秒后关闭连接（测试用）
-    setTimeout(() => {
-      sendProgress('complete', 100, '🎉 测试完成', {});
-      res.end();
-    }, 3000);
+    // 步骤1: 解析文章 (0-10%)
+    sendProgress('parsing', 5, '正在解析文章...', {});
+    const article = await articleParser.parse(url || content);
+    sendProgress('parsing', 10, '✅ 文章解析完成', {
+      title: article.title,
+      content: article.content?.substring(0, 200) + '...'
+    });
+
+    // 测试：发送完成信号
+    sendProgress('complete', 100, '🎉 解析完成', { article });
+    res.end();
 
   } catch (error) {
     console.error('[SSE Error]', error);
-    sendProgress('error', 0, '❌ 连接失败', { error: error.message });
+    sendProgress('error', 0, '❌ 解析失败', { error: error.message });
     res.end();
   }
 });

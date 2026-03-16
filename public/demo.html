@@ -2468,12 +2468,15 @@
         progressText.textContent = data.message;
         progressPercentage.textContent = `${data.progress}%`;
 
-        // 完成时关闭连接
+        // 根据步骤处理
+        if (data.step === 'parsing' && data.progress === 10) {
+          console.log('[Article Parsed]', data.data);
+          // 显示文章标题
+          alert(`文章解析成功：${data.data.title}`);
+        }
+
         if (data.step === 'complete' || data.step === 'error') {
-          setTimeout(() => {
-            eventSource.close();
-            alert('SSE 测试完成！');
-          }, 1000);
+          setTimeout(() => eventSource.close(), 1000);
         }
       };
 
