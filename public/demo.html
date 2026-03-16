@@ -2563,6 +2563,9 @@
 
       const eventSource = new EventSource(`/api/evaluate-stream?${params.toString()}`);
 
+      // 跟踪连接状态
+      let isComplete = false;
+
       // 监听消息
       eventSource.onmessage = (event) => {
         const data = JSON.parse(event.data);
@@ -2579,6 +2582,7 @@
 
         // 完成时关闭连接
         if (data.step === 'complete' || data.step === 'error') {
+          isComplete = true;
           setTimeout(() => {
             eventSource.close();
             if (data.step === 'complete') {
@@ -2589,9 +2593,20 @@
       };
 
       eventSource.onerror = (error) => {
-        console.error('SSE Error:', error);
+        console.log('[SSE Connection closed]', error);
         eventSource.close();
-        showError('连接中断，请重试');
+
+        // 只有在未收到 complete 的情况下才显示错误
+        //（服务器关闭连接是正常的，不是错误）
+        if (!isComplete) {
+          console.error('[SSE Error] Connection closed before completion');
+          showError('连接中断，请重试');
+
+          // 恢复按钮状态
+          const submitBtn = document.getElementById('submitBtn');
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<span class="btn-text">开始评估</span>';
+        }
       };
     }
 
