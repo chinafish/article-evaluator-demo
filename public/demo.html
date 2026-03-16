@@ -2574,8 +2574,8 @@
         progressText.textContent = data.message;
         progressPercentage.textContent = `${data.progress}%`;
 
-        // 处理各个步骤
-        handleStepUpdate(data);
+        // 处理各个步骤（传递 articleInput 以便完成后获取完整结果）
+        handleStepUpdate(data, articleInput);
 
         // 完成时关闭连接
         if (data.step === 'complete' || data.step === 'error') {
@@ -2595,45 +2595,95 @@
       };
     }
 
-    function handleStepUpdate(data) {
+    function handleStepUpdate(data, articleInput) {
       switch(data.step) {
         case 'parsing':
           if (data.progress === 10) {
             console.log('[Article Parsed]', data.data);
-            // TODO: 显示文章信息
           }
           break;
 
         case 'gics':
           if (data.progress === 30) {
             console.log('[GICS Classified]', data.data);
-            // TODO: 显示 GICS 分类结果
           }
           break;
 
         case 'ai-eval':
           if (data.progress === 80) {
             console.log('[AI Eval Complete]', data.data);
-            // TODO: 显示 AI 评估结果
           }
           break;
 
         case 'strategy':
           if (data.progress === 90) {
             console.log('[Strategy Generated]', data.data);
-            // TODO: 显示战略建议
           }
           break;
 
         case 'complete':
-          console.log('[Evaluation Complete]', data.data);
-          // TODO: 显示完整结果
+          console.log('[SSE Progress Complete]', data.data);
+          // SSE 进度完成，现在获取完整评估结果
+          fetchCompleteEvaluation(articleInput);
           break;
 
         case 'error':
           console.error('[Evaluation Error]', data.data);
+          const submitBtn = document.getElementById('submitBtn');
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<span class="btn-text">开始评估</span>';
           showError(data.data.error || '评估失败');
           break;
+      }
+    }
+
+    // 使用原有 API 获取完整评估结果
+    async function fetchCompleteEvaluation(articleInput) {
+      try {
+        const response = await fetch('/api/evaluate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            type: articleInput.url ? 'url' : 'content',
+            data: articleInput.url || articleInput.content
+          })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          // 隐藏进度条
+          const progressHeader = document.getElementById('progressHeader');
+          progressHeader.style.display = 'none';
+
+          // 显示结果
+          displayResult(result.evaluation);
+
+          // 恢复按钮状态
+          const submitBtn = document.getElementById('submitBtn');
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<span class="btn-text">开始评估</span>';
+
+          // 显示浮动按钮
+          document.getElementById('floatingNewEvalBtn').classList.add('show');
+
+        } else if (result.requires_user_action) {
+          // 处理需要用户选择的情况
+          showRouteDecision(result);
+        } else {
+          throw new Error(result.error?.message || '评估失败');
+        }
+
+      } catch (error) {
+        console.error('[获取完整结果失败]', error);
+        showError('评估失败：' + error.message);
+
+        // 恢复按钮状态
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span class="btn-text">开始评估</span>';
       }
     }
 
@@ -2838,14 +2888,13 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
       }
     }
 
-    // 提交表单
+    // 提交表单 - 使用 SSE 流式评估
     document.getElementById('evaluationForm').addEventListener('submit', async function(e) {
       e.preventDefault();
 
       const submitBtn = document.getElementById('submitBtn');
       const errorMessage = document.getElementById('errorMessage');
       const resultSection = document.getElementById('resultSection');
-      const evaluationProgress = document.getElementById('evaluationProgress');
 
       // 获取输入
       let data = '';
@@ -2898,45 +2947,25 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<div class="spinner"></div><span class="btn-text">分析中...</span>';
 
-      // 显示评估进度条
-      if (evaluationProgress) {
-        evaluationProgress.style.display = 'block';
-        // 重置进度
-        updateEvaluationProgress(0, 0);
-      }
-
-      // 模拟进度更新（使用更合理的时间分配）
-      const progressSimulation = (() => {
-        let timeouts = [];
-
-        const updateSteps = [
-          { step: 0, percentage: 10, delay: 2000 },   // 步骤1: 解析文章 - 2秒
-          { step: 1, percentage: 25, delay: 4000 },   // 步骤2: 识别行业 - 4秒
-          { step: 2, percentage: 50, delay: 8000 },   // 步骤3: 多维评估 - 8秒
-          { step: 3, percentage: 75, delay: 12000 },  // 步骤4: 战略洞察 - 12秒
-          { step: 4, percentage: 90, delay: 15000 },  // 步骤5: 置信度报告 - 15秒
-          { step: 5, percentage: 95, delay: 20000 }   // 等待完成 - 20秒
-        ];
-
-        updateSteps.forEach(({ step, percentage, delay }) => {
-          const timeoutId = setTimeout(() => {
-            updateEvaluationProgress(step, percentage);
-          }, delay);
-          timeouts.push(timeoutId);
-        });
-
-        return () => {
-          timeouts.forEach(id => clearTimeout(id));
-        };
-      })();
-
+      // 使用 SSE 流式评估
       try {
-        // 发送请求
-        const response = await fetch('/api/evaluate', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+        const articleInput = currentTab === 'url'
+          ? { url: data }
+          : { content: data };
+
+        await startEvaluation(articleInput);
+
+        // 恢复按钮状态
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span class="btn-text">开始评估</span>';
+
+      } catch (error) {
+        console.error('[评估错误]', error);
+        showError('评估失败：' + error.message);
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span class="btn-text">开始评估</span>';
+      }
+    });
           body: JSON.stringify({
             type: currentTab,
             data: data
