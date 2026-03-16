@@ -2480,6 +2480,15 @@
           alert(`GICS 分类：${data.data.industryName} (${data.data.gics4})\n置信度：${data.data.confidence}`);
         }
 
+        if (data.step === 'ai-eval') {
+          if (data.progress < 80) {
+            console.log(`[AI Evaluating] ${data.progress}%`);
+          } else {
+            console.log('[AI Eval Complete]', data.data);
+            alert(`AI 评估完成\n决策优先级：${data.data.decisionPriority}\n相关性：${data.data.relevance}`);
+          }
+        }
+
         if (data.step === 'complete' || data.step === 'error') {
           setTimeout(() => eventSource.close(), 1000);
         }

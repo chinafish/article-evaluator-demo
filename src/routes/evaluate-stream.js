@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const articleParser = require('../services/articleParser');
 const CognitiveOrchestrator = require('../services/CognitiveOrchestrator');
+const articleEvaluator = require('../services/articleEvaluatorWithBenchmark');
+const benchmarkData = require('../services/benchmarkData');
 
 router.get('/', async (req, res) => {
   // 设置 SSE 响应头
@@ -45,8 +47,36 @@ router.get('/', async (req, res) => {
       industryName: gicsResult.industryName
     });
 
+    // 步骤3: AI评估 (30-80%)
+    sendProgress('ai-eval', 35, '正在进行 AI 评估分析...', {});
+
+    // 获取行业基准（简化版）
+    const industryBenchmark = await benchmarkData.getByGics4(gicsResult.gics4);
+
+    // 如果没有行业基准，使用通用基准
+    const benchmark = industryBenchmark && industryBenchmark.length > 0
+      ? industryBenchmark[0]
+      : { gics4: '通用', evaluation_dimensions: {}, scoring_criteria: {}, comparison_standards: {}, blind_spots_to_check: {} };
+
+    const aiResult = await articleEvaluator.evaluate(
+      article,
+      benchmark,
+      null, // report
+      (internalProgress) => {
+        // AI评估内部进度回调 (35%-80%)
+        const adjustedProgress = 35 + (internalProgress * 0.45);
+        sendProgress('ai-eval', Math.round(adjustedProgress), 'AI 评估分析中...', {});
+      }
+    );
+
+    sendProgress('ai-eval', 80, '✅ AI 评估完成', {
+      decisionPriority: aiResult.decision_priority || 'N/A',
+      relevance: aiResult.relevance_score || 'N/A',
+      urgency: aiResult.urgency_level || 'N/A'
+    });
+
     // 继续测试...
-    sendProgress('complete', 100, '🎉 分类完成', { article, gicsResult });
+    sendProgress('complete', 100, '🎉 评估完成', { article, gicsResult, aiResult });
     res.end();
 
   } catch (error) {

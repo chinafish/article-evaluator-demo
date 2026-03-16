@@ -9,6 +9,7 @@
 
 const axios = require('axios');
 const ModelRouter = require('./ModelRouter');
+const perfTracker = require('../utils/performanceTracker');
 
 class ArticleEvaluatorWithBenchmark {
   constructor() {
@@ -20,19 +21,37 @@ class ArticleEvaluatorWithBenchmark {
    * @param {Object} article - 文章对象 {title, content, source, url}
    * @param {Object} benchmark - 行业判断基准
    * @param {Object} report - 行业研究报告（可选）
+   * @param {Function} progressCallback - 进度回调函数（可选）
    * @returns {Promise<Object>} 评估结果
    */
-  async evaluate(article, benchmark, report = null) {
+  async evaluate(article, benchmark, report = null, progressCallback = null) {
     console.log(`[文章评估] 开始评估: ${article.title}`);
+    perfTracker.start('文章评估');
 
     // 1. 构建评估Prompt
+    perfTracker.start('构建评估Prompt');
     const prompt = this.buildEvaluationPrompt(article, benchmark, report);
+    perfTracker.end('构建评估Prompt');
+
+    // 在调用 AI 前发送进度
+    if (progressCallback) progressCallback(0);
 
     // 2. 调用AI评估（使用ModelRouter，自动选择qwen3.5-plus）
+    perfTracker.start('AI评估调用');
     const evaluationContent = await this.callAI(prompt);
 
+    // 在调用 AI 后发送进度
+    if (progressCallback) progressCallback(50);
+
+    perfTracker.end('AI评估调用');
+
     // 3. 解析评估结果
+    perfTracker.start('解析评估结果');
     const evaluation = this.parseEvaluation(evaluationContent);
+    perfTracker.end('解析评估结果');
+
+    // 完成时发送进度
+    if (progressCallback) progressCallback(100);
 
     // 4. 添加元数据
     evaluation.article_title = article.title;
@@ -41,6 +60,7 @@ class ArticleEvaluatorWithBenchmark {
     evaluation.benchmark_gics4 = benchmark.gics4;
     evaluation.evaluated_at = new Date().toISOString();
 
+    perfTracker.end('文章评估');
     console.log(`[文章评估] 评估完成: ${article.title}`);
     return evaluation;
   }
