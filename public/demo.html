@@ -2052,9 +2052,6 @@
           <button type="submit" class="submit-btn" id="submitBtn">
             <span class="btn-text">开始评估</span>
           </button>
-          <button type="button" onclick="testSSEConnection()" style="margin-top: 10px; padding: 10px 20px; background: #10b981; color: white; border: none; border-radius: 8px; cursor: pointer;">
-            🧪 测试 SSE 连接
-          </button>
         </form>
 
         <div class="error-message" id="errorMessage"></div>
@@ -2500,6 +2497,114 @@
         eventSource.close();
         progressText.textContent = '❌ 连接失败';
       };
+    }
+
+    // SSE 评估处理函数
+    async function startEvaluation(articleInput) {
+      const progressHeader = document.getElementById('progressHeader');
+      const progressFill = document.getElementById('progressFill');
+      const progressText = document.getElementById('progressText');
+      const progressPercentage = document.getElementById('progressPercentage');
+
+      // 显示进度条
+      progressHeader.style.display = 'block';
+      progressFill.style.width = '0%';
+      progressText.textContent = '准备评估...';
+      progressPercentage.textContent = '0%';
+
+      // 隐藏评估结果区域
+      const resultSection = document.getElementById('resultSection');
+      resultSection.classList.remove('show');
+
+      // 创建 SSE 连接
+      const params = new URLSearchParams();
+      if (articleInput.url) {
+        params.append('url', articleInput.url);
+      } else {
+        params.append('content', articleInput.content);
+      }
+
+      const eventSource = new EventSource(`/api/evaluate-stream?${params.toString()}`);
+
+      // 监听消息
+      eventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+
+        console.log('[SSE Progress]', data);
+
+        // 更新进度条
+        progressFill.style.width = `${data.progress}%`;
+        progressText.textContent = data.message;
+        progressPercentage.textContent = `${data.progress}%`;
+
+        // 处理各个步骤
+        handleStepUpdate(data);
+
+        // 完成时关闭连接
+        if (data.step === 'complete' || data.step === 'error') {
+          setTimeout(() => {
+            eventSource.close();
+            if (data.step === 'complete') {
+              showCompleteButton();
+            }
+          }, 1000);
+        }
+      };
+
+      eventSource.onerror = (error) => {
+        console.error('SSE Error:', error);
+        eventSource.close();
+        showError('连接中断，请重试');
+      };
+    }
+
+    function handleStepUpdate(data) {
+      switch(data.step) {
+        case 'parsing':
+          if (data.progress === 10) {
+            console.log('[Article Parsed]', data.data);
+            // TODO: 显示文章信息
+          }
+          break;
+
+        case 'gics':
+          if (data.progress === 30) {
+            console.log('[GICS Classified]', data.data);
+            // TODO: 显示 GICS 分类结果
+          }
+          break;
+
+        case 'ai-eval':
+          if (data.progress === 80) {
+            console.log('[AI Eval Complete]', data.data);
+            // TODO: 显示 AI 评估结果
+          }
+          break;
+
+        case 'strategy':
+          if (data.progress === 90) {
+            console.log('[Strategy Generated]', data.data);
+            // TODO: 显示战略建议
+          }
+          break;
+
+        case 'complete':
+          console.log('[Evaluation Complete]', data.data);
+          // TODO: 显示完整结果
+          break;
+
+        case 'error':
+          console.error('[Evaluation Error]', data.data);
+          showError(data.data.error || '评估失败');
+          break;
+      }
+    }
+
+    function showCompleteButton() {
+      // 显示完成按钮或自动滚动到底部
+      const resultSection = document.getElementById('resultSection');
+      resultSection.classList.add('show');
+      resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     // 示例内容

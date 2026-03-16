@@ -75,8 +75,16 @@ router.get('/', async (req, res) => {
       urgency: aiResult.urgency_level || 'N/A'
     });
 
-    // 继续测试...
-    sendProgress('complete', 100, '🎉 评估完成', { article, gicsResult, aiResult });
+    // 步骤4: 生成战略建议 (80-90%)
+    sendProgress('strategy', 85, '正在生成战略建议...', {});
+    const finalResult = {
+      article,
+      gics: gicsResult,
+      evaluation: aiResult
+    };
+
+    // 步骤5: 完成 (90-100%)
+    sendProgress('complete', 100, '🎉 评估完成', finalResult);
     res.end();
 
   } catch (error) {
