@@ -30,6 +30,15 @@ router.get('/', async (req, res) => {
       return res.end();
     }
 
+    // 超时处理
+    const TIMEOUT = 180000; // 3分钟
+    const timeout = setTimeout(() => {
+      sendProgress('error', 0, '❌ 评估超时', {
+        error: '评估时间过长，请稍后重试'
+      });
+      res.end();
+    }, TIMEOUT);
+
     // 步骤1: 解析文章 (0-10%)
     sendProgress('parsing', 0, '准备评估...', {});
     sendProgress('parsing', 5, '正在解析文章...', {});
@@ -88,6 +97,9 @@ router.get('/', async (req, res) => {
       gics: gicsResult,
       evaluation: aiResult
     };
+
+    // 在成功完成时清除超时
+    clearTimeout(timeout);
 
     // 步骤5: 完成 (90-100%)
     sendProgress('complete', 100, '🎉 评估完成', finalResult);

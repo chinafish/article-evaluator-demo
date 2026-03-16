@@ -2531,7 +2531,8 @@
       eventSource.onerror = (error) => {
         console.error('SSE Error:', error);
         eventSource.close();
-        progressText.textContent = '❌ 连接失败';
+        progressText.textContent = '❌ 连接中断';
+        showRetryButton(articleInput);
       };
     }
 
@@ -2641,6 +2642,35 @@
       const resultSection = document.getElementById('resultSection');
       resultSection.classList.add('show');
       resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function showRetryButton(articleInput) {
+      const progressHeader = document.getElementById('progressHeader');
+      const progressInfo = progressHeader.querySelector('.progress-info');
+
+      // 移除旧的重试按钮
+      const existingButton = document.getElementById('retryButton');
+      if (existingButton) existingButton.remove();
+
+      // 创建重试按钮
+      const button = document.createElement('button');
+      button.id = 'retryButton';
+      button.textContent = '🔄 重新评估';
+      button.style.cssText = `
+        padding: 8px 16px;
+        background: #ef4444;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+      `;
+      button.onclick = () => {
+        button.remove();
+        startEvaluation(articleInput);
+      };
+
+      progressInfo.appendChild(button);
     }
 
     // 示例内容
