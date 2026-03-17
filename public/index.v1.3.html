@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文章评估智能体 v1.3 - 效率优先版</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      font-size: 2em;
+      margin-bottom: 8px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .header .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.9em;
+      margin-top: 8px;
+    }
+
+    .main-card {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+
+    /* 文章标题卡片 */
+    .article-title-card {
+      background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%);
+      backdrop-filter: blur(10px);
+      padding: 20px 30px;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .article-title-card .meta {
+      font-size: 0.85em;
+      color: #6b7280;
+      margin-bottom: 8px;
+    }
+
+    .article-title-card .title {
+      font-size: 1.3em;
+      font-weight: 700;
+      color: #1f2937;
+      line-height: 1.4;
+    }
+
+    /* BLOCK 0: 总体判断（首屏） */
+    .block-0 {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 30px;
+      color: white;
+    }
+
+    .block-title {
+      font-size: 1.2em;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .conclusion-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .tag {
+      background: rgba(255,255,255,0.2);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.9em;
+    }
+
+    .judgment {
+      font-size: 1.5em;
+      font-weight: 700;
+      margin-bottom: 20px;
+      padding: 15px 20px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .metric-item {
+      background: rgba(255,255,255,0.1);
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 0.9em;
+    }
+
+    .metric-label {
+      opacity: 0.8;
+      margin-bottom: 5px;
+    }
+
+    .metric-value {
+      font-weight: 600;
+      font-size: 1.1em;
+    }
+
+    .method {
+      background: rgba(255,255,255,0.1);
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 0.9em;
+      opacity: 0.9;
+    }
+
+    /* BLOCK 1/2/3: 可折叠区域 */
+    .collapsible-block {
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .block-header {
+      padding: 20px 30px;
+      background: #f9fafb;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+      transition: background 0.2s;
+    }
+
+    .block-header:hover {
+      background: #f3f4f6;
+    }
+
+    .block-header .title {
+      font-size: 1.1em;
+      font-weight: 600;
+      color: #1f2937;
+    }
+
+    .block-header .icon {
+      transition: transform 0.3s;
+      font-size: 0.9em;
+      color: #6b7280;
+    }
+
+    .block-header.collapsed .icon {
+      transform: rotate(-90deg);
+    }
+
+    .block-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+    }
+
+    .block-content.expanded {
+      max-height: 5000px;
+    }
+
+    .block-inner {
+      padding: 30px;
+    }
+
+    /* 数据核查表格 */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.9em;
+    }
+
+    .data-table th,
+    .data-table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .data-table th {
+      background: #f9fafb;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .data-table tr:hover {
+      background: #f9fafb;
+    }
+
+    /* Tier标签 */
+    .tier-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.8em;
+      font-weight: 600;
+      position: relative;
+      cursor: help;
+    }
+
+    .tier-badge.tier-1 {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .tier-badge.tier-2 {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .tier-badge.tier-3 {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .tier-badge.tier-4 {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .tier-badge:hover::after {
+      content: attr(data-description);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1f2937;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.75em;
+      white-space: nowrap;
+      margin-bottom: 5px;
+      z-index: 10;
+    }
+
+    /* 决策建议 */
+    .decision-advice {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.8em;
+      font-weight: 600;
+    }
+
+    .decision-advice.yes {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .decision-advice.warning {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .decision-advice.no {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    /* 逻辑核查 */
+    .logic-check {
+      margin: 20px 0;
+      padding: 15px;
+      background: #f9fafb;
+      border-radius: 8px;
+    }
+
+    .logic-check-item {
+      margin-bottom: 15px;
+    }
+
+    .logic-check-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .logic-check-title {
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 8px;
+    }
+
+    .logic-check-content {
+      font-size: 0.9em;
+      color: #4b5563;
+      line-height: 1.6;
+    }
+
+    /* 认知盲区 */
+    .blind-spot {
+      margin: 20px 0;
+      padding: 15px;
+      background: #fef3c7;
+      border-radius: 8px;
+      border-left: 4px solid #f59e0b;
+    }
+
+    .blind-spot-title {
+      font-weight: 600;
+      color: #92400e;
+      margin-bottom: 10px;
+    }
+
+    .blind-spot-content {
+      font-size: 0.9em;
+      color: #78350f;
+      line-height: 1.6;
+    }
+
+    /* 行业全景 */
+    .industry-overview {
+      background: #eff6ff;
+      padding: 20px;
+      border-radius: 8px;
+      border-left: 4px solid #3b82f6;
+    }
+
+    .industry-overview-title {
+      font-weight: 600;
+      color: #1e40af;
+      margin-bottom: 15px;
+    }
+
+    .industry-overview-content {
+      font-size: 0.9em;
+      color: #1e3a8a;
+      line-height: 1.6;
+    }
+
+    /* 展开/收起按钮 */
+    .expand-all-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-size: 0.9em;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      transition: all 0.3s;
+    }
+
+    .expand-all-btn:hover {
+      background: #5a67d8;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+    }
+
+    /* 响应式 */
+    @media (max-width: 768px) {
+      .metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .data-table {
+        font-size: 0.8em;
+      }
+
+      .block-inner {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>文章评估智能体 v1.3</h1>
+      <div class="badge">效率优先版 - 5秒快速判断</div>
+    </div>
+
+    <div class="main-card">
+      <!-- 文章标题卡片 -->
+      <div class="article-title-card">
+        <div class="meta">36氪 · 2025-03-16</div>
+        <div class="title">2025年度盘点：SaaS行业的"AI大考"与上市公司的生死突围</div>
+      </div>
+
+      <!-- BLOCK 0: 总体判断（首屏） -->
+      <div class="block-0">
+        <div class="block-title">📊 总体判断</div>
+
+        <div class="conclusion-tags">
+          <span class="tag">⚠️ 竞对动态</span>
+          <span class="tag">📊 行业趋势</span>
+          <span class="tag">💡 产品策略</span>
+          <span class="tag">💰 投资参考</span>
+        </div>
+
+        <div class="judgment">基本采信</div>
+
+        <div class="metrics">
+          <div class="metric-item">
+            <div class="metric-label">事实核查</div>
+            <div class="metric-value">2处有偏差</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-label">逻辑核查</div>
+            <div class="metric-value">1处有问题</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-label">盲点提醒</div>
+            <div class="metric-value">3项未提及</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-label">时效性</div>
+            <div class="metric-value">2025 Q2-Q3需重点关注</div>
+          </div>
+        </div>
+
+        <div class="method">
+          <strong>判断方法：</strong>基于SaaS行业企业图谱、AI生成的行业研究报告、GICS四级分类，通过数据印证、逻辑推断、行业常识进行核查。
+        </div>
+      </div>
+
+      <!-- BLOCK 1: 核查详情 -->
+      <div class="collapsible-block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <div class="title">📋 核查详情</div>
+          <div class="icon">▼</div>
+        </div>
+        <div class="block-content">
+          <div class="block-inner">
+            <h3>D. 数据核查清单</h3>
+
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>文章说</th>
+                  <th>实际情况</th>
+                  <th>来源</th>
+                  <th>判定</th>
+                  <th>决策建议</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>2025年中国SaaS市场规模1860亿元</td>
+                  <td>1860亿元</td>
+                  <td>
+                    <span class="tier-badge tier-2" data-description="权威机构：IDC、Gartner等">Tier 2: IDC</span>
+                  </td>
+                  <td>✅吻合</td>
+                  <td>
+                    <span class="decision-advice yes">✅可以引用</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>北森简历解析准确率98.7%</td>
+                  <td>未找到第三方验证</td>
+                  <td>
+                    <span class="tier-badge tier-3" data-description="企业自报：公司财报、宣传材料">Tier 3: 企业自报</span>
+                  </td>
+                  <td>⚠️需验证</td>
+                  <td>
+                    <span class="decision-advice warning">⚠️需第三方验证</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>超60%厂商仅通过API简单封装</td>
+                  <td>未找到原始报告链接</td>
+                  <td>
+                    <span class="tier-badge tier-3" data-description="二手引用：媒体引用、转载">Tier 3: 艾瑞咨询（二手）</span>
+                  </td>
+                  <td>⚠️需验证</td>
+                  <td>
+                    <span class="decision-advice warning">⚠️需查看原文</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h3>E. 逻辑核查清单</h3>
+
+            <div class="logic-check">
+              <div class="logic-check-item">
+                <div class="logic-check-title">E1. 文章论点核查</div>
+                <div class="logic-check-content">
+                  <strong>论点1：</strong>"未来五年，所有SaaS要么变成AI Native，要么被淘汰"<br>
+                  <strong>验证结果：</strong>⚠️逻辑跳跃<br>
+                  <strong>验证依据：</strong>这是清华大学专家的个人预测，不是必然规律。历史上也有很多企业不追热点但活得很好（如致远）。<br>
+                  <strong>决策建议：</strong><span class="decision-advice warning">⚠️需补充验证</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="logic-check">
+              <div class="logic-check-item">
+                <div class="logic-check-title">E2. 隐含错误前提</div>
+                <div class="logic-check-content">
+                  <strong>隐含前提1：</strong>文章默认"AI转型越激进越好"<br>
+                  <strong>问题：</strong>金蝶激进投入导致亏损2.1亿元，致远保守策略反而续费率89%、盈利稳定<br>
+                  <strong>风险：</strong>读者可能误以为必须All-in AI，忽略自身节奏<br>
+                  <strong>补充信息：</strong>AI转型需结合自身资源，不是越激进越好
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BLOCK 2: 认知盲区 -->
+      <div class="collapsible-block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <div class="title">🧠 认知盲区</div>
+          <div class="icon">▼</div>
+        </div>
+        <div class="block-content">
+          <div class="block-inner">
+            <h3>F. 盲点提醒</h3>
+
+            <div class="blind-spot">
+              <div class="blind-spot-title">F1. 文章未提及的重要信息</div>
+              <div class="blind-spot-content">
+                <strong>缺失维度1：技术实现细节</strong><br>
+                缺失内容：AI Native的技术架构到底长什么样？Multi-Agent如何协同？<br>
+                为什么重要：产品负责人需要知道"如何实现"，而不只是"是什么"<br>
+                补充渠道：需查询北森AI Talent OS的技术白皮书、专利文档
+              </div>
+            </div>
+
+            <div class="blind-spot">
+              <div class="blind-spot-title">F2. 行业常见误解</div>
+              <div class="blind-spot-content">
+                <strong>误解1："AI功能越多，产品越智能"</strong><br>
+                真实情况：北森只有3个AI Agent但协同效果好，泛微AI功能多但卡顿<br>
+                数据支撑：北森NDR 114.6%，泛微未披露（推测&lt;100%）
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BLOCK 3: 评估依据 -->
+      <div class="collapsible-block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <div class="title">📖 评估依据</div>
+          <div class="icon">▼</div>
+        </div>
+        <div class="block-content">
+          <div class="block-inner">
+            <div class="industry-overview">
+              <div class="industry-overview-title">B. 行业全景</div>
+              <div class="industry-overview-content">
+                <strong>行业阶段：</strong>成长期<br>
+                关键特征：AI转型加速，但泡沫与真实并存，市场将从"百家争鸣"走向"十家争霸"<br><br>
+
+                <strong>关键数据：</strong><br>
+                - 市场规模：1860亿元（Tier 2: IDC）<br>
+                - 增速：22.3%（Tier 2: IDC）<br>
+                - AI SaaS占比：&lt;15%（Tier 4: 推测）<br><br>
+
+                <strong>竞争格局：</strong><br>
+                - 北森：真智能者（NDR 114.6%，数据飞轮）<br>
+                - 用友、金蝶：转型阵痛者（技术领先但投入激进）<br>
+                - 泛微：伪创新者（架构陈旧）<br>
+                - 致远：务实幸存者（现金牛策略）
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="expand-all-btn" onclick="toggleAllBlocks()">展开全部</button>
+  </div>
+
+  <script>
+    function toggleBlock(header) {
+      header.classList.toggle('collapsed');
+      const content = header.nextElementSibling;
+      content.classList.toggle('expanded');
+    }
+
+    function toggleAllBlocks() {
+      const headers = document.querySelectorAll('.block-header');
+      const contents = document.querySelectorAll('.block-content');
+      const btn = document.querySelector('.expand-all-btn');
+      const isAllExpanded = Array.from(contents).every(c => c.classList.contains('expanded'));
+
+      if (isAllExpanded) {
+        headers.forEach(h => h.classList.add('collapsed'));
+        contents.forEach(c => c.classList.remove('expanded'));
+        btn.textContent = '展开全部';
+      } else {
+        headers.forEach(h => h.classList.remove('collapsed'));
+        contents.forEach(c => c.classList.add('expanded'));
+        btn.textContent = '收起全部';
+      }
+    }
+
+    // 默认展开BLOCK 1
+    window.addEventListener('DOMContentLoaded', () => {
+      const firstBlock = document.querySelector('.collapsible-block .block-header');
+      if (firstBlock) {
+        firstBlock.classList.remove('collapsed');
+        firstBlock.nextElementSibling.classList.add('expanded');
+      }
+    });
+  </script>
+</body>
+</html>
