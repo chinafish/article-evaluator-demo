@@ -11,6 +11,7 @@ const ModelRouter = require('./ModelRouter');
 const industryBenchmarkGenerator = require('./industryBenchmarkGenerator');
 const comprehensiveResearchGenerator = require('./comprehensiveResearchGenerator');
 const articleEvaluatorWithBenchmark = require('./articleEvaluatorWithBenchmark');
+const articleEvaluatorV13 = require('./evaluator.v1.3');
 const benchmarkData = require('./benchmarkData');
 
 class CognitiveOrchestrator {
@@ -311,16 +312,14 @@ class CognitiveOrchestrator {
    * 使用行业认知基准评估
    */
   async evaluateWithIndustryBenchmark(article, routeDecision) {
-    console.log('[评估] 使用行业认知基准进行评估...');
+    console.log('[评估] 使用行业认知基准进行评估（v1.3）...');
 
-    // 获取行业基准数据和研究报告
+    // 使用v1.3评估器
+    const evaluation = await articleEvaluatorV13.evaluate(article, routeDecision);
+
+    // 获取行业基准数据和研究报告（供前端弹窗使用）
     const industryData = await benchmarkData.getByGics4(routeDecision.gics4);
     const industryReport = routeDecision.benchmark.industry_research_report || null;
-
-    const evaluation = await articleEvaluatorWithBenchmark.evaluate(
-      article,
-      routeDecision.benchmark
-    );
 
     return {
       ...evaluation,
@@ -339,15 +338,10 @@ class CognitiveOrchestrator {
    * 使用通用基准评估
    */
   async evaluateWithGeneralBenchmark(article, routeDecision) {
-    console.log('[评估] 使用通用认知基准进行评估...');
+    console.log('[评估] 使用通用认知基准进行评估（v1.3）...');
 
-    // 加载通用基准
-    const generalBenchmark = await this.loadGeneralBenchmark();
-
-    const evaluation = await articleEvaluatorWithBenchmark.evaluate(
-      article,
-      generalBenchmark
-    );
+    // 使用v1.3评估器
+    const evaluation = await articleEvaluatorV13.evaluate(article, routeDecision);
 
     return {
       ...evaluation,
