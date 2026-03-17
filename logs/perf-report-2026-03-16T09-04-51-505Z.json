@@ -1,0 +1,168 @@
+{
+  "timestamp": "2026-03-16T09:04:51.505Z",
+  "summary": {
+    "totalDuration": 247607,
+    "stepCount": 12,
+    "averageDuration": 20633.916666666668
+  },
+  "byCategory": [
+    {
+      "category": "路由决策",
+      "totalDuration": 0,
+      "averageDuration": 0,
+      "percentage": "0.0%",
+      "count": 2,
+      "steps": [
+        {
+          "label": "路由决策",
+          "duration": 0,
+          "startTime": "2026-03-16T09:03:15.402Z",
+          "endTime": "2026-03-16T09:03:15.402Z"
+        },
+        {
+          "label": "路由决策",
+          "duration": 0,
+          "startTime": "2026-03-16T09:04:13.071Z",
+          "endTime": "2026-03-16T09:04:13.071Z"
+        }
+      ]
+    },
+    {
+      "category": "AI评估",
+      "totalDuration": 181453,
+      "averageDuration": 36290.6,
+      "percentage": "73.3%",
+      "count": 5,
+      "steps": [
+        {
+          "label": "认知评估总流程",
+          "duration": 104587,
+          "startTime": "2026-03-16T09:03:06.917Z",
+          "endTime": "2026-03-16T09:04:51.504Z"
+        },
+        {
+          "label": "AI评估调用",
+          "duration": 38433,
+          "startTime": "2026-03-16T09:04:13.071Z",
+          "endTime": "2026-03-16T09:04:51.504Z"
+        },
+        {
+          "label": "文章评估",
+          "duration": 38433,
+          "startTime": "2026-03-16T09:04:13.071Z",
+          "endTime": "2026-03-16T09:04:51.504Z"
+        },
+        {
+          "label": "构建评估Prompt",
+          "duration": 0,
+          "startTime": "2026-03-16T09:03:15.403Z",
+          "endTime": "2026-03-16T09:03:15.403Z"
+        },
+        {
+          "label": "构建评估Prompt",
+          "duration": 0,
+          "startTime": "2026-03-16T09:04:13.071Z",
+          "endTime": "2026-03-16T09:04:13.071Z"
+        }
+      ]
+    },
+    {
+      "category": "GICS分类",
+      "totalDuration": 45895,
+      "averageDuration": 45895,
+      "percentage": "18.5%",
+      "count": 1,
+      "steps": [
+        {
+          "label": "GICS行业分类",
+          "duration": 45895,
+          "startTime": "2026-03-16T09:03:06.917Z",
+          "endTime": "2026-03-16T09:03:52.812Z"
+        }
+      ]
+    },
+    {
+      "category": "基准加载",
+      "totalDuration": 0,
+      "averageDuration": 0,
+      "percentage": "0.0%",
+      "count": 2,
+      "steps": [
+        {
+          "label": "检查基准数据",
+          "duration": 0,
+          "startTime": "2026-03-16T09:03:52.812Z",
+          "endTime": "2026-03-16T09:03:52.812Z"
+        },
+        {
+          "label": "加载缓存基准",
+          "duration": 0,
+          "startTime": "2026-03-16T09:03:52.812Z",
+          "endTime": "2026-03-16T09:03:52.812Z"
+        }
+      ]
+    },
+    {
+      "category": "相关性检查",
+      "totalDuration": 20259,
+      "averageDuration": 20259,
+      "percentage": "8.2%",
+      "count": 1,
+      "steps": [
+        {
+          "label": "文章相关性检查",
+          "duration": 20259,
+          "startTime": "2026-03-16T09:03:52.812Z",
+          "endTime": "2026-03-16T09:04:13.071Z"
+        }
+      ]
+    },
+    {
+      "category": "文章解析",
+      "totalDuration": 0,
+      "averageDuration": 0,
+      "percentage": "0.0%",
+      "count": 1,
+      "steps": [
+        {
+          "label": "解析评估结果",
+          "duration": 0,
+          "startTime": "2026-03-16T09:04:51.504Z",
+          "endTime": "2026-03-16T09:04:51.504Z"
+        }
+      ]
+    }
+  ],
+  "topSteps": [
+    {
+      "label": "认知评估总流程",
+      "category": "AI评估",
+      "duration": 104587,
+      "percentage": "42.2%"
+    },
+    {
+      "label": "GICS行业分类",
+      "category": "GICS分类",
+      "duration": 45895,
+      "percentage": "18.5%"
+    },
+    {
+      "label": "AI评估调用",
+      "category": "AI评估",
+      "duration": 38433,
+      "percentage": "15.5%"
+    },
+    {
+      "label": "文章评估",
+      "category": "AI评估",
+      "duration": 38433,
+      "percentage": "15.5%"
+    },
+    {
+      "label": "文章相关性检查",
+      "category": "相关性检查",
+      "duration": 20259,
+      "percentage": "8.2%"
+    }
+  ]
+}

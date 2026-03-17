@@ -1,0 +1,105 @@
+{
+  "timestamp": "2026-03-16T09:20:14.478Z",
+  "summary": {
+    "totalDuration": 36161,
+    "stepCount": 6,
+    "averageDuration": 6026.833333333333
+  },
+  "byCategory": [
+    {
+      "category": "路由决策",
+      "totalDuration": 0,
+      "averageDuration": 0,
+      "percentage": "0.0%",
+      "count": 1,
+      "steps": [
+        {
+          "label": "路由决策",
+          "duration": 0,
+          "startTime": "2026-03-16T09:20:04.327Z",
+          "endTime": "2026-03-16T09:20:04.327Z"
+        }
+      ]
+    },
+    {
+      "category": "AI评估",
+      "totalDuration": 36161,
+      "averageDuration": 9040.25,
+      "percentage": "100.0%",
+      "count": 4,
+      "steps": [
+        {
+          "label": "认知评估总流程",
+          "duration": 15859,
+          "startTime": "2026-03-16T09:19:58.619Z",
+          "endTime": "2026-03-16T09:20:14.478Z"
+        },
+        {
+          "label": "AI评估调用",
+          "duration": 10151,
+          "startTime": "2026-03-16T09:20:04.327Z",
+          "endTime": "2026-03-16T09:20:14.478Z"
+        },
+        {
+          "label": "文章评估",
+          "duration": 10151,
+          "startTime": "2026-03-16T09:20:04.327Z",
+          "endTime": "2026-03-16T09:20:14.478Z"
+        },
+        {
+          "label": "构建评估Prompt",
+          "duration": 0,
+          "startTime": "2026-03-16T09:20:04.327Z",
+          "endTime": "2026-03-16T09:20:04.327Z"
+        }
+      ]
+    },
+    {
+      "category": "文章解析",
+      "totalDuration": 0,
+      "averageDuration": 0,
+      "percentage": "0.0%",
+      "count": 1,
+      "steps": [
+        {
+          "label": "解析评估结果",
+          "duration": 0,
+          "startTime": "2026-03-16T09:20:14.478Z",
+          "endTime": "2026-03-16T09:20:14.478Z"
+        }
+      ]
+    }
+  ],
+  "topSteps": [
+    {
+      "label": "认知评估总流程",
+      "category": "AI评估",
+      "duration": 15859,
+      "percentage": "43.9%"
+    },
+    {
+      "label": "AI评估调用",
+      "category": "AI评估",
+      "duration": 10151,
+      "percentage": "28.1%"
+    },
+    {
+      "label": "文章评估",
+      "category": "AI评估",
+      "duration": 10151,
+      "percentage": "28.1%"
+    },
+    {
+      "label": "路由决策",
+      "category": "路由决策",
+      "duration": 0,
+      "percentage": "0.0%"
+    },
+    {
+      "label": "构建评估Prompt",
+      "category": "AI评估",
+      "duration": 0,
+      "percentage": "0.0%"
+    }
+  ]
+}

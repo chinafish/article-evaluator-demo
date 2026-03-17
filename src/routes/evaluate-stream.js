@@ -42,7 +42,19 @@ router.get('/', async (req, res) => {
     // 步骤1: 解析文章 (0-10%)
     sendProgress('parsing', 0, '准备评估...', {});
     sendProgress('parsing', 5, '正在解析文章...', {});
-    const article = await articleParser.parse(url || content);
+
+    let article;
+    if (url) {
+      article = await articleParser.parseUrl(url);
+    } else {
+      // 直接内容处理
+      article = {
+        title: '直接输入内容',
+        content: content,
+        url: null
+      };
+    }
+
     sendProgress('parsing', 10, '✅ 文章解析完成', {
       title: article.title,
       content: article.content?.substring(0, 200) + '...'

@@ -1,0 +1,303 @@
+{
+  "success": true,
+  "evaluation": {
+    "overall_assessment": {
+      "score": 68,
+      "rating": "acceptable",
+      "one_sentence_summary": "文章逻辑清晰且具备行业深度，但未来时间点设定导致事实无法验证，需谨慎参考。"
+    },
+    "dimension_scores": {
+      "factual_accuracy": {
+        "score": 50,
+        "assessment": "文章声称时间为 2026 年，当前实际时间为 2024 年，导致核心事实无法验证。银价暴涨 140% 及退税政策具体日期均为预测性内容，被表述为既定事实，存在误导性风险。",
+        "strengths": [
+          "引用了具体的招标价格区间",
+          "成本测算逻辑符合行业公式"
+        ],
+        "weaknesses": [
+          "时间戳为未来时间（2026 年）",
+          "政策变动未获官方正式确认"
+        ],
+        "data_verification": [
+          {
+            "claim": "白银价格年内暴涨 140%",
+            "benchmark_value": "2024 年白银涨幅约 20-30%",
+            "article_value": "140%",
+            "deviation": "显著偏高",
+            "verdict": "不符合"
+          },
+          {
+            "claim": "2026 年 4 月 1 日取消出口退税",
+            "benchmark_value": "暂无官方正式公告",
+            "article_value": "2026 年 4 月 1 日",
+            "deviation": "无法验证",
+            "verdict": "不符合"
+          },
+          {
+            "claim": "银浆价格每上涨 1000 元/kg，电池片成本增加 0.01 元/W",
+            "benchmark_value": "行业通用测算约 0.008-0.012 元/W",
+            "article_value": "0.01 元/W",
+            "deviation": "基本一致",
+            "verdict": "符合"
+          }
+        ]
+      },
+      "industry_insight": {
+        "score": 85,
+        "assessment": "对光伏产业链成本结构（银浆、辅材）及政策影响（出口退税）有深刻理解。分析了价格传导机制及供需博弈，展现了较高的专业度。",
+        "demonstrated_knowledge": [
+          "光伏组件非硅成本构成",
+          "出口退税对定价的影响机制"
+        ],
+        "missing_knowledge": [
+          "N 型与 P 型组件成本差异的具体量化",
+          "海外本土制造政策（如美国 IRA）的对比影响"
+        ],
+        "misconceptions_detected": [
+          "将预测性政策视为既定事实"
+        ]
+      },
+      "strategic_value": {
+        "score": 70,
+        "assessment": "为行业提供了成本上涨的逻辑推演，有助于企业做压力测试。但因基于未来假设，不宜作为短期决策的唯一依据。",
+        "key_insights": [
+          "成本推动型涨价与需求消化的矛盾",
+          "政策退坡倒逼行业价值竞争"
+        ],
+        "opportunities": [
+          {
+            "type": "技术机会",
+            "description": "减银、去银技术迭代加速，相关设备与材料供应商受益。",
+            "urgency": "高",
+            "potential_impact": "高"
+          }
+        ],
+        "risks": [
+          {
+            "type": "政策风险",
+            "description": "出口退税政策调整时间表若变动，将打乱企业定价策略。",
+            "probability": "中",
+            "mitigation": "建立政策监测机制，预留价格调整空间"
+          }
+        ],
+        "decision_relevance": "中",
+        "actionability": "中",
+        "investment_recommendation": {
+          "verdict": "谨慎观察",
+          "rationale": "涨价逻辑成立但落地时间存疑，需等待政策官方确认。",
+          "time_horizon": "中期"
+        }
+      },
+      "data_quality": {
+        "score": 60,
+        "assessment": "数据量化程度较高，提供了具体价格区间和成本测算。但数据来源多为‘行业测算’或‘官微’，且涉及未来时间，可信度打折。",
+        "source_credibility": "中",
+        "data_recency": "未来预测",
+        "quantification_level": "高"
+      }
+    },
+    "benchmark_comparison": {
+      "above_benchmark": [
+        {
+          "area": "成本分析深度",
+          "description": "详细拆解了银浆价格对组件成本的具体影响系数。",
+          "evidence": "银浆价格每上涨 1000 元/kg，电池片成本就会增加 0.01 元/W"
+        }
+      ],
+      "meets_benchmark": [
+        {
+          "area": "头部企业动态追踪",
+          "description": "覆盖了隆基、晶科、天合等主流厂商的涨价动作。",
+          "evidence": "天合光能再涨 1 分/W...晶科决定自 3 月起...隆基、晶澳"
+        }
+      ],
+      "below_benchmark": [
+        {
+          "area": "事实核查严谨性",
+          "description": "未区分预测信息与既定事实，时间戳存在严重异常。",
+          "evidence": "文章日期显示为 2026 年，当前为 2024 年",
+          "improvement_suggestion": "明确标注预测性内容，修正时间戳或声明为情景模拟"
+        }
+      ]
+    },
+    "competitive_analysis": {
+      "industry_leaders": [
+        {
+          "company": "隆基绿能",
+          "strengths": [
+            "品牌溢价能力强",
+            "垂直一体化成本控制"
+          ],
+          "financial_metrics": {
+            "revenue_growth": "近期波动",
+            "profit_margin": "承压",
+            "roe": "行业平均"
+          },
+          "strategic_focus": "BC 电池技术路线"
+        },
+        {
+          "company": "晶科能源",
+          "strengths": [
+            "N 型 TOPCon 量产领先",
+            "海外渠道布局完善"
+          ],
+          "financial_metrics": {
+            "revenue_growth": "稳健",
+            "profit_margin": "中等",
+            "roe": "行业平均"
+          },
+          "strategic_focus": "N 型产能扩张"
+        }
+      ],
+      "article_comparison": {
+        "similarities": [
+          "均关注成本压力与价格传导",
+          "均提及头部企业涨价行为"
+        ],
+        "differences": [
+          "文章侧重政策驱动，企业财报侧重市场表现",
+          "文章预测未来数据，企业披露历史数据"
+        ],
+        "gap_analysis": "文章缺乏对企业具体财务承受能力的量化分析，仅停留在报价层面。"
+      }
+    },
+    "blind_spot_analysis": {
+      "identified_blind_spots": [
+        {
+          "spot": "下游电站收益率测算",
+          "importance": "高",
+          "suggested_addition": "补充组件涨价对电站 IRR 的具体影响数据"
+        },
+        {
+          "spot": "库存周期影响",
+          "importance": "中",
+          "suggested_addition": "分析渠道库存水位对涨价接受度的影响"
+        }
+      ],
+      "critical_missing_context": [
+        "全球光伏装机需求增速放缓的具体数据支撑",
+        "其他替代材料（如铜电镀）的技术成熟度对比"
+      ]
+    },
+    "quantitative_analysis": {
+      "data_points_mentioned": 8,
+      "quantified_claims": 5,
+      "source_citations": 3,
+      "benchmark_references": 1
+    },
+    "recommendations": {
+      "for_readers": [
+        {
+          "priority": "高",
+          "recommendation": "核实政策官方公告",
+          "rationale": "文章所述退税取消时间尚未获官方正式文件确认"
+        },
+        {
+          "priority": "中",
+          "recommendation": "关注银价实际走势",
+          "rationale": "银价波动是成本推动的核心变量，需实时跟踪"
+        }
+      ],
+      "for_authors": [
+        {
+          "priority": "高",
+          "recommendation": "修正时间戳或明确声明为预测",
+          "rationale": "避免误导读者将预测视为已发生事实"
+        },
+        {
+          "priority": "中",
+          "recommendation": "增加下游接受度数据",
+          "rationale": "涨价能否落地取决于终端电站的承受能力"
+        }
+      ]
+    },
+    "verdict": {
+      "is_reliable": "部分可靠",
+      "is_valuable": "有价值",
+      "target_audience": "光伏行业从业者、投资者、政策研究者",
+      "reading_time_recommendation": "值得浏览"
+    },
+    "data_sources": {
+      "article_sources": [
+        "光伏产业网官微",
+        "新浪财经"
+      ],
+      "verification_sources": [
+        "中国光伏行业协会官网",
+        "国家税务总局公告",
+        "上海黄金交易所白银价格数据"
+      ],
+      "benchmark_source": "何志毅教授企业图谱数据（清华产业研究院）"
+    },
+    "confidence_and_trust": {
+      "overall_confidence": {
+        "score": 65,
+        "level": "中",
+        "explanation": "行业逻辑可信，但核心事实（时间、政策）无法验证，降低了整体置信度。"
+      },
+      "data_quality_score": {
+        "overall": 60,
+        "completeness": 70,
+        "credibility": 50,
+        "recency": 40,
+        "quantification": 80
+      },
+      "evaluation_traceability": {
+        "assessment_basis": [
+          {
+            "aspect": "事实准确性",
+            "score": 50,
+            "evidence": "文章日期 2026 年与当前时间不符",
+            "source": "系统当前时间"
+          },
+          {
+            "aspect": "行业洞察力",
+            "score": 85,
+            "evidence": "成本传导逻辑清晰，引用行业通用测算公式",
+            "source": "光伏行业成本模型"
+          }
+        ],
+        "uncertainty_areas": [
+          {
+            "area": "政策落地时间",
+            "reason": "仅为市场传闻或预测，无官方文件",
+            "impact": "影响涨价逻辑的时效性",
+            "suggested_verification": "查阅财政部或税务总局官方公告"
+          },
+          {
+            "area": "银价涨幅",
+            "reason": "140% 涨幅远超历史常态",
+            "impact": "影响成本测算的准确性",
+            "suggested_verification": "查询伦敦银现或上海黄金交易所数据"
+          }
+        ],
+        "key_data_points_verified": [
+          {
+            "claim": "银浆成本影响系数",
+            "verified_value": "0.01 元/W  per 1000 元/kg",
+            "source": "行业通用技术经济模型",
+            "confidence": "高"
+          },
+          {
+            "claim": "2026 年 4 月 1 日退税取消",
+            "verified_value": "未验证",
+            "source": "无官方记录",
+            "confidence": "低"
+          }
+        ]
+      }
+    },
+    "article_title": "光伏组件涨价潮起！“1元/W”时代重启，这次能走多远？",
+    "article_source": "finance.sina.com.cn",
+    "article_url": "https://finance.sina.com.cn/wm/2026-03-04/doc-inhpvpqn0368333.shtml",
+    "evaluated_at": "2026-03-16T09:22:44.394Z",
+    "route_info": {
+      "type": "GENERAL_BENCHMARK",
+      "reason": "暂无光伏产品材料与设备行业的基准数据，使用通用认知基准进行评估。",
+      "benchmark_name": "通用认知基准"
+    },
+    "article_content": "（来源：光伏产业网官微）白银价格飙升、出口退税取消进入倒计时，让光伏组件价格的天平似乎正在发生微妙的倾斜。2026年开年以来，光伏头部企业已接连涨价：近期天合光能再涨1分/W，轻质单玻组件更是率先突破1元/W大关；晶科决定自3月起，对650W以上的飞虎3和其他场景化特殊制程产品执行涨价计划；隆基、晶澳、TCL中环等也纷纷上调报价……在长时间的跌势之后，光伏组件价格迎来大范围回升，整个行业正在发生脱胎换骨的变化。光伏行业的“白银劫”核心成本承压，是驱动光伏组价涨价的首要因素。2025年下半年以来，受国际经济形势、地缘政治风险、供需格局重构等多重因素影响，白银价格便一路水涨船高展现出惊人态势，年内暴涨140%。进入2026后，这股势头有增无减，尤其是在近期中东局势持续升级的影响下，市场避险情绪升温，白银价格直线拉升，现货白银日内一度大涨超4%。随之而来的，是对光伏行业产生的巨大成本冲击——作为光伏组件电池片栅线的核心原材料，银浆的价格直接决定组件非硅成本的高低。行业测算显示，银浆价格每上涨1000元/kg，电池片成本就会增加0.01元/W。面对持续攀升的成本压力，头部企业正在加快推进“减银”、“去银”技术迭代。然而，这些技术大多处于规模化量产初期，仍面临一定程度上的现实瓶颈，行业整体对白银的依赖短期内难以根本扭转。而在光伏组件原材料中，除白银外，铜、铝等价格也都出现了不同程度的上涨。这些辅材成本的持续攀升，与银价上涨形成叠加效应，进一步推高了成本压力，让本就盈利困难的光伏行业雪上加霜。光伏出口退税取消进入倒计时成本端的压力尚未缓解，政策端的变量已悄然逼近。今年1月，一则公告让光伏圈瞬间沸腾：自2026年4月1日起，取消光伏等产品增值税出口退税，并将电池产品的增值税出口退税率由9%下调至6%；2027年1月1日起，取消电池产品增值税出口退税。光伏出口退税政策指对出口的光伏产品按一定比例返还已在国内缴纳的增值税，政策的本意在于光伏行业不能再靠“退税换订单”，从而引导行业从价格竞争转向价值竞争，呈现出短期波动、长期利好的特点。中国光伏行业协会指出，部分企业在出口过程中，将出口退税额折算为对外议价空间，“适时降低或取消光伏产品的出口退税，有助于推动国外市场价格理性回归。”但对于企业而言，眼下的现实更为紧迫——这一政策调整直接抬升了出口成本，倒逼企业上调组件报价。此外，距离4月1日光伏产品增值税出口退税取消仅剩最后不到一个月，为了锁定最后一笔退税红利，3月被业内视为出口抢装最后的窗口期。需求端的短期爆发，直接反映在市场价格上，进一步强化了组件涨价预期。一场关于成本、政策与市场的博弈，正在将组件价格推向十字路口。“1元/W”时代，拐点已至？就在今日，中国华电集团有限公司2026年光伏组件集中采购批次评标结果公示，为这轮沸沸扬扬的涨价潮提供了一个颇具分量的观察窗口：两个标段的单价区间分别落在了0.82-0.925元/W和0.77-0.893元/W。尽管春节前曾有企业在华电集采开标中报出过1元/W以上的价格，但最终入围的候选人名单显示，被市场视为组件价格回温标志的1.018元/W报价并未出现，最高报价为隆基的0.925元/W。具体来看，标段一（N型高效组件，6GW）的单价区间为0.82-0.925元/W，而标段二（N型常规组件，2GW）的价格区间更低，为0.77-0.893元/W。这并不意味着涨价的逻辑被证伪。从更长周期来看，这轮涨价并非昙花一现的脉冲式波动，在银价持续高位、退税取消落地、以及行业反内卷政策共识的合力下，组件价格中枢将稳步抬升，行业正从“失血”状态回归“造血”状态。但需要清醒的看到，行业复苏之路仍面临根本性制约。2026年全球光伏市场需求增速预计放缓，供给过剩的底色并未根本改变，组件价格能否在1元/W关口站稳，仍取决于成本传导与终端收益之间的微妙平衡。结语这个3月，对于大多数光伏人来说，或许都是亢奋而紧张的。亢奋的是，终于可以名正言顺地谈论涨价，而不再是无底线的内卷；紧张的是，这波由成本推升、政策催化的涨价，能否真正被终端消化，而不是沦为一场“有价无市”的独角戏。随着4月1日的脚步越来越近，当退税红利的潮水褪去，谁在裸泳，谁又在筑桥，或许将看得更加清晰。组件价格能否重回“1元/W”时代，或许仍面临诸多不确定性，但有一点可以确定：光伏行业的定价逻辑，正在发生深刻的变化。 海量资讯、精准解读，尽在新浪财经APP",
+    "article_html": "<div id=\"readability-page-1\" class=\"page\"><div id=\"artibody\">\n\t\t\t\t\t<!-- 相关专题top start-->\n\t\t\t\t\t\n\t\t\t\t\t<!-- 相关专题top end-->\n\t\t\t\t\t\t\t\t<!-- 期货推广begin -->\n\t\t\t\n\t\t\t<!-- 期货推广end -->\n\n\t\t\t<!-- 秒拍begin -->\n\t\t\t\n\t\t\t<!-- 秒拍end -->\n\t\n\t\t\t<!-- 视频播放器start -->\n\t\t\t\n\t\t\t<!-- 视频播放器end -->\n\t\n\t\t\t<!-- 行情图begin -->\n\t\t\t\n\t\t\t<!-- 行情图end -->\n\n            \n\n    <p>（来源：光伏产业网官微）</p><p cms-style=\"font-L\">白银价格飙升、出口退税取消进入倒计时，让光伏组件价格的天平似乎正在发生微妙的倾斜。</p><p cms-style=\"font-L\">2026年开年以来，光伏头部企业已接连涨价：近期<span id=\"stock_sh688599\"><a href=\"https://finance.sina.com.cn/realstock/company/sh688599/nc.shtml\" target=\"_blank\" data-sudaclick=\"content_marketkeywords_p\">天合光能</a></span><span id=\"quote_sh688599\"></span>再涨1分/W，轻质单玻组件更是率先突破1元/W大关；晶科决定自3月起，对650W以上的飞虎3和其他场景化特殊制程产品执行涨价计划；隆基、晶澳、<span id=\"stock_sz002129\"><a href=\"https://finance.sina.com.cn/realstock/company/sz002129/nc.shtml\" target=\"_blank\" data-sudaclick=\"content_marketkeywords_p\">TCL中环</a></span><span id=\"quote_sz002129\"></span>等也纷纷上调报价……</p><p><img src=\"https://n.sinaimg.cn/spider20260304/219/w1080h739/20260304/dbad-93d08da6d8e1a75f2d2e08b0aba97921.jpg\" cms-width=\"1080\" cms-height=\"739\" id=\"0\"><span></span></p><p cms-style=\"font-L\">在长时间的跌势之后，光伏组件价格迎来大范围回升，整个行业正在发生脱胎换骨的变化。</p><p cms-style=\"font-L\"><span cms-style=\"font-L strong-Bold color0\">光伏行业的“白银劫”</span></p><p cms-style=\"font-L\"><span cms-style=\"font-L strong-Bold\">核心成本承压，是驱动光伏组价涨价的首要因素。</span></p><p cms-style=\"font-L\">2025年下半年以来，受国际经济形势、地缘政治风险、供需格局重构等多重因素影响，白银价格便一路水涨船高展现出惊人态势，年内暴涨140%。进入2026后，这股势头有增无减，尤其是在近期中东局势持续升级的影响下，市场避险情绪升温，白银价格直线拉升，现货白银日内一度大涨超4%。</p><p cms-style=\"font-L\">随之而来的，是对光伏行业产生的巨大成本冲击——作为光伏组件电池片栅线的核心原材料，银浆的价格直接决定组件非硅成本的高低。行业测算显示，银浆价格每上涨1000元/kg，电池片成本就会增加0.01元/W。</p><p cms-style=\"font-L\">面对持续攀升的成本压力，头部企业正在加快推进“减银”、“去银”技术迭代。然而，这些技术大多处于规模化量产初期，仍面临一定程度上的现实瓶颈，行业整体对白银的依赖短期内难以根本扭转。</p><p cms-style=\"font-L\">而在光伏组件原材料中，除白银外，铜、铝等价格也都出现了不同程度的上涨。这些辅材成本的持续攀升，与银价上涨形成叠加效应，进一步推高了成本压力，让本就盈利困难的光伏行业雪上加霜。</p><p cms-style=\"font-L\"><span cms-style=\"font-L strong-Bold color0\">光伏出口退税取消进入倒计时</span></p><p cms-style=\"font-L\"><span cms-style=\"font-L strong-Bold\">成本端的压力尚未缓解，政策端的变量已悄然逼近。</span></p><p cms-style=\"font-L\">今年1月，一则公告让光伏圈瞬间沸腾：自2026年4月1日起，取消光伏等产品增值税出口退税，并将电池产品的增值税出口退税率由9%下调至6%；2027年1月1日起，取消电池产品增值税出口退税。</p><p><img src=\"https://n.sinaimg.cn/spider20260304/97/w1024h673/20260304/2ebf-7a71ee3229e82b3ef1f80f9df9aa829b.jpg\" cms-width=\"1258\" cms-height=\"826.797\" id=\"1\"><span></span></p><p cms-style=\"font-L\">光伏出口退税政策指对出口的光伏产品按一定比例返还已在国内缴纳的增值税，<span cms-style=\"font-L strong-Bold\">政策的本意在于光伏行业不能再靠“退税换订单”，从而引导行业从价格竞争转向价值竞争</span>，呈现出短期波动、长期利好的特点。中国光伏行业协会指出，部分企业在出口过程中，将出口退税额折算为对外议价空间，“适时降低或取消光伏产品的出口退税，有助于推动国外市场价格理性回归。”</p><p cms-style=\"font-L\">但对于企业而言，眼下的现实更为紧迫——这一政策调整直接抬升了出口成本，倒逼企业上调组件报价。</p><p cms-style=\"font-L\">此外，距离4月1日光伏产品增值税出口退税取消仅剩最后不到一个月，为了锁定最后一笔退税红利，3月被业内视为出口抢装最后的窗口期。</p><p cms-style=\"font-L\">需求端的短期爆发，直接反映在市场价格上，进一步强化了组件涨价预期。一场关于成本、政策与市场的博弈，正在将组件价格推向十字路口。</p><p cms-style=\"font-L\"><span cms-style=\"font-L strong-Bold color0\">“1元/W”时代，拐点已至？</span></p><p cms-style=\"font-L\">就在今日，中国华电集团有限公司2026年光伏组件集中采购批次评标结果公示，为这轮沸沸扬扬的涨价潮提供了一个颇具分量的观察窗口：两个标段的单价区间分别落在了0.82-0.925元/W和0.77-0.893元/W。</p><p><img src=\"https://n.sinaimg.cn/spider20260304/675/w1080h1195/20260304/1375-d49ccda4a2ce706e53abc1479420c3ef.png\" cms-width=\"1080\" cms-height=\"1195\" id=\"2\"><span></span></p><p cms-style=\"font-L\">尽管春节前曾有企业在华电集采开标中报出过1元/W以上的价格，但最终入围的候选人名单显示，<span cms-style=\"font-L strong-Bold\">被市场视为组件价格回温标志的1.018元/W报价并未出现，最高报价为隆基的0.925元/W。</span></p><p cms-style=\"font-L\">具体来看，<span cms-style=\"font-L underline\">标段一（N型高效组件，6GW）</span>的单价区间为0.82-0.925元/W，而<span cms-style=\"font-L underline\">标段二（N型常规组件，2GW）</span>的价格区间更低，为0.77-0.893元/W。</p><p cms-style=\"font-L\">这并不意味着涨价的逻辑被证伪。从更长周期来看，这轮涨价并非昙花一现的脉冲式波动，在银价持续高位、退税取消落地、以及行业反内卷政策共识的合力下，组件价格中枢将稳步抬升，行业正从“失血”状态回归“造血”状态。</p><p cms-style=\"font-L\">但需要清醒的看到，行业复苏之路仍面临根本性制约。2026年全球光伏市场需求增速预计放缓，供给过剩的底色并未根本改变，组件价格能否在1元/W关口站稳，仍取决于成本传导与终端收益之间的微妙平衡。</p><p cms-style=\"font-L\"><span cms-style=\"font-L strong-Bold color0\">结语</span></p><p cms-style=\"font-L\">这个3月，对于大多数光伏人来说，或许都是亢奋而紧张的。</p><p cms-style=\"font-L\">亢奋的是，终于可以名正言顺地谈论涨价，而不再是无底线的内卷；紧张的是，这波由成本推升、政策催化的涨价，能否真正被终端消化，而不是沦为一场“有价无市”的独角戏。</p><p cms-style=\"font-L\"><span cms-style=\"font-L\">随着4月1日的脚步越来越近，当退税红利的潮水褪去，谁在裸泳，谁又在筑桥，或许将看得更加清晰。组件价格能否重回“1元/W</span><span cms-style=\"font-L\"><span cms-style=\"font-L\">”时代</span></span><span cms-style=\"font-L\">，或许仍面临诸多不确定性，但有一点可以确定：光伏行业的定价逻辑，正在发生深刻的变化。</span></p><!--article_adlist[<p cms-style=\"font-L align-right color0\"><font cms-style=\"font-L strong-Bold align-right color0\">★</font></p>\n]article_adlist--><!--article_adlist[<p cms-style=\"font-L\"><font cms-style=\"font-L strong-Bold\">大会火热报名中</font></p>\n]article_adlist--><!--article_adlist[<p cms-style=\"font-L color0\"><font cms-style=\"font-L strong-Bold color0\">★</font></p>\n]article_adlist--><!--article_adlist[<p cms-style=\"font-L align-Center\"><font cms-style=\"font-L align-Center color0\"><font cms-style=\"font-L strong-Bold align-Center color0\"><font cms-style=\"font-L strong-Bold align-Center color0\"><font cms-style=\"font-L strong-Bold align-Center color0\">论坛名称</font></font></font></font><font cms-style=\"font-L strong-Bold align-Center color0\"></font></p><p cms-style=\"font-L align-Center\"><font cms-style=\"font-L strong-Bold align-Center\">2026第四届重庆分布式光储发展论坛</font></p>\n]article_adlist--><!--article_adlist[<p cms-style=\"font-L align-Center\"><font cms-style=\"font-L strong-Bold align-Center color0\">论坛安排</font></p><p cms-style=\"font-L align-Center\"><font cms-style=\"font-L strong-Bold align-Center\"><font cms-style=\"font-L strong-Bold align-Center\"><font cms-style=\"font-L strong-Bold align-Center\">时间：</font></font><font cms-style=\"font-L strong-Bold align-Center\"><font cms-style=\"font-L strong-Bold align-Center\"><font cms-style=\"font-L strong-Bold align-Center\">2026年3月13日</font></font></font></font></p><p cms-style=\"font-L align-Center\"><font cms-style=\"font-L strong-Bold align-Center\">地点：重庆·喜来登大酒店</font></p><p cms-style=\"font-L align-Center\"><font cms-style=\"font-L strong-Bold align-Center\"><font cms-style=\"font-L strong-Bold align-Center\"><font cms-style=\"font-L strong-Bold align-Center\">电话：</font></font><font cms-style=\"font-L strong-Bold align-Center\"><font cms-style=\"font-L strong-Bold align-Center\">13883812561（</font></font><font cms-style=\"font-L strong-Bold align-Center\"><font cms-style=\"font-L strong-Bold align-Center\">周总监）</font></font></font></p><p cms-style=\"font-L align-Center\"><font cms-style=\"font-L align-Center\"><font cms-style=\"font-L strong-Bold align-Center\"><font cms-style=\"font-L strong-Bold align-Center\"><font cms-style=\"font-L strong-Bold align-Center\"><font cms-style=\"font-L strong-Bold align-Center\">尊享会务价</font></font></font></font></font><font cms-style=\"font-L strong-Bold align-Center\"><font cms-style=\"font-L strong-Bold align-Center\"><font cms-style=\"font-L strong-Bold align-Center\"><font cms-style=\"font-L strong-Bold align-Center\"><font cms-style=\"font-L strong-Bold align-Center\">（报光伏会议）：</font></font></font></font></font></p><p cms-style=\"font-L align-Center\"><font cms-style=\"font-L strong-Bold align-Center\">550元（单双同价、含早）</font></p>\n]article_adlist--><!--article_adlist[<p cms-style=\"font-L align-Center\"><font cms-style=\"font-L strong-Bold align-Center color0\">参会联系</font></p><p cms-style=\"font-L align-Center\"><font cms-style=\"font-L strong-Bold align-Center\">方女士 18297973393</font></p><p cms-style=\"font-L align-Center\"><font cms-style=\"font-L strong-Bold align-Center\">张先生 17718115803</font></p><p cms-style=\"font-L align-Center\"><font cms-style=\"font-L strong-Bold align-Center\">陈女士 18505605706</font></p><p cms-style=\"font-L align-Center\"><font cms-style=\"font-L strong-Bold align-Center\">仇女士 18715179125</font></p>\n]article_adlist--><!--article_adlist[<p cms-style=\"font-L align-Center\"><font cms-style=\"font-L align-Center\"><font cms-style=\"font-L strong-Bold align-Center\"><font cms-style=\"font-L strong-Bold align-Center color0\"><font cms-style=\"font-L strong-Bold align-Center color0\">报名二维码</font></font></font></font><font cms-style=\"font-L align-Center\"></font></p><p cms-style=\"font-L align-Center\"><img src=\"//n.sinaimg.cn/spider20260304/396/w198h198/20260304/c3f3-b5930ffc33dd1ffccf977844189be1e6.png\" cms-width=\"179\" cms-height=\"179\"/></p>\n]article_adlist--><!--article_adlist[<p cms-style=\"font-L\"><img src=\"//n.sinaimg.cn/spider20260304/769/w351h418/20260304/79d9-gifb6fe41b421870c917aad7834b2d9f590.gif\" cms-width=\"30\" cms-height=\"35.7188\"/></p><p cms-style=\"font-L color210\"><font cms-style=\"font-L strong-Bold color210\">诚征稿件</font></p>\n]article_adlist--><!--article_adlist[<p cms-style=\"font-L align-Center\">期待您的专业洞见与实战经验</p><p cms-style=\"font-L align-Center\">投稿请发送至邮箱936604464@qq.com</p><p cms-style=\"font-L align-Center\">一经采用，稿费从优</p><p cms-style=\"font-L\">责任编辑：菠萝包</p><p cms-style=\"font-L\">校对：阿越</p><p cms-style=\"font-L\">审核：老张</p>\n]article_adlist--><!--article_adlist[<p cms-style=\"font-L\"><img src=\"//n.sinaimg.cn/spider20260304/480/w1080h200/20260304/9bcc-44a4bc1d588be5a3dde293a9feec2bb2.jpg\" cms-width=\"1258\" cms-height=\"232.969\"/></p>\n]article_adlist--><!-- news_keyword_pub,stock,sz002129&sh688599 -->\n\n\n\n\n\n\n\t\t\t\n\t\t\t<!-- 正文下iframe -->\n\t\t\t\n\n\t\t\t<!-- 正文下iframe -->\n\n\t\t\t<!-- 总声明-->\n\t\t\t\n\n\n\n\n\n\n\n\n\n\n\t\t\t<!-- 总声明-->\n\t\t\t\n\t\t\t<!-- 文末二维码 start -->\n\t\t\t\n\n            <!-- 文末二维码 start -->\n            \n            <div>\n                <p><img src=\"https://n.sinaimg.cn/finance/cece9e13/20240627/655959900_20240627.png\"></p>\n                <p>海量资讯、精准解读，尽在新浪财经APP</p>\n            </div>\n            <!-- 文末二维码 start -->\n\n            <!-- 文末二维码 start -->\n\n\t\t\t<!-- 编辑姓名及工作代码 -->\n\t\t\t\n\n\t\t\t<!-- 编辑姓名及工作代码-->\n\n\t\t\t\t</div></div>",
+    "is_partial_content": false
+  }
+}

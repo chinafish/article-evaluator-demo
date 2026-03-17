@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>认知智能体 v2.0</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #667eea;
+      --primary-dark: #5a67d8;
+      --secondary: #764ba2;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --info: #3b82f6;
+      --bg: #f3f4f6;
+      --card: #ffffff;
+      --text: #1f2937;
+      --text-secondary: #6b7280;
+      --border: #e5e7eb;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      --radius: 12px;
+      --radius-lg: 20px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* ===== Header ===== */
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 30px;
+      animation: fadeInDown 0.6s ease;
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .header h1 {
+      font-size: 2.8em;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+      background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.8) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header .subtitle {
+      font-size: 1.1em;
+      opacity: 0.9;
+      margin-bottom: 20px;
+    }
+
+    .header .features {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .feature-badge {
+      background: rgba(255,255,255,0.15);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.85em;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+      transition: all 0.3s ease;
+    }
+
+    .feature-badge:hover {
+      background: rgba(255,255,255,0.25);
+      transform: translateY(-2px);
+    }
+
+    /* ===== Main Card ===== */
+    .main-card {
+      background: var(--card);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      animation: fadeInUp 0.6s ease 0.2s both;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== Input Section ===== */
+    .input-section {
+      padding: 40px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 30px;
+      border-bottom: 2px solid var(--border);
+      position: relative;
+    }
+
+    .tab {
+      padding: 14px 28px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1em;
+      color: var(--text-secondary);
+      position: relative;
+      transition: all 0.3s;
+      border-radius: 8px 8px 0 0;
+      font-weight: 500;
+    }
+
+    .tab:hover {
+      color: var(--primary);
+      background: rgba(102, 126, 234, 0.05);
+    }
+
+    .tab.active {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: 3px 3px 0 0;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from { transform: scaleX(0); }
+      to { transform: scaleX(1); }
+    }
+
+    .input-group {
+      margin-bottom: 24px;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 600;
+      color: var(--text);
+      font-size: 0.95em;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 16px 20px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 1em;
+      transition: all 0.3s;
+      font-family: inherit;
+      background: var(--card);
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+
+    textarea.input-field {
+      min-height: 200px;
+      resize: vertical;
+    }
+
+    /* ===== Submit Button with Ripple ===== */
+    .submit-btn {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 1.1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .submit-btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255,255,255,0.3);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .submit-btn:active::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .submit-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .submit-btn .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ===== Skeleton Loading ===== */
+    .skeleton {
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 8px;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .skeleton-text {
+      height: 16px;
+      margin-bottom: 12px;
+    }
+
+    .skeleton-title {
+      height: 24px;
+      width: 60%;
+      margin-bottom: 20px;
+    }
+
+    .skeleton-card {
+      height: 100px;
+      margin-bottom: 16px;
+    }
+
+    /* ===== Result Section ===== */
+    .result-section {
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .result-section.show {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* ===== Tab Navigation for Results ===== */
+    .result-tabs {
+      display: flex;
+      gap: 4px;
+      padding: 0 40px;
+      background: #f9fafb;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .result-tab {
+      padding: 16px 24px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95em;
+      color: var(--text-secondary);
+      position: relative;
+      transition: all 0.3s;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .result-tab:hover {
+      color: var(--primary);
+      background: rgba(102, 126, 234, 0.05);
+    }
+
+    .result-tab.active {
+      color: var(--primary);
+      background: white;
+      border-bottom: 2px solid var(--primary);
+      margin-bottom: -1px;
+    }
+
+    .result-tab .badge {
+      background: var(--primary);
+      color: white;
+      font-size: 0.75em;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    .result-tab-content {
+      display: none;
+      padding: 40px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .result-tab-content.active {
+      display: block;
+    }
+
+    /* ===== Score Cards ===== */
+    .score-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    .score-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+      border: 1px solid var(--border);
+    }
+
+    .score-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .score-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .score-card-title {
+      font-weight: 600;
+      color: var(--text);
+      font-size: 1em;
+    }
+
+    .score-badge {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.85em;
+      font-weight: 600;
+    }
+
+    .score-badge.high { background: #d1fae5; color: #059669; }
+    .score-badge.medium { background: #fef3c7; color: #d97706; }
+    .score-badge.low { background: #fee2e2; color: #dc2626; }
+
+    .score-value {
+      font-size: 2.5em;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    .score-bar {
+      height: 8px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .score-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: 4px;
+      transition: width 1s ease;
+    }
+
+    .score-description {
+      font-size: 0.9em;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* ===== Radar Chart Container ===== */
+    .chart-container {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 32px;
+      box-shadow: var(--shadow);
+      margin-bottom: 32px;
+      border: 1px solid var(--border);
+    }
+
+    .chart-title {
+      font-size: 1.2em;
+      font-weight: 600;
+      margin-bottom: 24px;
+      color: var(--text);
+      text-align: center;
+    }
+
+    .chart-wrapper {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    /* ===== Action Cards ===== */
+    .action-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .action-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      border-left: 4px solid var(--primary);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .action-card:hover {
+      transform: translateX(8px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .action-card.priority-high { border-left-color: var(--danger); }
+    .action-card.priority-medium { border-left-color: var(--warning); }
+    .action-card.priority-low { border-left-color: var(--success); }
+
+    .action-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .action-title {
+      font-weight: 600;
+      color: var(--text);
+      font-size: 1.05em;
+      line-height: 1.4;
+      flex: 1;
+    }
+
+    .action-priority {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8em;
+      font-weight: 600;
+      margin-left: 12px;
+    }
+
+    .action-priority.high { background: #fee2e2; color: #dc2626; }
+    .action-priority.medium { background: #fef3c7; color: #d97706; }
+    .action-priority.low { background: #d1fae5; color: #059669; }
+
+    .action-meta {
+      display: flex;
+      gap: 16px;
+      font-size: 0.9em;
+      color: var(--text-secondary);
+    }
+
+    .action-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ===== Typewriter Effect ===== */
+    .typewriter {
+      overflow: hidden;
+      border-right: 2px solid var(--primary);
+      white-space: nowrap;
+      animation: typing 3s steps(40, end), blink-caret 0.75s step-end infinite;
+    }
+
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+
+    @keyframes blink-caret {
+      from, to { border-color: transparent; }
+      50% { border-color: var(--primary); }
+    }
+
+    /* ===== Summary Card ===== */
+    .summary-card {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: white;
+      padding: 28px;
+      border-radius: var(--radius);
+      margin-bottom: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .summary-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    }
+
+    .summary-label {
+      font-size: 0.85em;
+      opacity: 0.9;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .summary-text {
+      font-size: 1.15em;
+      line-height: 1.7;
+      position: relative;
+    }
+
+    /* ===== Detail Section ===== */
+    .detail-section {
+      background: var(--card);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+
+    .detail-header {
+      padding: 20px 24px;
+      background: #f9fafb;
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+      font-size: 1.05em;
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.3s;
+    }
+
+    .detail-header:hover {
+      background: #f3f4f6;
+    }
+
+    .detail-header .toggle-icon {
+      transition: transform 0.3s;
+      font-size: 0.8em;
+    }
+
+    .detail-header.expanded .toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    .detail-content {
+      display: none;
+      padding: 24px;
+    }
+
+    .detail-content.show {
+      display: block;
+      animation: slideDown 0.3s ease;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== Toast Notification ===== */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #1f2937;
+      color: white;
+      padding: 16px 28px;
+      border-radius: 50px;
+      font-size: 0.95em;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      z-index: 10000;
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    .toast.success { background: var(--success); }
+    .toast.error { background: var(--danger); }
+    .toast.info { background: var(--info); }
+
+    /* ===== Floating Action Button ===== */
+    .fab {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      border: none;
+      border-radius: 50%;
+      color: white;
+      font-size: 1.5em;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+      transition: all 0.3s ease;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .fab:hover {
+      transform: scale(1.1) rotate(90deg);
+      box-shadow: 0 6px 30px rgba(102, 126, 234, 0.5);
+    }
+
+    /* ===== Progress Steps ===== */
+    .progress-steps {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 40px;
+      position: relative;
+    }
+
+    .progress-steps::before {
+      content: '';
+      position: absolute;
+      top: 20px;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--border);
+      z-index: 0;
+    }
+
+    .progress-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .step-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      color: var(--text-secondary);
+      transition: all 0.3s ease;
+      border: 3px solid white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .progress-step.active .step-circle {
+      background: var(--primary);
+      color: white;
+      animation: pulse 2s infinite;
+    }
+
+    .progress-step.completed .step-circle {
+      background: var(--success);
+      color: white;
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4); }
+      50% { box-shadow: 0 0 0 10px rgba(102, 126, 234, 0); }
+    }
+
+    .step-label {
+      margin-top: 10px;
+      font-size: 0.85em;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .progress-step.active .step-label {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* ===== Error Message ===== */
+    .error-message {
+      background: #fee2e2;
+      color: #dc2626;
+      padding: 16px 20px;
+      border-radius: var(--radius);
+      margin-top: 20px;
+      display: none;
+      align-items: center;
+      gap: 12px;
+      animation: shake 0.5s ease;
+    }
+
+    .error-message.show {
+      display: flex;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 768px) {
+      .header h1 { font-size: 2em; }
+      .input-section { padding: 24px; }
+      .score-grid { grid-template-columns: 1fr; }
+      .result-tabs { overflow-x: auto; }
+      .result-tab { white-space: nowrap; }
+    }
+
+    /* ===== Example Links ===== */
+    .example-hint {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 12px;
+      font-size: 0.9em;
+    }
+
+    .example-hint .label {
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #1e40af;
+    }
+
+    .example-link {
+      color: var(--primary);
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    .example-link:hover {
+      background: rgba(102, 126, 234, 0.1);
+      text-decoration: underline;
+    }
+
+    /* ===== Loading Overlay ===== */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(5px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .loading-overlay.show {
+      display: flex;
+    }
+
+    .loading-spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    .loading-text {
+      font-size: 1.1em;
+      color: var(--text-secondary);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1>认知智能体 v2.0</h1>
+      <div class="subtitle">智能文章评估与决策支持系统</div>
+      <div class="features">
+        <div class="feature-badge">可视化分析</div>
+        <div class="feature-badge">智能决策</div>
+        <div class="feature-badge">数据溯源</div>
+        <div class="feature-badge">行动建议</div>
+      </div>
+    </div>
+
+    <!-- Main Card -->
+    <div class="main-card">
+      <!-- Input Section -->
+      <div class="input-section" id="inputSection">
+        <div class="tabs">
+          <button class="tab active" data-tab="url">🔗 URL链接</button>
+          <button class="tab" data-tab="content">📝 文章内容</button>
+        </div>
+
+        <form id="evaluationForm">
+          <!-- URL Input -->
+          <div class="input-group" id="urlInputGroup">
+            <label for="urlInput">输入文章URL</label>
+            <input
+              type="url"
+              id="urlInput"
+              class="input-field"
+              placeholder="https://example.com/article"
+            />
+            <div class="example-hint">
+              <div class="label">示例链接（点击快速填入）:</div>
+              <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+                <div>
+                  <span class="example-link" onclick="fillUrl('https://www.woshipm.com/it/5967220.html')">SaaS行业趋势（产品经理）</span>
+                  <span style="color: #6b7280; font-size: 0.85em; margin-left: 8px;">→ 命中【应用软件】行业认知基准</span>
+                </div>
+                <div>
+                  <span class="example-link" onclick="fillUrl('https://www.woshipm.com/it/5953260.html')">光伏产业分析（产品经理）</span>
+                  <span style="color: #6b7280; font-size: 0.85em; margin-left: 8px;">→ 命中【电气设备】行业认知基准</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Content Input -->
+          <div class="input-group" id="contentInputGroup" style="display: none;">
+            <label for="contentInput">输入文章内容（至少50字）</label>
+            <textarea
+              id="contentInput"
+              class="input-field"
+              placeholder="请粘贴文章内容..."
+            ></textarea>
+            <div class="example-hint">
+              <div class="label">示例内容（点击快速填入）:</div>
+              <div>
+                <span class="example-link" onclick="fillContent('saas')">SaaS行业示例</span> |
+                <span class="example-link" onclick="fillContent('ai')">AI助手示例</span> |
+                <span class="example-link" onclick="fillContent('general')">通用文章示例</span>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="submit-btn" id="submitBtn">
+            <span>🚀</span>
+            <span class="btn-text">开始智能评估</span>
+          </button>
+        </form>
+
+        <div class="error-message" id="errorMessage">
+          <span>⚠️</span>
+          <span id="errorText"></span>
+        </div>
+
+        <!-- Progress Steps -->
+        <div class="progress-steps" id="progressSteps" style="display: none; margin-top: 40px;">
+          <div class="progress-step active" data-step="1">
+            <div class="step-circle">1</div>
+            <div class="step-label">解析文章</div>
+          </div>
+          <div class="progress-step" data-step="2">
+            <div class="step-circle">2</div>
+            <div class="step-label">行业识别</div>
+          </div>
+          <div class="progress-step" data-step="3">
+            <div class="step-circle">3</div>
+            <div class="step-label">多维评估</div>
+          </div>
+          <div class="progress-step" data-step="4">
+            <div class="step-circle">4</div>
+            <div class="step-label">生成洞察</div>
+          </div>
+          <div class="progress-step" data-step="5">
+            <div class="step-circle">5</div>
+            <div class="step-label">完成</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Result Section -->
+      <div class="result-section" id="resultSection">
+        <!-- Result Tabs -->
+        <div class="result-tabs">
+          <button class="result-tab active" data-tab="overview">
+            📊 总览
+          </button>
+          <button class="result-tab" data-tab="analysis">
+            🔍 详细分析
+          </button>
+          <button class="result-tab" data-tab="actions">
+            ✅ 行动建议 <span class="badge" id="actionCount">0</span>
+          </button>
+          <button class="result-tab" data-tab="source">
+            📄 原文查看
+          </button>
+        </div>
+
+        <!-- Overview Tab -->
+        <div class="result-tab-content active" id="overviewTab">
+          <!-- Summary Card -->
+          <div class="summary-card">
+            <div class="summary-label">核心价值</div>
+            <div class="summary-text" id="summaryText"></div>
+          </div>
+
+          <!-- Radar Chart -->
+          <div class="chart-container">
+            <div class="chart-title">多维度评估雷达图</div>
+            <div class="chart-wrapper">
+              <canvas id="radarChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Score Cards -->
+          <div class="score-grid" id="scoreGrid">
+            <!-- Dynamic content -->
+          </div>
+        </div>
+
+        <!-- Analysis Tab -->
+        <div class="result-tab-content" id="analysisTab">
+          <div class="detail-section">
+            <div class="detail-header" onclick="toggleDetail(this)">
+              <span>📋 输入诊断</span>
+              <span class="toggle-icon">▼</span>
+            </div>
+            <div class="detail-content" id="inputDiagnosis"></div>
+          </div>
+
+          <div class="detail-section">
+            <div class="detail-header" onclick="toggleDetail(this)">
+              <span>📊 基准对比</span>
+              <span class="toggle-icon">▼</span>
+            </div>
+            <div class="detail-content" id="benchmarkComparison"></div>
+          </div>
+
+          <div class="detail-section">
+            <div class="detail-header" onclick="toggleDetail(this)">
+              <span>⚠️ 盲点警示</span>
+              <span class="toggle-icon">▼</span>
+            </div>
+            <div class="detail-content" id="blindSpotAlert"></div>
+          </div>
+        </div>
+
+        <!-- Actions Tab -->
+        <div class="result-tab-content" id="actionsTab">
+          <div class="action-list" id="actionList">
+            <!-- Dynamic content -->
+          </div>
+        </div>
+
+        <!-- Source Tab -->
+        <div class="result-tab-content" id="sourceTab">
+          <div style="background: var(--card); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+              <h3 style="font-size: 1.2em;">原文内容</h3>
+              <button class="submit-btn" style="width: auto; padding: 10px 20px; font-size: 0.9em;" onclick="openOriginalUrl()">
+                🌐 在新窗口打开
+              </button>
+            </div>
+            <div id="sourceContent" style="max-height: 600px; overflow-y: auto; line-height: 1.8; color: var(--text-secondary);">
+              <!-- Dynamic content -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Action Button -->
+  <button class="fab" id="fabBtn" onclick="backToInput()" style="display: none;">
+    ✕
+  </button>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">AI正在分析中...</div>
+  </div>
+
+  <script>
+    // ===== State =====
+    let currentTab = 'url';
+    let radarChart = null;
+    let evaluationResult = null;
+
+    // ===== Examples =====
+    const examples = {
+      saas: `产品驱动增长(PLG) vs 销售驱动增长(SLG)：SaaS企业如何选择？
+
+随着SaaS行业竞争加剧，增长模式的选择变得至关重要。PLG模式通过产品自助体验降低获客成本，而SLG模式依赖销售团队建立深度客户关系。
+
+核心指标对比：
+- PLG：CAC更低，但需要强大的产品体验
+- SLG：ACV更高，但销售成本较大
+
+成功案例：
+- Slack：PLG模式，病毒式增长
+- Salesforce：SLG模式，企业级市场领导者
+
+选择建议：
+初创期优先PLG快速验证市场，成熟期引入SLG提升客户价值。`,
+
+      ai: `ChatGPT用户突破1亿大关，AI助手市场竞争白热化
+
+OpenAI的ChatGPT在推出仅两个月后，月活跃用户就已突破1亿大关，创下了互联网应用增长的新纪录。
+
+市场格局：
+1. OpenAI ChatGPT：GPT-4强大能力
+2. 微软Bing Chat：整合搜索优势
+3. Google Bard：快速追赶
+
+商业化进展：
+ChatGPT Plus订阅服务月费20美元，为企业用户提供更稳定的服务。
+
+行业影响：
+AI助手正在重塑客服、教育、内容创作等多个行业。`,
+
+      general: `2024年春节档电影票房破纪录
+
+2024年春节档票房突破80亿元大关，创下历史新高。其中《热辣滚烫》《飞驰人生2》《熊出没·逆转时空》三部影片贡献了超过60%的票房。
+
+观众满意度：
+根据猫眼专业版数据，今年春节档观众评分达到9.2分，为近五年最高。
+
+市场趋势：
+中国电影市场正在从疫情中恢复，2024年全年票房有望突破500亿元。`
+    };
+
+    // ===== Tab Switching =====
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+
+        currentTab = this.dataset.tab;
+        document.getElementById('urlInputGroup').style.display = currentTab === 'url' ? 'block' : 'none';
+        document.getElementById('contentInputGroup').style.display = currentTab === 'content' ? 'block' : 'none';
+      });
+    });
+
+    // ===== Result Tab Switching =====
+    document.querySelectorAll('.result-tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.result-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+
+        document.querySelectorAll('.result-tab-content').forEach(c => c.classList.remove('active'));
+        document.getElementById(this.dataset.tab + 'Tab').classList.add('active');
+      });
+    });
+
+    // ===== Helper Functions =====
+    function fillUrl(url) {
+      document.getElementById('urlInput').value = url;
+      showToast('已填入示例链接', 'info');
+    }
+
+    function fillContent(type) {
+      document.getElementById('contentInput').value = examples[type];
+      showToast('已填入示例内容', 'info');
+    }
+
+    function showToast(message, type = 'info') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = `toast ${type} show`;
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    function showError(message) {
+      const errorEl = document.getElementById('errorMessage');
+      document.getElementById('errorText').textContent = message;
+      errorEl.classList.add('show');
+      setTimeout(() => errorEl.classList.remove('show'), 5000);
+    }
+
+    function toggleDetail(header) {
+      header.classList.toggle('expanded');
+      const content = header.nextElementSibling;
+      content.classList.toggle('show');
+    }
+
+    // ===== Typewriter Effect =====
+    function typeWriter(element, text, speed = 30) {
+      element.textContent = '';
+      let i = 0;
+      function type() {
+        if (i < text.length) {
+          element.textContent += text.charAt(i);
+          i++;
+          setTimeout(type, speed);
+        }
+      }
+      type();
+    }
+
+    // ===== Update Progress Steps =====
+    function updateProgressStep(step) {
+      document.querySelectorAll('.progress-step').forEach((s, index) => {
+        if (index < step - 1) {
+          s.classList.add('completed');
+          s.classList.remove('active');
+          s.querySelector('.step-circle').textContent = '✓';
+        } else if (index === step - 1) {
+          s.classList.add('active');
+          s.classList.remove('completed');
+          s.querySelector('.step-circle').textContent = index + 1;
+        } else {
+          s.classList.remove('active', 'completed');
+          s.querySelector('.step-circle').textContent = index + 1;
+        }
+      });
+    }
+
+    // ===== Create Radar Chart =====
+    function createRadarChart(scores) {
+      const ctx = document.getElementById('radarChart').getContext('2d');
+      
+      if (radarChart) {
+        radarChart.destroy();
+      }
+
+      radarChart = new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: ['事实准确性', '行业洞察', '战略价值', '数据质量', '可读性'],
+          datasets: [{
+            label: '文章评分',
+            data: [
+              scores.factual || 70,
+              scores.insight || 75,
+              scores.strategic || 80,
+              scores.data || 65,
+              scores.readability || 85
+            ],
+            backgroundColor: 'rgba(102, 126, 234, 0.2)',
+            borderColor: 'rgba(102, 126, 234, 1)',
+            pointBackgroundColor: 'rgba(102, 126, 234, 1)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgba(102, 126, 234, 1)',
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          scales: {
+            r: {
+              beginAtZero: true,
+              max: 100,
+              ticks: {
+                stepSize: 20,
+                font: { size: 11 }
+              },
+              pointLabels: {
+                font: { size: 12, weight: 'bold' }
+              }
+            }
+          },
+          plugins: {
+            legend: { display: false }
+          },
+          animation: {
+            duration: 1500,
+            easing: 'easeOutQuart'
+          }
+        }
+      });
+    }
+
+    // ===== Display Results =====
+    function displayResults(evaluation) {
+      evaluationResult = evaluation;
+
+      // Typewriter summary
+      const summary = evaluation.overall_assessment?.one_sentence_summary || 
+                     evaluation.summary || 
+                     '文章评估完成';
+      typeWriter(document.getElementById('summaryText'), summary, 20);
+
+      // Create radar chart
+      const scores = evaluation.dimension_scores || {};
+      createRadarChart({
+        factual: scores.factual_accuracy?.score || 70,
+        insight: scores.industry_insight?.score || 75,
+        strategic: scores.strategic_value?.score || 80,
+        data: scores.data_quality?.score || 65,
+        readability: scores.readability?.score || 85
+      });
+
+      // Score cards
+      const scoreGrid = document.getElementById('scoreGrid');
+      scoreGrid.innerHTML = `
+        <div class="score-card">
+          <div class="score-card-header">
+            <span class="score-card-title">综合评分</span>
+            <span class="score-badge ${(evaluation.overall_assessment?.rating === 'excellent' || evaluation.overall_assessment?.rating === 'good') ? 'high' : 'medium'}">${evaluation.overall_assessment?.rating === 'excellent' ? '优秀' : evaluation.overall_assessment?.rating === 'good' ? '良好' : '一般'}</span>
+          </div>
+          <div class="score-value">${evaluation.overall_assessment?.total_score || 75}</div>
+          <div class="score-bar">
+            <div class="score-bar-fill" style="width: ${evaluation.overall_assessment?.total_score || 75}%"></div>
+          </div>
+          <div class="score-description">基于多维度评估的综合得分</div>
+        </div>
+        <div class="score-card">
+          <div class="score-card-header">
+            <span class="score-card-title">决策相关性</span>
+            <span class="score-badge high">${evaluation.dimension_scores?.strategic_value?.decision_relevance || '高'}</span>
+          </div>
+          <div class="score-value">${evaluation.dimension_scores?.strategic_value?.actionability === '高' ? '是' : '可能'}</div>
+          <div class="score-description">建议采取行动</div>
+        </div>
+        <div class="score-card">
+          <div class="score-card-header">
+            <span class="score-card-title">置信度</span>
+            <span class="score-badge ${(evaluation.confidence_and_trust?.overall_confidence?.score || 80) > 70 ? 'high' : 'medium'}">${evaluation.confidence_and_trust?.overall_confidence?.level || '中高'}</span>
+          </div>
+          <div class="score-value">${evaluation.confidence_and_trust?.overall_confidence?.score || 80}%</div>
+          <div class="score-bar">
+            <div class="score-bar-fill" style="width: ${evaluation.confidence_and_trust?.overall_confidence?.score || 80}%"></div>
+          </div>
+          <div class="score-description">评估结果的可信程度</div>
+        </div>
+      `;
+
+      // Analysis details
+      document.getElementById('inputDiagnosis').innerHTML = `<p>${evaluation.dimension_scores?.factual_accuracy?.assessment || '文章数据基本准确，逻辑清晰'}</p>`;
+      
+      const benchmarkComp = evaluation.benchmark_comparison || {};
+      document.getElementById('benchmarkComparison').innerHTML = `
+        <p><strong>超出基准：</strong>${benchmarkComp.above_benchmark?.map(b => b.area).join('、') || '暂无'}</p>
+        <p><strong>符合基准：</strong>${benchmarkComp.meets_benchmark?.map(b => b.area).join('、') || '整体表现良好'}</p>
+        <p><strong>待改进：</strong>${benchmarkComp.below_benchmark?.map(b => `${b.area}: ${b.improvement_suggestion}`).join('；') || '无明显短板'}</p>
+      `;
+
+      const blindSpots = evaluation.blind_spot_analysis || {};
+      document.getElementById('blindSpotAlert').innerHTML = `
+        <p>${blindSpots.critical_missing_context?.length > 0 ? '缺失关键背景：' + blindSpots.critical_missing_context.join('；') : '未发现明显盲点'}</p>
+      `;
+
+      // Action list
+      const actionList = document.getElementById('actionList');
+      const recommendations = evaluation.recommendations?.for_readers || [];
+      
+      if (recommendations.length > 0) {
+        actionList.innerHTML = recommendations.map((rec, index) => `
+          <div class="action-card priority-${rec.priority === '高' ? 'high' : rec.priority === '中' ? 'medium' : 'low'}" style="animation: fadeInUp 0.4s ease ${index * 0.1}s both;">
+            <div class="action-header">
+              <div class="action-title">${rec.recommendation}</div>
+              <div class="action-priority ${rec.priority === '高' ? 'high' : rec.priority === '中' ? 'medium' : 'low'}">${rec.priority}优先级</div>
+            </div>
+            <div class="action-meta">
+              <div class="action-meta-item">
+                <span>💡</span>
+                <span>${rec.rationale}</span>
+              </div>
+            </div>
+          </div>
+        `).join('');
+        document.getElementById('actionCount').textContent = recommendations.length;
+      } else {
+        actionList.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 40px;">暂无具体行动建议</p>';
+        document.getElementById('actionCount').textContent = '0';
+      }
+
+      // Source content
+      document.getElementById('sourceContent').innerHTML = evaluation.article_content ? 
+        `<div style="white-space: pre-wrap;">${evaluation.article_content}</div>` : 
+        '<p style="text-align: center; color: var(--text-secondary);">原文内容加载中...</p>';
+
+      // Show results
+      document.getElementById('resultSection').classList.add('show');
+      document.getElementById('fabBtn').style.display = 'flex';
+      
+      // Scroll to results
+      document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // ===== Form Submit =====
+    document.getElementById('evaluationForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const submitBtn = document.getElementById('submitBtn');
+      const progressSteps = document.getElementById('progressSteps');
+      const loadingOverlay = document.getElementById('loadingOverlay');
+
+      // Get input
+      let data = '';
+      if (currentTab === 'url') {
+        data = document.getElementById('urlInput').value.trim();
+      } else {
+        data = document.getElementById('contentInput').value.trim();
+      }
+
+      if (!data) {
+        const errorMsg = currentTab === 'url'
+          ? '⚠️ 请输入文章URL'
+          : '⚠️ 请输入文章内容';
+        showError(errorMsg);
+        return;
+      }
+
+      // URL格式验证
+      if (currentTab === 'url') {
+        try {
+          new URL(data);
+        } catch (e) {
+          showError('⚠️ URL格式不正确，请输入完整的URL（如：https://example.com/article）');
+          return;
+        }
+      }
+
+      // 内容长度验证
+      if (currentTab === 'content') {
+        if (data.length < 50) {
+          showError(`⚠️ 内容过少（当前${data.length}字），请至少输入50字`);
+          return;
+        }
+        if (data.length > 10000) {
+          showError(`⚠️ 内容过多（当前${data.length}字），建议控制在5000字以内`);
+          return;
+        }
+      }
+
+      // UI updates
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<div class="spinner"></div><span>分析中...</span>';
+      progressSteps.style.display = 'flex';
+      updateProgressStep(1);
+
+      // Simulate progress
+      const progressInterval = setInterval(() => {
+        const currentStep = document.querySelector('.progress-step.active');
+        const stepNum = parseInt(currentStep?.dataset.step || '1');
+        if (stepNum < 5) {
+          updateProgressStep(stepNum + 1);
+        }
+      }, 2000);
+
+      try {
+        const response = await fetch('/api/evaluate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: currentTab, data })
+        });
+
+        clearInterval(progressInterval);
+        updateProgressStep(5);
+
+        if (!response.ok) {
+          // 尝试获取后端返回的错误信息
+          const errorData = await response.json().catch(() => null);
+          const errorMsg = errorData?.error?.message || `HTTP ${response.status} 错误`;
+          throw new Error(errorMsg);
+        }
+
+        const result = await response.json();
+
+        if (!result.success) {
+          const errorMsg = result.error?.message || '评估失败，请重试';
+          showError(`⚠️ ${errorMsg}`);
+          return;
+        }
+
+        // Hide progress after a moment
+        setTimeout(() => {
+          progressSteps.style.display = 'none';
+          displayResults(result.evaluation);
+          showToast('评估完成！', 'success');
+        }, 500);
+
+      } catch (error) {
+        clearInterval(progressInterval);
+        showError('网络错误，请检查连接后重试');
+        console.error(error);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span>🚀</span><span class="btn-text">开始智能评估</span>';
+      }
+    });
+
+    // ===== Back to Input =====
+    function backToInput() {
+      document.getElementById('resultSection').classList.remove('show');
+      document.getElementById('fabBtn').style.display = 'none';
+      document.getElementById('inputSection').scrollIntoView({ behavior: 'smooth' });
+      
+      // Reset tabs
+      document.querySelectorAll('.result-tab').forEach(t => t.classList.remove('active'));
+      document.querySelector('.result-tab[data-tab="overview"]').classList.add('active');
+      document.querySelectorAll('.result-tab-content').forEach(c => c.classList.remove('active'));
+      document.getElementById('overviewTab').classList.add('active');
+    }
+
+    // ===== Open Original URL =====
+    function openOriginalUrl() {
+      if (evaluationResult?.article_url) {
+        window.open(evaluationResult.article_url, '_blank');
+      } else {
+        showToast('暂无原文链接', 'info');
+      }
+    }
+
+    // ===== Keyboard Shortcuts =====
+    document.addEventListener('keydown', function(e) {
+      if (e.ctrlKey && e.key === 'Enter') {
+        document.getElementById('evaluationForm').dispatchEvent(new Event('submit'));
+      }
+    });
+  </script>
+</body>
+</html>

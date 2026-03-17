@@ -12,6 +12,7 @@ const industryBenchmarkGenerator = require('./industryBenchmarkGenerator');
 const comprehensiveResearchGenerator = require('./comprehensiveResearchGenerator');
 const articleEvaluatorWithBenchmark = require('./articleEvaluatorWithBenchmark');
 const benchmarkData = require('./benchmarkData');
+const perfTracker = require('../utils/performanceTracker');
 
 class CognitiveOrchestrator {
   constructor() {
@@ -25,38 +26,56 @@ class CognitiveOrchestrator {
    */
   async evaluate(article) {
     try {
+      perfTracker.clear();
       console.log('\n[认知智能体] 开始认知评估流程...');
+      perfTracker.start('认知评估总流程');
 
       // 步骤1: GICS行业分类（使用qwen3.5-flash）
+      perfTracker.start('GICS行业分类');
       const gicsClassification = await this.classifyGICS(article);
+      perfTracker.end('GICS行业分类');
 
       // 步骤2: 检查行业基准数据是否存在
+      perfTracker.start('检查基准数据');
       const hasBenchmarkData = await this.checkBenchmarkData(gicsClassification.gics4);
+      perfTracker.end('检查基准数据');
 
       // 步骤3: 检查是否有缓存的行业认知基准
+      perfTracker.start('加载缓存基准');
       const cachedBenchmark = await this.loadCachedBenchmark(gicsClassification.gics4);
+      perfTracker.end('加载缓存基准');
 
       // 步骤4: 检查文章与行业的相关性（如果有行业数据）
+      perfTracker.start('文章相关性检查');
       const articleRelevance = hasBenchmarkData
         ? await this.checkArticleRelevance(article, gicsClassification)
         : { isRelevant: false, confidence: 0, reason: '无该行业基准数据' };
+      perfTracker.end('文章相关性检查');
 
       // 步骤5: 路由决策
+      perfTracker.start('路由决策');
       const routeDecision = this.makeRouteDecision({
         gicsClassification,
         hasBenchmarkData,
         cachedBenchmark,
         articleRelevance
       });
+      perfTracker.end('路由决策');
 
       console.log(`[认知智能体] 路由决策: ${routeDecision.resultType}`);
       console.log(`[认知智能体] 路由原因: ${routeDecision.reason}`);
 
       // 步骤6: 处理路由结果
-      return await this.handleRoute(article, routeDecision);
+      const result = await this.handleRoute(article, routeDecision);
+
+      perfTracker.end('认知评估总流程');
+      perfTracker.generateReport();
+
+      return result;
 
     } catch (error) {
       console.error('[认知智能体] 评估失败:', error.message);
+      perfTracker.generateReport();
       // 降级到通用评估
       return await this.evaluateWithGeneralBenchmark(article, { error: error.message });
     }

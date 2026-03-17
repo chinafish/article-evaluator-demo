@@ -1,0 +1,54 @@
+{
+  "timestamp": "2026-03-16T09:05:48.674Z",
+  "summary": {
+    "totalDuration": 1659,
+    "stepCount": 2,
+    "averageDuration": 829.5
+  },
+  "byCategory": [
+    {
+      "category": "文章解析",
+      "totalDuration": 1,
+      "averageDuration": 1,
+      "percentage": "0.1%",
+      "count": 1,
+      "steps": [
+        {
+          "label": "解析评估结果",
+          "duration": 1,
+          "startTime": "2026-03-16T09:05:48.673Z",
+          "endTime": "2026-03-16T09:05:48.674Z"
+        }
+      ]
+    },
+    {
+      "category": "AI评估",
+      "totalDuration": 1658,
+      "averageDuration": 1658,
+      "percentage": "99.9%",
+      "count": 1,
+      "steps": [
+        {
+          "label": "认知评估总流程",
+          "duration": 1658,
+          "startTime": "2026-03-16T09:05:47.016Z",
+          "endTime": "2026-03-16T09:05:48.674Z"
+        }
+      ]
+    }
+  ],
+  "topSteps": [
+    {
+      "label": "认知评估总流程",
+      "category": "AI评估",
+      "duration": 1658,
+      "percentage": "99.9%"
+    },
+    {
+      "label": "解析评估结果",
+      "category": "文章解析",
+      "duration": 1,
+      "percentage": "0.1%"
+    }
+  ]
+}

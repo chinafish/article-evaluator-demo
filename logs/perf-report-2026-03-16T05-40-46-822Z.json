@@ -1,0 +1,156 @@
+{
+  "timestamp": "2026-03-16T05:40:46.822Z",
+  "summary": {
+    "totalDuration": 341501,
+    "stepCount": 10,
+    "averageDuration": 34150.1
+  },
+  "byCategory": [
+    {
+      "category": "GICS分类",
+      "totalDuration": 22946,
+      "averageDuration": 22946,
+      "percentage": "6.7%",
+      "count": 1,
+      "steps": [
+        {
+          "label": "GICS行业分类",
+          "duration": 22946,
+          "startTime": "2026-03-16T05:38:41.202Z",
+          "endTime": "2026-03-16T05:39:04.148Z"
+        }
+      ]
+    },
+    {
+      "category": "基准加载",
+      "totalDuration": 1,
+      "averageDuration": 0.5,
+      "percentage": "0.0%",
+      "count": 2,
+      "steps": [
+        {
+          "label": "加载缓存基准",
+          "duration": 1,
+          "startTime": "2026-03-16T05:39:04.148Z",
+          "endTime": "2026-03-16T05:39:04.149Z"
+        },
+        {
+          "label": "检查基准数据",
+          "duration": 0,
+          "startTime": "2026-03-16T05:39:04.148Z",
+          "endTime": "2026-03-16T05:39:04.148Z"
+        }
+      ]
+    },
+    {
+      "category": "相关性检查",
+      "totalDuration": 12409,
+      "averageDuration": 12409,
+      "percentage": "3.6%",
+      "count": 1,
+      "steps": [
+        {
+          "label": "文章相关性检查",
+          "duration": 12409,
+          "startTime": "2026-03-16T05:39:04.149Z",
+          "endTime": "2026-03-16T05:39:16.558Z"
+        }
+      ]
+    },
+    {
+      "category": "路由决策",
+      "totalDuration": 0,
+      "averageDuration": 0,
+      "percentage": "0.0%",
+      "count": 1,
+      "steps": [
+        {
+          "label": "路由决策",
+          "duration": 0,
+          "startTime": "2026-03-16T05:39:16.558Z",
+          "endTime": "2026-03-16T05:39:16.558Z"
+        }
+      ]
+    },
+    {
+      "category": "AI评估",
+      "totalDuration": 306145,
+      "averageDuration": 76536.25,
+      "percentage": "89.6%",
+      "count": 4,
+      "steps": [
+        {
+          "label": "认知评估总流程",
+          "duration": 125619,
+          "startTime": "2026-03-16T05:38:41.202Z",
+          "endTime": "2026-03-16T05:40:46.821Z"
+        },
+        {
+          "label": "AI评估调用",
+          "duration": 90263,
+          "startTime": "2026-03-16T05:39:16.558Z",
+          "endTime": "2026-03-16T05:40:46.821Z"
+        },
+        {
+          "label": "文章评估",
+          "duration": 90263,
+          "startTime": "2026-03-16T05:39:16.558Z",
+          "endTime": "2026-03-16T05:40:46.821Z"
+        },
+        {
+          "label": "构建评估Prompt",
+          "duration": 0,
+          "startTime": "2026-03-16T05:39:16.558Z",
+          "endTime": "2026-03-16T05:39:16.558Z"
+        }
+      ]
+    },
+    {
+      "category": "文章解析",
+      "totalDuration": 0,
+      "averageDuration": 0,
+      "percentage": "0.0%",
+      "count": 1,
+      "steps": [
+        {
+          "label": "解析评估结果",
+          "duration": 0,
+          "startTime": "2026-03-16T05:40:46.821Z",
+          "endTime": "2026-03-16T05:40:46.821Z"
+        }
+      ]
+    }
+  ],
+  "topSteps": [
+    {
+      "label": "认知评估总流程",
+      "category": "AI评估",
+      "duration": 125619,
+      "percentage": "36.8%"
+    },
+    {
+      "label": "AI评估调用",
+      "category": "AI评估",
+      "duration": 90263,
+      "percentage": "26.4%"
+    },
+    {
+      "label": "文章评估",
+      "category": "AI评估",
+      "duration": 90263,
+      "percentage": "26.4%"
+    },
+    {
+      "label": "GICS行业分类",
+      "category": "GICS分类",
+      "duration": 22946,
+      "percentage": "6.7%"
+    },
+    {
+      "label": "文章相关性检查",
+      "category": "相关性检查",
+      "duration": 12409,
+      "percentage": "3.6%"
+    }
+  ]
+}

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>性能分析报告</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 30px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .summary-item {
+      background: #f9fafb;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .summary-item .label {
+      font-size: 0.9em;
+      color: #6b7280;
+      margin-bottom: 8px;
+    }
+
+    .summary-item .value {
+      font-size: 2em;
+      font-weight: 700;
+      color: #1f2937;
+    }
+
+    .category-section {
+      margin-bottom: 30px;
+    }
+
+    .category-title {
+      font-size: 1.3em;
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    .step-item {
+      background: #f9fafb;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .step-label {
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .step-duration {
+      font-size: 1.1em;
+      font-weight: 700;
+      color: #667eea;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: #e5e7eb;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      transition: width 0.5s ease;
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 60px 20px;
+      color: #6b7280;
+    }
+
+    .no-data .icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 24px;
+      background: white;
+      color: #667eea;
+      border: none;
+      border-radius: 8px;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .refresh-btn {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+    }
+
+    .loading::after {
+      content: '';
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 4px solid #f3f4f6;
+      border-top-color: #667eea;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📊 性能分析报告</h1>
+      <p>文章评估流程耗时分析</p>
+    </div>
+
+    <div class="refresh-btn">
+      <button class="btn" onclick="loadReport()">🔄 刷新报告</button>
+      <a href="/" class="btn">← 返回首页</a>
+    </div>
+
+    <div id="reportContent" class="loading"></div>
+  </div>
+
+  <script>
+    async function loadReport() {
+      const content = document.getElementById('reportContent');
+
+      try {
+        const response = await fetch('/api/performance/report');
+        const data = await response.json();
+
+        if (!data.success) {
+          content.innerHTML = `
+            <div class="card no-data">
+              <div class="icon">📊</div>
+              <h3>${data.error.message}</h3>
+              <p>请先进行一次文章评估，然后再查看性能报告</p>
+            </div>
+          `;
+          return;
+        }
+
+        renderReport(data.report);
+
+      } catch (error) {
+        content.innerHTML = `
+          <div class="card no-data">
+            <div class="icon">❌</div>
+            <h3>加载失败</h3>
+            <p>${error.message}</p>
+          </div>
+        `;
+      }
+    }
+
+    function renderReport(report) {
+      const content = document.getElementById('reportContent');
+
+      let html = `
+        <div class="card">
+          <h2 style="margin-bottom: 20px;">📈 总体统计</h2>
+          <div class="summary">
+            <div class="summary-item">
+              <div class="label">总耗时</div>
+              <div class="value">${formatDuration(report.summary.totalDuration)}</div>
+            </div>
+            <div class="summary-item">
+              <div class="label">步骤数</div>
+              <div class="value">${report.summary.stepCount}</div>
+            </div>
+            <div class="summary-item">
+              <div class="label">平均耗时</div>
+              <div class="value">${formatDuration(report.summary.averageDuration)}</div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // 按类别显示
+      report.byCategory.forEach(category => {
+        html += `
+          <div class="card">
+            <div class="category-section">
+              <div class="category-title">📊 ${category.category}</div>
+              <p style="margin-bottom: 15px; color: #6b7280;">
+                总耗时: ${formatDuration(category.totalDuration)} |
+                占比: ${category.percentage} |
+                次数: ${category.count}
+              </p>
+        `;
+
+        category.steps.forEach(step => {
+          const percentage = (step.duration / category.totalDuration * 100).toFixed(1);
+          html += `
+            <div class="step-item">
+              <div>
+                <div class="step-label">${step.label}</div>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${percentage}%"></div>
+                </div>
+              </div>
+              <div class="step-duration">${formatDuration(step.duration)}</div>
+            </div>
+          `;
+        });
+
+        html += `</div></div></div>`;
+      });
+
+      // 最耗时步骤
+      html += `
+        <div class="card">
+          <h2 style="margin-bottom: 20px;">🔥 最耗时步骤 TOP 5</h2>
+      `;
+
+      report.topSteps.forEach((step, index) => {
+        html += `
+          <div class="step-item" style="background: ${index === 0 ? '#fef3c7' : '#f9fafb'}">
+            <div>
+              <div class="step-label">${index + 1}. ${step.label} <span style="font-weight: 400; color: #6b7280; margin-left: 10px;">(${step.category})</span></div>
+            </div>
+            <div class="step-duration">${formatDuration(step.duration)} <span style="font-size: 0.8em; color: #6b7280;">(${step.percentage})</span></div>
+          </div>
+        `;
+      });
+
+      html += `</div>`;
+
+      // 报告时间
+      html += `
+        <div style="text-align: center; color: white; margin-top: 20px; opacity: 0.9;">
+          报告生成时间: ${new Date(report.timestamp).toLocaleString('zh-CN')}
+        </div>
+      `;
+
+      content.innerHTML = html;
+    }
+
+    function formatDuration(ms) {
+      if (ms < 1000) {
+        return `${ms}ms`;
+      } else if (ms < 60000) {
+        const seconds = (ms / 1000).toFixed(1);
+        return `${seconds}s`;
+      } else {
+        const minutes = Math.floor(ms / 60000);
+        const seconds = ((ms % 60000) / 1000).toFixed(1);
+        return `${minutes}m ${seconds}s`;
+      }
+    }
+
+    // 页面加载时自动加载报告
+    loadReport();
+  </script>
+</body>
+</html>
