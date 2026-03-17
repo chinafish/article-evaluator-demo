@@ -110,15 +110,15 @@ class ArticleEvaluatorV15 {
       GICS4: context.gics4 || '未知',
       INDUSTRY_STAGE: context.industryStage || '成熟增长期',
 
-      // 行业数据（从benchmark和report中提取）
+      // 行业数据（从benchmark和report中提取，截断避免过长）
       KEY_DATA_TABLE: this.formatKeyDataTable(context.keyData),
-      COMPETITIVE_LANDSCAPE: context.competitiveLandscape || '暂无',
-      SUCCESS_FACTORS: context.successFactors || ['暂无'],
-      COMMON_MISCONCEPTIONS: context.commonMisconceptions || [],
+      COMPETITIVE_LANDSCAPE: (context.competitiveLandscape || '暂无').substring(0, 500),
+      SUCCESS_FACTORS: (context.successFactors || ['暂无']).slice(0, 5),
+      COMMON_MISCONCEPTIONS: (context.commonMisconceptions || []).slice(0, 3),
 
-      // 报告和基准
-      INDUSTRY_REPORT: context.industryReport || '暂无',
-      INDUSTRY_BENCHMARK: context.industryBenchmark || '暂无'
+      // 报告和基准（截断避免过长）
+      INDUSTRY_REPORT: (context.industryReport || '暂无').substring(0, 800),
+      INDUSTRY_BENCHMARK: '已提供'
     };
 
     const promptText = industryPromptTemplate(promptVars);
@@ -200,17 +200,62 @@ class ArticleEvaluatorV15 {
    * 添加元数据
    */
   addMetadata(evaluation, article, context, type) {
+    // 从 BLOCK 0 中提取决策相关信息
+    const block0 = evaluation.block0 || {};
+    const summaryCards = block0.summary_cards || {};
+
+    // 计算决策优先级（基于判定结果）
+    let decisionPriority = 'N/A';
+    const verdict = block0.verdict || '';
+    if (verdict.includes('不建议采信') || verdict.includes('谨慎')) {
+      decisionPriority = '低';
+    } else if (verdict.includes('基本可信') || verdict.includes('可以采信')) {
+      decisionPriority = '中';
+    } else if (verdict.includes('高度可信')) {
+      decisionPriority = '高';
+    }
+
+    // 计算相关性（基于内容标签数量）
+    let relevanceScore = 'N/A';
+    const contentTags = block0.content_tags || [];
+    if (contentTags.length >= 4) {
+      relevanceScore = '高';
+    } else if (contentTags.length >= 2) {
+      relevanceScore = '中';
+    } else if (contentTags.length > 0) {
+      relevanceScore = '低';
+    }
+
+    // 计算紧迫性（基于时效性）
+    let urgencyLevel = 'N/A';
+    const timeliness = summaryCards.timeliness || {};
+    if (timeliness.value) {
+      if (timeliness.value.includes('2021') || timeliness.value.includes('2022')) {
+        urgencyLevel = '低'; // 数据较旧
+      } else if (timeliness.value.includes('2023') || timeliness.value.includes('2024')) {
+        urgencyLevel = '中'; // 数据较新
+      } else if (timeliness.value.includes('预测')) {
+        urgencyLevel = '高'; // 预测性内容
+      }
+    }
+
     return {
       ...evaluation,
+      // 添加决策相关字段（供 evaluate-stream.js 使用）
+      decision_priority: decisionPriority,
+      relevance_score: relevanceScore,
+      urgency_level: urgencyLevel,
+      // 原有字段
       article_title: article.title,
       article_source: article.source,
       article_url: article.url || null,
       evaluated_at: new Date().toISOString(),
       evaluator_version: 'v1.5',
       route_info: {
-        type: type === 'INDUSTRY' ? 'INDUSTRY_BENCHMARK_V15' : 'GENERAL_BENCHMARK_V15',
+        type: type === 'INDUSTRY' ? 'INDUSTRY_BENCHMARK' : 'GENERAL_BENCHMARK',
         gics4: context.gics4 || null,
-        benchmark_name: type === 'INDUSTRY' ? `${context.gics4}行业认知基准(v1.5)` : '通用认知基准(v1.5)'
+        benchmark_name: type === 'INDUSTRY' ? `${context.gics4}行业认知基准(v1.5)` : '通用认知基准(v1.5)',
+        evaluator_version: 'v1.5'
       },
       // 保留原始数据供前端使用
       _raw_context: {

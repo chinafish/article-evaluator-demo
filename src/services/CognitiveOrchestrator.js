@@ -407,9 +407,10 @@ class CognitiveOrchestrator {
     return {
       ...evaluation,
       route_info: {
-        type: 'GENERAL_BENCHMARK_V15',
+        type: 'GENERAL_BENCHMARK',
         reason: routeDecision.reason,
-        benchmark_name: '通用认知基准(v1.5)'
+        benchmark_name: '通用认知基准(v1.5)',
+        evaluator_version: 'v1.5'
       }
     };
   }

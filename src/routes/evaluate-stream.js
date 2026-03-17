@@ -2,8 +2,10 @@ const express = require('express');
 const router = express.Router();
 const articleParser = require('../services/articleParser');
 const CognitiveOrchestrator = require('../services/CognitiveOrchestrator');
-const articleEvaluator = require('../services/articleEvaluatorWithBenchmark');
+const { ArticleEvaluatorV15 } = require('../services/articleEvaluator.v1.5');
 const benchmarkData = require('../services/benchmarkData');
+
+const articleEvaluatorV15 = new ArticleEvaluatorV15();
 
 router.get('/', async (req, res) => {
   // 设置 SSE 响应头
@@ -72,29 +74,53 @@ router.get('/', async (req, res) => {
     // 步骤3: AI评估 (30-80%)
     sendProgress('ai-eval', 35, 'AI 评估分析中... (这是最大头的步骤，请稍候)', {});
 
-    // 获取行业基准（简化版）
+    // 获取行业基准
     const industryBenchmark = await benchmarkData.getByGics4(gicsResult.gics4);
+    const hasIndustryBenchmark = industryBenchmark && industryBenchmark.length > 0;
 
-    // 如果没有行业基准，使用通用基准
-    const benchmark = industryBenchmark && industryBenchmark.length > 0
-      ? industryBenchmark[0]
-      : { gics4: '通用', evaluation_dimensions: {}, scoring_criteria: {}, comparison_standards: {}, blind_spots_to_check: {} };
+    // 构建v1.5评估上下文
+    const benchmark = hasIndustryBenchmark ? industryBenchmark[0] : null;
+    const context = {
+      userIndustry: 'SaaS',
+      userStage: '成熟期',
+      userFocus: '竞争格局、客户增长',
+      industryName: gicsResult.gics4,
+      gics4: gicsResult.gics4,
+      industryStage: benchmark?.industry_stage || '成熟增长期',
+      keyData: [],
+      competitiveLandscape: benchmark?.competitive_landscape || '暂无',
+      successFactors: benchmark?.critical_success_factors || [],
+      commonMisconceptions: benchmark?.common_misconceptions || [],
+      industryReport: '暂无',
+      industryBenchmark: '已提供',
+      articleType: null
+    };
 
-    const aiResult = await articleEvaluator.evaluate(
-      article,
-      benchmark,
-      null, // report
-      (internalProgress) => {
-        // AI评估内部进度回调 (35%-80%)
-        const adjustedProgress = 35 + (internalProgress * 0.45);
-        const message = internalProgress < 50
-          ? 'AI 评估分析中... (这是最大头的步骤，请稍候)'
-          : internalProgress < 80
-          ? 'AI 评估分析中... (已完成一半)'
-          : 'AI 评估分析中... (即将完成)';
-        sendProgress('ai-eval', Math.round(adjustedProgress), message, {});
-      }
-    );
+    let aiResult;
+    if (hasIndustryBenchmark) {
+      aiResult = await articleEvaluatorV15.evaluateWithIndustry(
+        article,
+        context,
+        (internalProgress) => {
+          const adjustedProgress = 35 + (internalProgress * 0.45);
+          const message = internalProgress < 50
+            ? 'AI 评估分析中... (这是最大头的步骤，请稍候)'
+            : internalProgress < 80
+            ? 'AI 评估分析中... (已完成一半)'
+            : 'AI 评估分析中... (即将完成)';
+          sendProgress('ai-eval', Math.round(adjustedProgress), message, {});
+        }
+      );
+    } else {
+      aiResult = await articleEvaluatorV15.evaluateWithGeneral(
+        article,
+        context,
+        (internalProgress) => {
+          const adjustedProgress = 35 + (internalProgress * 0.45);
+          sendProgress('ai-eval', Math.round(adjustedProgress), 'AI 评估分析中...', {});
+        }
+      );
+    }
 
     sendProgress('ai-eval', 80, '✅ AI 评估完成', {
       decisionPriority: aiResult.decision_priority || 'N/A',
