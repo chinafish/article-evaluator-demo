@@ -19,6 +19,11 @@ app.get('/demo', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'demo.html'));
 });
 
+// v1.3 示例页面（静态展示BLOCK结构）
+app.get('/v1.3', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'index.v1.3.html'));
+});
+
 // API路由
 app.use('/api', require('./routes/evaluate'));
 app.use('/api/admin', require('./routes/admin'));
@@ -160,14 +165,16 @@ app.listen(PORT, () => {
   console.log(`
 ╔═══════════════════════════════════════════════════════════╗
 ║                                                               ║
-║  📊 文章评估智能体 Demo v1.2 (P0优化版)                      ║
+║  📊 文章评估智能体 v1.3 (效率优先版)                         ║
 ║                                                               ║
-║  ✅ 决策优先级判断                                           ║
-║  ✅ 相关性评估                                               ║
-║  ✅ 紧迫性判断                                               ║
-║  ✅ 优化卡片呈现                                             ║
+║  ✅ v1.3 Prompt模板 (行业认知基准 + 通用认知基准)            ║
+║  ✅ 4级可信度标注 (Tier 1/2/3/4)                             ║
+║  ✅ 集成决策建议列                                           ║
+║  ✅ BLOCK分层架构 (效率优先)                                 ║
 ║                                                               ║
-║  服务地址: http://localhost:${PORT}                           ║
+║  主应用: http://localhost:${PORT}                            ║
+║  v1.3示例: http://localhost:${PORT}/v1.3                     ║
+║  管理后台: http://localhost:${PORT}/admin                     ║
 ║                                                               ║
 ╚═══════════════════════════════════════════════════════════╝
   `);
