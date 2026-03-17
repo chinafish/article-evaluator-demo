@@ -71,13 +71,13 @@ class CognitiveOrchestrator {
       const result = await this.handleRoute(article, routeDecision);
 
       perfTracker.end('认知评估总流程');
-      perfTracker.generateReport();
+      if (typeof perfTracker.generateReport === 'function') perfTracker.generateReport();
 
       return result;
 
     } catch (error) {
       console.error('[认知智能体] 评估失败:', error.message);
-      perfTracker.generateReport();
+      if (typeof perfTracker.generateReport === 'function') perfTracker.generateReport();
       // 降级到通用评估
       return await this.evaluateWithGeneralBenchmark(article, { error: error.message });
     }

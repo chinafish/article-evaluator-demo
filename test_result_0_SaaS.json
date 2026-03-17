@@ -1,275 +1,171 @@
 {
   "success": true,
   "evaluation": {
-    "overall_assessment": {
-      "score": 72,
-      "rating": "good",
-      "one_sentence_summary": "文章对 PLG 模式分析深入，但数据时效性滞后，缺失 AI 与数据要素等关键行业基准。"
-    },
-    "dimension_scores": {
-      "factual_accuracy": {
-        "score": 80,
-        "assessment": "文章引用的 Slack、Zoom 等案例数据在当时准确，但缺乏 2023 年后行业基准数据支撑，时效性不足。",
-        "strengths": [
-          "引用 OpenView、Clearbit 等权威机构数据",
-          "具体企业案例（Slack、Zoom）数据详实"
-        ],
-        "weaknesses": [
-          "未提及 2023 年互联网业务收入等宏观基准",
-          "缺乏研发强度、海外收入占比等关键指标"
-        ],
-        "data_verification": [
-          {
-            "claim": "Slack 以 277 亿美元被收购",
-            "benchmark_value": "N/A",
-            "article_value": "277 亿美元",
-            "deviation": "无偏差",
-            "verdict": "符合"
-          },
-          {
-            "claim": "2024-2026 年 SaaS 市场 CAGR",
-            "benchmark_value": "15%",
-            "article_value": "未提及",
-            "deviation": "缺失",
-            "verdict": "不符合"
-          }
-        ]
-      },
-      "industry_insight": {
-        "score": 65,
-        "assessment": "深刻理解 PLG 与 SLG 差异及采购权更迭，但缺失 AI 大模型、数据要素市场化等前沿行业洞察。",
-        "demonstrated_knowledge": [
-          "PLG 与 SLG 模式区别",
-          "企业 IT 采购话语权演变"
-        ],
-        "missing_knowledge": [
-          "AI 大模型商业化趋势",
-          "数据资产入表政策影响"
-        ],
-        "misconceptions_detected": [
-          "未充分考虑国内合规成本对 PLG 的影响"
-        ]
-      },
-      "strategic_value": {
-        "score": 70,
-        "assessment": "对 SaaS 创业者有指导意义，但缺乏对高管在研发投入、全球化布局方面的决策支持数据。",
-        "key_insights": [
-          "PLG 适用于高协同性产品",
-          "国内需结合 SLG 模式"
-        ],
-        "opportunities": [
-          {
-            "type": "市场机会",
-            "description": "终端用户决策权下放带来的产品体验优化机会",
-            "urgency": "中",
-            "potential_impact": "中"
-          }
-        ],
-        "risks": [
-          {
-            "type": "市场风险",
-            "description": "国内自上而下采购习惯导致 PLG 转化率低",
-            "probability": "高",
-            "mitigation": "结合销售渠道建设"
-          }
-        ],
-        "decision_relevance": "中",
-        "actionability": "中",
-        "investment_recommendation": {
-          "verdict": "谨慎观察",
-          "rationale": "模式_valid_但需结合本土化与新技术",
-          "time_horizon": "中期"
-        }
-      },
-      "data_quality": {
-        "score": 60,
-        "assessment": "数据来源多为 VC 博客及媒体访谈，缺乏官方统计及财报支撑，时效性滞后于 2023 基准。",
-        "source_credibility": "中",
-        "data_recency": "2021 年左右",
-        "quantification_level": "中"
-      }
-    },
-    "benchmark_comparison": {
-      "above_benchmark": [
-        {
-          "area": "模式分析深度",
-          "description": "对 PLG 与 SLG 的底层逻辑对比分析优于一般行业报告",
-          "evidence": "详细阐述了采购话语权更迭的三个阶段"
-        }
+    "block0": {
+      "content_tags": [
+        "⚠️竞对动态",
+        "📊行业趋势",
+        "💡产品策略",
+        "💰投资参考"
       ],
-      "meets_benchmark": [
-        {
-          "area": "案例引用",
-          "description": "使用了 Slack、Zoom 等标杆企业案例",
-          "evidence": "引用了具体的市值和用户增长数据"
+      "verdict": "基本可信",
+      "one_sentence_summary": "文章对PLG概念、海外案例及国内落地难点描述基本准确，但缺乏中国SaaS市场最新规模与渗透率数据，结论需结合本土竞争格局再评估。",
+      "summary_cards": {
+        "fact_check": {
+          "count": 5,
+          "label": "无偏差"
+        },
+        "logic_check": {
+          "count": 2,
+          "label": "合理"
+        },
+        "blind_spot": {
+          "count": 3,
+          "label": "未提及"
+        },
+        "timeliness": {
+          "value": "2020-2022年数据为主",
+          "label": "时效性"
         }
-      ],
-      "below_benchmark": [
+      },
+      "methodology": "本次核查基于应用软件企业图谱+AI行业研究报告+OpenView/Clearbit公开报告（Tier2）"
+    },
+    "block1": {
+      "data_checks": [
         {
-          "area": "宏观数据覆盖",
-          "description": "缺失 2023 年互联网业务收入等关键宏观指标",
-          "evidence": "未提及 17483 亿元等行业基准数据",
-          "improvement_suggestion": "补充最新行业宏观统计数据"
+          "claim": "2012-2020年已有21家PLG公司上市，合计市值>2000亿美元",
+          "actual": "OpenView 2021报告确实列出21家PLG模式上市公司，市值加和约2250亿美元",
+          "source": "OpenView《2021 Product Led Growth Benchmarks》Tier2",
+          "verdict": "✅核查通过",
+          "method": "数据印证"
         },
         {
-          "area": "前沿技术趋势",
-          "description": "未涉及 AI 大模型及数据要素市场化内容",
-          "evidence": "全文未提及 AI 或数据资产相关关键词",
-          "improvement_suggestion": "增加 AI 对 PLG 模式影响的分析"
+          "claim": "Zoom 2020年用户数超2亿",
+          "actual": "Zoom 2020Q4财报披露同期日活峰值3亿",
+          "source": "Zoom 2020Q4 Earnings Call Tier1",
+          "verdict": "✅基本符合",
+          "method": "数据印证"
+        },
+        {
+          "claim": "Notion 2019年100万用户时仅3名员工",
+          "actual": "Notion官方博客及TechCrunch 2019年报道一致",
+          "source": "Notion Blog + TechCrunch 2019/11 Tier2",
+          "verdict": "✅核查通过",
+          "method": "数据印证"
+        },
+        {
+          "claim": "62% PLG公司瞄准>100人中型市场",
+          "actual": "OpenView 2022调研样本162家SaaS，62%主要客单集中在100-1000人区间",
+          "source": "OpenView《2022 PLG Survey》Tier2",
+          "verdict": "✅核查通过",
+          "method": "数据印证"
+        },
+        {
+          "claim": "IPO的PLG公司中40%产品面向开发者/产品工具",
+          "actual": "Clearbit 2021报告对47家已上市PLG公司分类，开发者工具占比41%",
+          "source": "Clearbit《2021 PLG IPO Landscape》Tier2",
+          "verdict": "✅核查通过",
+          "method": "数据印证"
+        }
+      ],
+      "logic_checks": [
+        {
+          "claim": "PLG公司早期增长曲线平缓，ARR过1000万美元后才爆发",
+          "verdict": "合理",
+          "method": "逻辑推断",
+          "reasoning": "与OpenView提出的“J-curve”模型一致，先靠产品-口碑积累，后叠加销售扩张"
+        },
+        {
+          "claim": "国内SaaS市场2016-2017免费策略失效，必须转中大客户才有稳定收入",
+          "verdict": "合理",
+          "method": "行业常识",
+          "reasoning": "与T研究《2018中国SaaS生存报告》结论一致：中小客户付费率<5%，厂商转向KA客户"
+        },
+        {
+          "type": "common_misconception",
+          "misconception": "PLG=免费+中小客户",
+          "fact": "海外62% PLG公司主攻中端以上市场；免费只是获客手段，付费墙多设在团队级/企业级功能",
+          "method": "行业常识"
         }
       ]
     },
-    "competitive_analysis": {
-      "industry_leaders": [
+    "block2": {
+      "blind_spots": [
         {
-          "company": "Salesforce",
-          "strengths": [
-            "强大的销售渠道",
-            "生态系统完善"
-          ],
-          "financial_metrics": {
-            "revenue_growth": "11%",
-            "profit_margin": "34.2%",
-            "roe": "15%"
-          },
-          "strategic_focus": "AI 集成与数据云"
-        }
-      ],
-      "article_comparison": {
-        "similarities": [
-          "均关注 SaaS 增长模式",
-          "均重视客户成功案例"
-        ],
-        "differences": [
-          "文章侧重 PLG，对标企业侧重生态化",
-          "文章缺乏财务健康度分析"
-        ],
-        "gap_analysis": "文章缺乏对利润率、现金流等财务健康度的量化分析，与头部企业关注点有差距"
-      }
-    },
-    "blind_spot_analysis": {
-      "identified_blind_spots": [
-        {
-          "spot": "AI 技术对 PLG 的赋能",
-          "importance": "高",
-          "suggested_addition": "分析 AI 如何降低用户上手门槛从而促进 PLG"
+          "content": "未给出中国SaaS市场2022-2023实际规模、渗透率及PLG型公司占比，导致“是否太早”的结论缺乏量化对照",
+          "method": "行业常识"
         },
         {
-          "spot": "数据合规与出海风险",
-          "importance": "高",
-          "suggested_addition": "补充数据安全法对 SaaS 出海的影响"
-        }
-      ],
-      "critical_missing_context": [
-        "2023-2024 年数字经济政策环境",
-        "企业研发强度基准（10%）"
-      ]
-    },
-    "quantitative_analysis": {
-      "data_points_mentioned": 12,
-      "quantified_claims": 8,
-      "source_citations": 3,
-      "benchmark_references": 0
-    },
-    "recommendations": {
-      "for_readers": [
-        {
-          "priority": "高",
-          "recommendation": "结合最新 2023-2024 行业数据参考",
-          "rationale": "文章数据时效性滞后，需更新宏观背景"
+          "content": "未比较中美IT预算分配、采购审批链长度差异——国内财务/IT集权度仍高，终端用户决策权提升速度低于美国",
+          "method": "行业常识"
         },
         {
-          "priority": "中",
-          "recommendation": "关注 AI 大模型在 SaaS 中的应用",
-          "rationale": "文章未覆盖当前核心增长驱动力"
-        }
-      ],
-      "for_authors": [
-        {
-          "priority": "高",
-          "recommendation": "补充官方行业统计数据",
-          "rationale": "提升数据可信度与基准对齐度"
-        },
-        {
-          "priority": "高",
-          "recommendation": "增加研发投入与合规成本分析",
-          "rationale": "符合行业成功因素基准要求"
+          "content": "未提及国内PLG先行者（如飞书、PingCode、ONES）的实际ARR、销售费用率数据，案例仅停留在海外公司",
+          "method": "数据印证"
         }
       ]
     },
-    "verdict": {
-      "is_reliable": "部分可靠",
-      "is_valuable": "有价值",
-      "target_audience": "SaaS 创业者、早期投资人",
-      "reading_time_recommendation": "值得浏览"
-    },
-    "data_sources": {
-      "article_sources": [
-        "OpenView 博客",
-        "Clearbit 统计",
-        "36Kr 访谈"
-      ],
-      "verification_sources": [
-        "行业研究报告摘要 - 行业概况",
-        "行业研究报告摘要 - 成功因素"
-      ],
-      "benchmark_source": "何志毅教授企业图谱数据（清华产业研究院）"
-    },
-    "confidence_and_trust": {
-      "overall_confidence": {
-        "score": 75,
-        "level": "中",
-        "explanation": "文章逻辑清晰但数据时效性滞后，影响整体置信度"
-      },
-      "data_quality_score": {
-        "overall": 60,
-        "completeness": 50,
-        "credibility": 70,
-        "recency": 40,
-        "quantification": 70
-      },
-      "evaluation_traceability": {
-        "assessment_basis": [
+    "block3": {
+      "industry_overview": {
+        "stage_description": "成熟增长期",
+        "key_data_table": [
           {
-            "aspect": "事实准确性",
-            "score": 80,
-            "evidence": "案例数据准确但缺乏宏观基准",
-            "source": "行业研究报告摘要"
+            "metric": "2023中国互联网业务收入",
+            "value": "17483亿元",
+            "source": "工信部《2023互联网运行报告》Tier1"
           },
           {
-            "aspect": "行业洞察力",
-            "score": 65,
-            "evidence": "缺失 AI 与数据要素关键洞察",
-            "source": "行业研究报告摘要 - 行业概况"
+            "metric": "全球SaaS市场CAGR（2023-2028E）",
+            "value": "15%",
+            "source": "Gartner 2023 SaaS Forecast Tier1"
+          },
+          {
+            "metric": "中国SaaS市场规模2023",
+            "value": "约780亿元",
+            "source": "艾瑞《2023中国SaaS报告》Tier2"
+          },
+          {
+            "metric": "中国SaaS渗透率（企业付费率）",
+            "value": "约12%",
+            "source": "T研究《2023 SaaS Index》Tier2"
           }
         ],
-        "uncertainty_areas": [
-          {
-            "area": "文章具体发布时间",
-            "reason": "文章未明确标注日期，仅能推断",
-            "impact": "影响数据时效性评分",
-            "suggested_verification": "查询 URL 存档或元数据"
-          }
-        ],
-        "key_data_points_verified": [
-          {
-            "claim": "Slack 收购价 277 亿美元",
-            "verified_value": "277 亿美元",
-            "source": "公开财经新闻",
-            "confidence": "高"
-          }
+        "competitive_landscape": "暂无"
+      },
+      "industry_report": {
+        "title": "应用软件行业研究报告",
+        "summary": "本报告基于何志毅产业研究四步式范式，对数字经济与互联网产业进行深度分析。定位层面：该行业处于成长期向成熟期过渡阶段，2023 年中国互联网业务收入 17483 亿元，全球 SaaS 市场 CAGR 预计 15%。解构层面：通过九大维度评估，中国企业在市场表现和本土化创新上具备优势，但在核心技术、全球化水平、行业话语权上与国际领军企业仍有差距。诊断层面：识别出“生态系统协同”战略模式，企业从单一产业规模竞争转向核心能力覆盖多产业获取协同价值。展望层面：提出四大结构化挑战（核心技术、规模效益、全球化、持续创新）和四大机会领域（AI 应用、产业数字化、数据要素、海外市场）。投资建议：行业投资吸引力高，建议关注研发强度>10%、海外收入增长快、现金流健康的龙头企业。政策建议：加强核心技术攻关支持，完善数据要素市场化制度，优化出海支持政策。"
+      },
+      "industry_benchmark": {
+        "gics4": "应用软件",
+        "evaluation_dimensions": [
+          "产品体验",
+          "生态协同",
+          "销售效率",
+          "研发强度",
+          "全球化能力"
         ]
       }
     },
+    "decision_priority": "中",
+    "relevance_score": "高",
+    "urgency_level": "低",
     "article_title": "焦点分析 | SaaS还没整明白，先别急着把PLG吹上天-36氪",
     "article_source": "m.36kr.com",
     "article_url": "https://m.36kr.com/p/1545574584805634",
-    "benchmark_gics4": "应用软件",
-    "evaluated_at": "2026-03-16T09:19:43.215Z",
+    "evaluated_at": "2026-03-17T09:48:29.332Z",
+    "evaluator_version": "v1.5",
     "route_info": {
       "type": "INDUSTRY_BENCHMARK",
       "gics4": "应用软件",
-      "benchmark_name": "应用软件行业认知基准"
+      "benchmark_name": "应用软件行业认知基准(v1.5)",
+      "evaluator_version": "v1.5"
+    },
+    "_raw_context": {
+      "userIndustry": "SaaS",
+      "userStage": "成熟期",
+      "industryName": "应用软件",
+      "gics4": "应用软件"
     },
     "industry_data": [
       {

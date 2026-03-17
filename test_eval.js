@@ -19,7 +19,7 @@ const data = JSON.stringify({ type: 'url', data: article.url, forceGeneral: true
 
 const req = http.request({
   hostname: 'localhost',
-  port: 3000,
+  port: 3001,
   path: '/api/evaluate',
   method: 'POST',
   headers: {
