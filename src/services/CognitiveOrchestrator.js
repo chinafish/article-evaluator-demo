@@ -11,12 +11,14 @@ const ModelRouter = require('./ModelRouter');
 const industryBenchmarkGenerator = require('./industryBenchmarkGenerator');
 const comprehensiveResearchGenerator = require('./comprehensiveResearchGenerator');
 const articleEvaluatorWithBenchmark = require('./articleEvaluatorWithBenchmark');
+const { ArticleEvaluatorV15 } = require('./articleEvaluator.v1.5');
 const benchmarkData = require('./benchmarkData');
 const perfTracker = require('../utils/performanceTracker');
 
 class CognitiveOrchestrator {
   constructor() {
     this.modelRouter = ModelRouter;
+    this.evaluatorV15 = new ArticleEvaluatorV15();
   }
 
   /**
@@ -327,55 +329,106 @@ class CognitiveOrchestrator {
   }
 
   /**
-   * 使用行业认知基准评估
+   * 使用行业认知基准评估（v1.5版本）
    */
   async evaluateWithIndustryBenchmark(article, routeDecision) {
-    console.log('[评估] 使用行业认知基准进行评估...');
+    console.log('[评估] 使用行业认知基准进行评估 (v1.5)...');
 
     // 获取行业基准数据和研究报告
     const industryData = await benchmarkData.getByGics4(routeDecision.gics4);
     const industryReport = routeDecision.benchmark.industry_research_report || null;
 
-    const evaluation = await articleEvaluatorWithBenchmark.evaluate(
-      article,
-      routeDecision.benchmark
-    );
+    // 构建v1.5评估上下文
+    const context = {
+      // 用户背景（Demo阶段固定值）
+      userIndustry: 'SaaS',
+      userStage: '成熟期',
+      userFocus: '竞争格局、客户增长',
+
+      // 行业上下文
+      industryName: routeDecision.gics4,
+      gics4: routeDecision.gics4,
+      industryStage: routeDecision.benchmark.industry_stage || '成熟增长期',
+
+      // 行业数据（从benchmark中提取）
+      keyData: this.extractKeyData(industryData),
+      competitiveLandscape: routeDecision.benchmark.competitive_landscape || '暂无',
+      successFactors: routeDecision.benchmark.critical_success_factors || [],
+      commonMisconceptions: routeDecision.benchmark.common_misconceptions || [],
+
+      // 报告和基准
+      industryReport: industryReport?.executive_summary || '暂无',
+      industryBenchmark: JSON.stringify(routeDecision.benchmark, null, 2)
+    };
+
+    // 使用v1.5评估器
+    const evaluation = await this.evaluatorV15.evaluateWithIndustry(article, context);
 
     return {
       ...evaluation,
-      route_info: {
-        type: 'INDUSTRY_BENCHMARK',
-        gics4: routeDecision.gics4,
-        benchmark_name: `${routeDecision.gics4}行业认知基准`
-      },
-      // 添加行业数据和报告，供前端弹窗使用
       industry_data: industryData,
       industry_report: industryReport
     };
   }
 
   /**
-   * 使用通用基准评估
+   * 从行业数据中提取关键指标
+   */
+  extractKeyData(industryData) {
+    if (!industryData || !industryData.global_top10) {
+      return [];
+    }
+    // 提取头部企业的关键指标作为行业参考
+    const champion = industryData.global_champion;
+    if (!champion) return [];
+
+    return [
+      { metric: '全球龙头市值', value: champion.metrics?.市值 + '亿美元' || 'N/A', source: '企业图谱' },
+      { metric: '全球龙头营收', value: champion.metrics?.营收 + '亿美元' || 'N/A', source: '企业图谱' },
+      { metric: '平均研发强度', value: (champion.metrics?.研发强度 * 100)?.toFixed(0) + '%' || 'N/A', source: '企业图谱' }
+    ];
+  }
+
+  /**
+   * 使用通用基准评估（v1.5版本）
    */
   async evaluateWithGeneralBenchmark(article, routeDecision) {
-    console.log('[评估] 使用通用认知基准进行评估...');
+    console.log('[评估] 使用通用认知基准进行评估 (v1.5)...');
 
-    // 加载通用基准
-    const generalBenchmark = await this.loadGeneralBenchmark();
+    // 构建v1.5通用评估上下文
+    const context = {
+      userFocus: '通用商业分析',
+      articleType: this.detectArticleType(article)
+    };
 
-    const evaluation = await articleEvaluatorWithBenchmark.evaluate(
-      article,
-      generalBenchmark
-    );
+    // 使用v1.5评估器
+    const evaluation = await this.evaluatorV15.evaluateWithGeneral(article, context);
 
     return {
       ...evaluation,
       route_info: {
-        type: 'GENERAL_BENCHMARK',
+        type: 'GENERAL_BENCHMARK_V15',
         reason: routeDecision.reason,
-        benchmark_name: '通用认知基准'
+        benchmark_name: '通用认知基准(v1.5)'
       }
     };
+  }
+
+  /**
+   * 检测文章类型
+   */
+  detectArticleType(article) {
+    const content = (article.title + ' ' + article.content).toLowerCase();
+    if (content.includes('财报') || content.includes('营收') || content.includes('利润')) {
+      return '财经分析';
+    }
+    if (content.includes('行业') || content.includes('市场') || content.includes('趋势')) {
+      return '行业研究';
+    }
+    if (content.includes('产品') || content.includes('技术') || content.includes('创新')) {
+      return '产品技术';
+    }
+    return '综合资讯';
   }
 
   /**
