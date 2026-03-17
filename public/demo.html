@@ -2488,7 +2488,7 @@
       progressText.textContent = '正在连接...';
 
       // 创建 SSE 连接
-      const eventSource = new EventSource('/api/evaluate-stream');
+      const eventSource = new EventSource('http://localhost:3001/api/evaluate-stream');
 
       // 监听消息
       eventSource.onmessage = (event) => {
@@ -2561,7 +2561,7 @@
         params.append('content', articleInput.content);
       }
 
-      const eventSource = new EventSource(`/api/evaluate-stream?${params.toString()}`);
+      const eventSource = new EventSource(`http://localhost:3001/api/evaluate-stream?${params.toString()}`);
 
       // 跟踪连接状态
       let isComplete = false;
@@ -2655,7 +2655,7 @@
     // 使用原有 API 获取完整评估结果
     async function fetchCompleteEvaluation(articleInput) {
       try {
-        const response = await fetch('/api/evaluate', {
+        const response = await fetch('http://localhost:3001/api/evaluate', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -3097,7 +3097,7 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
 
         try {
           // 调用选择选项API
-          const response = await fetch('/api/evaluate/choose-option', {
+          const response = await fetch('http://localhost:3001/api/evaluate/choose-option', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -3178,7 +3178,7 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
       } else if (option === 'use_general') {
         // 使用通用基准，直接调用API
         try {
-          const response = await fetch('/api/evaluate/choose-option', {
+          const response = await fetch('http://localhost:3001/api/evaluate/choose-option', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -3287,7 +3287,7 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
 
         // 使用后端代理URL，iframe会加载完整的代理页面
         // 这样所有资源（图片、CSS、JS）都会正确加载
-        const proxyUrl = '/api/proxy?url=' + encodeURIComponent(sourceUrl);
+        const proxyUrl = 'http://localhost:3001/api/proxy?url=' + encodeURIComponent(sourceUrl);
         console.log('[renderSourceContent] Setting iframe src to:', proxyUrl);
 
         // 清除之前的load事件监听器
