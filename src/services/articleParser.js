@@ -383,6 +383,25 @@ class ArticleParser {
   }
 
   /**
+   * 通用解析方法（兼容Q分支调用）
+   * @param {string} input - URL或内容
+   * @returns {Promise<Object>} 解析结果
+   */
+  async parse(input) {
+    if (input.startsWith('http://') || input.startsWith('https://')) {
+      return await this.parseUrl(input);
+    } else {
+      // 直接内容
+      return {
+        title: '直接输入内容',
+        content: input,
+        url: null,
+        source: '直接输入'
+      };
+    }
+  }
+
+  /**
    * 使用 axios + Readability 解析（快速模式）
    */
   async parseWithAxios(url) {

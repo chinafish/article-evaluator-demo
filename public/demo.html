@@ -486,7 +486,328 @@
       color: #374151;
     }
 
-    /* 溯源按钮 */
+    /* ===== v1.5 Block结构样式 ===== */
+
+    /* BLOCK容器 */
+    .block-section {
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .block-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      background: #f8fafc;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .block-header.collapsible {
+      cursor: pointer;
+    }
+
+    .block-header.collapsible:hover {
+      background: #f1f5f9;
+    }
+
+    .block-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .block-subtitle {
+      font-size: 12px;
+      color: #6b7280;
+      margin-left: 8px;
+    }
+
+    /* 判定卡片 */
+    .verdict-card {
+      padding: 20px 18px 16px;
+    }
+
+    .content-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .content-tag {
+      padding: 3px 10px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .verdict-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .verdict-label {
+      font-size: 13px;
+      color: #6b7280;
+      font-weight: 500;
+    }
+
+    .verdict-value {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    .verdict-green { color: #059669; }
+    .verdict-blue  { color: #2563eb; }
+    .verdict-yellow { color: #d97706; }
+    .verdict-red   { color: #dc2626; }
+
+    .verdict-summary {
+      font-size: 14px;
+      color: #374151;
+      line-height: 1.6;
+      margin-bottom: 16px;
+      padding: 10px 12px;
+      background: #f8fafc;
+      border-radius: 8px;
+      border-left: 3px solid #667eea;
+    }
+
+    /* 四卡片汇总网格 */
+    .summary-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    @media (max-width: 600px) {
+      .summary-cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .summary-card-item {
+      background: #f9fafb;
+      border-radius: 10px;
+      padding: 10px 12px;
+      text-align: center;
+      cursor: pointer;
+      border: 1px solid #e5e7eb;
+      transition: box-shadow 0.2s;
+    }
+
+    .summary-card-item:hover {
+      box-shadow: 0 2px 8px rgba(102,126,234,0.15);
+      border-color: #a5b4fc;
+    }
+
+    .card-label {
+      font-size: 11px;
+      color: #6b7280;
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+
+    .card-count {
+      font-size: 20px;
+      font-weight: 800;
+      color: #1e293b;
+      line-height: 1;
+      margin-bottom: 3px;
+    }
+
+    .card-count.timeliness {
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .card-status {
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    /* 判断方法栏 */
+    .methodology-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      background: #fafafa;
+      border-top: 1px solid #f0f0f0;
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .methodology-icon {
+      font-size: 13px;
+    }
+
+    /* CTA 按钮行 */
+    .cta-row {
+      padding: 12px 18px 16px;
+      text-align: center;
+    }
+
+    .cta-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 22px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .cta-btn:hover {
+      opacity: 0.88;
+    }
+
+    /* 核查详情 */
+    .check-subsection {
+      padding: 14px 16px;
+      border-bottom: 1px solid #f3f4f6;
+    }
+
+    .check-subsection:last-child {
+      border-bottom: none;
+    }
+
+    .subsection-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #374151;
+      margin-bottom: 10px;
+    }
+
+    .check-item {
+      display: flex;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f9fafb;
+    }
+
+    .check-item:last-child {
+      border-bottom: none;
+    }
+
+    .check-status {
+      font-size: 16px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .check-body {
+      flex: 1;
+    }
+
+    .check-claim {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 4px;
+    }
+
+    .check-explanation {
+      font-size: 12px;
+      color: #4b5563;
+      line-height: 1.5;
+    }
+
+    .check-source {
+      font-size: 11px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+
+    /* 认知盲区 */
+    .blind-spot-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid #f3f4f6;
+    }
+
+    .blind-spot-item:last-child {
+      border-bottom: none;
+    }
+
+    .blind-spot-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 5px;
+    }
+
+    .blind-spot-desc {
+      font-size: 12px;
+      color: #4b5563;
+      line-height: 1.5;
+    }
+
+    .blind-spot-suggestion {
+      font-size: 11px;
+      color: #059669;
+      margin-top: 5px;
+    }
+
+    /* 评估依据 */
+    .basis-item {
+      border-bottom: 1px solid #f3f4f6;
+    }
+
+    .basis-item:last-child {
+      border-bottom: none;
+    }
+
+    .basis-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .basis-item-header:hover {
+      background: #f9fafb;
+    }
+
+    .key-data-row {
+      display: flex;
+      gap: 8px;
+      padding: 4px 0;
+      font-size: 12px;
+    }
+
+    .key-data-label {
+      color: #6b7280;
+      min-width: 100px;
+    }
+
+    .key-data-val {
+      color: #1e293b;
+      font-weight: 500;
+    }
+
+    .empty-hint {
+      padding: 16px;
+      color: #9ca3af;
+      font-size: 13px;
+      text-align: center;
+    }
     .source-toggle-btn {
       display: inline-flex;
       align-items: center;
@@ -2209,214 +2530,139 @@
                 <span class="warning-text">文章内容可能不完整，建议手动补充或点击"查看原文"确认</span>
               </div>
 
-            <!-- 核心信息 -->
-            <div class="core-info">
-              <div class="info-card judgment">
-                <div class="label">判断</div>
-                <div class="value" id="judgmentValue">认同</div>
-              </div>
-              <div class="info-card relevance">
-                <div class="label">与您相关</div>
-                <div class="value" id="relevanceValue">高</div>
-                <div class="tooltip">这篇文章对您的工作有多重要</div>
-              </div>
-              <div class="info-card urgency">
-                <div class="label">是否需行动</div>
-                <div class="value" id="urgencyValue">是</div>
-                <div class="tooltip">是否需要立即采取行动</div>
-              </div>
-            </div>
+            <!-- BLOCK 0: 总体判断（首屏） -->
+            <div class="block-section" id="block0Section">
 
-            <!-- 摘要 -->
-            <div class="summary-card">
-              <div class="label">核心价值</div>
-              <div class="value" id="summaryValue"></div>
-            </div>
+              <!-- A. 核查结论 -->
+              <div class="verdict-card">
+                <!-- 内容标签 -->
+                <div class="content-tags" id="contentTags"></div>
 
-            <!-- 紧迫性理由 -->
-            <div class="info-card" style="margin-bottom: 20px;">
-              <div class="label">⏰ 为什么要行动</div>
-              <div class="value" id="urgencyReason" style="font-size: 0.95em; font-weight: 400;"></div>
-            </div>
-
-            <!-- 行动建议 -->
-            <div class="actions-section">
-              <div class="actions-header">行动建议</div>
-              <div id="actionsList"></div>
-            </div>
-
-            <!-- 战略洞察 - 新增 -->
-            <div id="strategicInsightsSection" style="display: none;">
-              <!-- 市场机会识别 -->
-              <div class="actions-section" style="margin-top: 20px;">
-                <div class="actions-header" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">市场机会</div>
-                <div id="opportunitiesList"></div>
-              </div>
-
-              <!-- 风险预警 -->
-              <div class="actions-section" style="margin-top: 20px;">
-                <div class="actions-header" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">风险预警</div>
-                <div id="risksList"></div>
-              </div>
-
-              <!-- 投资建议 -->
-              <div class="info-card" style="margin: 20px 0; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white;">
-                <div style="font-size: 14px; opacity: 0.9;">💼 投资建议</div>
-                <div style="font-size: 18px; font-weight: 600; margin-top: 4px;" id="investmentVerdict"></div>
-                <div style="font-size: 13px; opacity: 0.9; margin-top: 4px;" id="investmentRationale"></div>
-                <div style="font-size: 12px; opacity: 0.8; margin-top: 2px;" id="investmentTimeHorizon"></div>
-              </div>
-
-              <!-- 竞品对标分析 -->
-              <div class="detail-section" style="margin-top: 20px;">
-                <div class="detail-header" onclick="toggleCompetitiveAnalysis()">
-                  <span>🏢 竞品对标分析</span>
-                  <span class="toggle-icon">▼</span>
+                <!-- 判定 -->
+                <div class="verdict-row">
+                  <span class="verdict-label">判定</span>
+                  <span class="verdict-value" id="verdictValue">-</span>
                 </div>
-                <div class="detail-content" id="competitiveAnalysisContent" style="display: none;">
-                  <div id="competitiveLeadersList"></div>
-                  <div class="detail-item" style="margin-top: 16px;">
-                    <div class="label">文章与对标企业对比</div>
-                    <div class="value" id="articleComparison"></div>
+
+                <!-- 一句话总结 -->
+                <div class="verdict-summary" id="verdictSummary">-</div>
+
+                <!-- 四卡片汇总 -->
+                <div class="summary-cards-grid">
+                  <div class="summary-card-item" onclick="scrollToBlock('block1Section')">
+                    <div class="card-label">事实核查</div>
+                    <div class="card-count" id="factCheckCount">-</div>
+                    <div class="card-status" id="factCheckLabel">-</div>
+                  </div>
+                  <div class="summary-card-item" onclick="scrollToBlock('block1Section')">
+                    <div class="card-label">逻辑核查</div>
+                    <div class="card-count" id="logicCheckCount">-</div>
+                    <div class="card-status" id="logicCheckLabel">-</div>
+                  </div>
+                  <div class="summary-card-item" onclick="scrollToBlock('block2Section')">
+                    <div class="card-label">盲点提醒</div>
+                    <div class="card-count" id="blindSpotCount">-</div>
+                    <div class="card-status" id="blindSpotLabel">-</div>
+                  </div>
+                  <div class="summary-card-item">
+                    <div class="card-label">时效性</div>
+                    <div class="card-count timeliness" id="timelinessValue">-</div>
+                    <div class="card-status" id="timelinessLabel">时效性</div>
                   </div>
                 </div>
               </div>
+
+              <!-- C. 判断方法（简化版） -->
+              <div class="methodology-bar">
+                <span class="methodology-icon">🔍</span>
+                <span id="methodologyText">-</span>
+              </div>
+
+              <!-- 查看核查详情 CTA -->
+              <div class="cta-row">
+                <button class="cta-btn" onclick="scrollToBlock('block1Section')">
+                  查看核查详情 ↓
+                </button>
+              </div>
+
             </div>
 
-            <!-- 详细分析 -->
-            <div class="detail-section">
-              <div class="detail-header" onclick="toggleDetail()">
-                <span>详细分析</span>
-                <span class="toggle-icon">▼</span>
+            <!-- BLOCK 1: 核查详情 -->
+            <div class="block-section" id="block1Section">
+              <div class="block-header">
+                <span class="block-title">核查详情</span>
               </div>
-              <div class="detail-content" id="detailContent">
-                <div class="detail-item">
-                  <div class="label">输入诊断</div>
-                  <div class="value" id="inputDiagnosis"></div>
+
+              <!-- D. 数据核查清单 -->
+              <div class="check-subsection">
+                <div class="subsection-title">📊 数据核查清单</div>
+                <div id="dataChecksContainer">
+                  <div class="empty-hint">暂无数据型声明需核查</div>
                 </div>
-                <div class="detail-item">
-                  <div class="label">宏观基准</div>
-                  <div class="value" id="macroBenchmark"></div>
-                </div>
-                <div class="detail-item">
-                  <div class="label">盲点警示</div>
-                  <div class="value" id="blindSpotAlert"></div>
+              </div>
+
+              <!-- E. 逻辑核查清单 -->
+              <div class="check-subsection">
+                <div class="subsection-title">🧠 逻辑核查清单</div>
+                <div id="logicChecksContainer">
+                  <div class="empty-hint">暂无逻辑型声明需核查</div>
                 </div>
               </div>
             </div>
 
-            <!-- 评估依据 -->
-            <div class="evaluation-basis">
-              <div class="basis-header" onclick="toggleBasisDetails()">
-                <span>评估依据</span>
-                <span class="toggle-icon">▼</span>
+            <!-- BLOCK 2: 认知盲区 -->
+            <div class="block-section" id="block2Section">
+              <div class="block-header">
+                <span class="block-title">认知盲区</span>
+                <span class="block-subtitle">文章未提及但重要的信息</span>
               </div>
-              <div class="basis-details" id="basisDetails">
-                <!-- 1. 当前命中的认知基准 -->
-                <div class="framework-card">
-                  <div class="framework-name">
-                    <span class="framework-badge" id="frameworkType">行业认知基准</span>
-                    <span id="frameworkName">-</span>
-                  </div>
-                  <div style="font-size: 12px; color: #6b7280; margin-top: 4px;">
-                    基准类型: <span id="benchmarkTypeName">-</span>
-                  </div>
-                </div>
-
-                <!-- 1.1 行业研究报告（可点击，打开弹窗） -->
-                <div class="data-link-item" id="reportItem" onclick="showReportModal()" style="display: none;">
-                  <div class="item-info">
-                    <div class="item-label">📄 行业研究报告</div>
-                    <div class="item-value" id="reportValue">-</div>
-                  </div>
-                  <div class="item-icon">🔍</div>
-                </div>
-
-                <!-- 2. 行业数据基准（可点击，打开弹窗） -->
-                <div class="data-link-item" id="benchmarkDataItem" onclick="showBenchmarkModal()" style="display: none;">
-                  <div class="item-info">
-                    <div class="item-label">📊 行业数据基准</div>
-                    <div class="item-value" id="benchmarkDataValue">-</div>
-                  </div>
-                  <div class="item-icon">🔍</div>
-                </div>
-
-                <!-- 通用基准说明（当没有行业基准时显示） -->
-                <div class="data-link-item" id="generalBenchmarkItem" onclick="showGeneralBenchmarkModal()" style="display: none;">
-                  <div class="item-info">
-                    <div class="item-label">通用认知基准</div>
-                    <div class="item-value">基于通用商业知识的评估框架</div>
-                  </div>
-                  <div class="item-icon">→</div>
-                </div>
+              <div id="blindSpotsContainer">
+                <div class="empty-hint">未发现明显盲区</div>
               </div>
             </div>
 
-            <!-- 置信度和数据质量 - 新增 -->
-            <div id="confidenceSection" style="display: none;">
-              <!-- 总体置信度卡片 -->
-              <div class="confidence-card">
-                <div class="confidence-header">
-                  <div>
-                    <div style="font-size: 14px; opacity: 0.9; margin-bottom: 4px;">评估置信度</div>
-                    <div class="confidence-score" id="overallConfidenceScore">-</div>
-                  </div>
-                  <div class="confidence-level" id="overallConfidenceLevel">-</div>
-                </div>
-                <div class="confidence-explanation" id="overallConfidenceExplanation">-</div>
-
-                <!-- 数据质量评分 -->
-                <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.2);">
-                  <div style="font-size: 13px; opacity: 0.9; margin-bottom: 10px;">数据质量评分</div>
-                  <div class="data-quality-grid">
-                    <div class="quality-item">
-                      <div class="quality-label">完整性</div>
-                      <div class="quality-score" id="qualityCompleteness">-</div>
-                    </div>
-                    <div class="quality-item">
-                      <div class="quality-label">可信度</div>
-                      <div class="quality-score" id="qualityCredibility">-</div>
-                    </div>
-                    <div class="quality-item">
-                      <div class="quality-label">时效性</div>
-                      <div class="quality-score" id="qualityRecency">-</div>
-                    </div>
-                    <div class="quality-item">
-                      <div class="quality-label">量化度</div>
-                      <div class="quality-score" id="qualityQuantification">-</div>
-                    </div>
-                    <div class="quality-item">
-                      <div class="quality-label">总分</div>
-                      <div class="quality-score" id="qualityOverall">-</div>
-                    </div>
-                  </div>
-                </div>
+            <!-- BLOCK 3: 评估依据（可折叠） -->
+            <div class="block-section" id="block3Section">
+              <div class="block-header collapsible" onclick="toggleBlock3()">
+                <span class="block-title">评估依据</span>
+                <span class="toggle-icon" id="block3Toggle">▼</span>
               </div>
-
-              <!-- 评估溯源 - 可折叠 -->
-              <div class="detail-section" style="margin-top: 20px;">
-                <div class="detail-header" onclick="toggleTraceability()">
-                  <span>评估溯源</span>
-                  <span class="toggle-icon">▼</span>
+              <div id="block3Content" style="display:none;">
+                <!-- 行业全景 -->
+                <div class="basis-item">
+                  <div class="basis-item-header" onclick="toggleBasisItem('industryOverview')">
+                    <span>🏭 行业全景</span><span class="toggle-icon">▼</span>
+                  </div>
+                  <div id="industryOverview" style="display:none; padding: 12px 16px;">
+                    <div id="industryStageDesc" style="margin-bottom:12px; color:#374151; font-size:14px;"></div>
+                    <div id="industryKeyData"></div>
+                    <div id="industryCompetitive" style="margin-top:12px; color:#374151; font-size:14px;"></div>
+                  </div>
                 </div>
-                <div class="detail-content" id="traceabilityContent" style="display: none;">
-                  <!-- 评估依据 -->
-                  <div style="margin-bottom: 16px;">
-                    <div class="traceability-header" style="font-size: 14px;">评估依据</div>
-                    <div id="assessmentBasisList"></div>
-                  </div>
 
-                  <!-- 不确定领域 -->
-                  <div style="margin-bottom: 16px;">
-                    <div class="traceability-header" style="font-size: 14px;">不确定领域</div>
-                    <div id="uncertaintyList"></div>
+                <!-- 行业研究报告 -->
+                <div class="basis-item" id="reportBasisItem" style="display:none;">
+                  <div class="basis-item-header" onclick="showReportModal()">
+                    <span>📄 行业研究报告</span>
+                    <span style="color:#3b82f6; font-size:13px;">查看完整报告 →</span>
                   </div>
+                </div>
 
-                  <!-- 关键数据点验证 -->
-                  <div>
-                    <div class="traceability-header" style="font-size: 14px;">关键数据点验证</div>
-                    <div id="verifiedDataList"></div>
+                <!-- 行业认知基准 -->
+                <div class="basis-item" id="benchmarkBasisItem" onclick="showBenchmarkModal()" style="display:none; cursor:pointer;">
+                  <div class="basis-item-header">
+                    <span>📐 行业认知基准</span>
+                    <span style="color:#3b82f6; font-size:13px;">查看详情 →</span>
                   </div>
+                  <div style="padding: 8px 16px; font-size:13px; color:#6b7280;" id="benchmarkGics4Text"></div>
+                </div>
+
+                <!-- 通用基准说明 -->
+                <div class="basis-item" id="generalBasisItem" style="display:none;">
+                  <div class="basis-item-header">
+                    <span>🌐 通用认知基准</span>
+                  </div>
+                  <div style="padding: 8px 16px; font-size:13px; color:#6b7280;">基于通用商业常识和公开信息进行核查</div>
                 </div>
               </div>
             </div>
@@ -2637,9 +2883,34 @@
           break;
 
         case 'complete':
-          console.log('[SSE Progress Complete]', data.data);
-          // SSE 进度完成，现在获取完整评估结果
-          fetchCompleteEvaluation(articleInput);
+          console.log('[SSE Complete]', data.data);
+          // 直接使用 SSE complete 里的 evaluation 数据，无需二次请求
+          {
+            const progressHeader = document.getElementById('progressHeader');
+            if (progressHeader) progressHeader.style.display = 'none';
+
+            const evalData = data.data?.evaluation;
+            const articleData = data.data?.article;
+            if (evalData) {
+              // 补充原文字段（供查看原文功能使用）
+              if (articleData) {
+                evalData.article_content = articleData.content || '';
+                evalData.article_html = articleData.html || articleData.content || '';
+                evalData.article_url = evalData.article_url || articleData.url || '';
+                evalData.article_title = evalData.article_title || articleData.title || '';
+              }
+              displayResult(evalData);
+            } else {
+              showError('评估结果为空，请重试');
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<span class="btn-text">开始评估</span>';
+
+            const floatingBtn = document.getElementById('floatingNewEvalBtn');
+            if (floatingBtn) floatingBtn.classList.add('show');
+          }
           break;
 
         case 'error':
@@ -3700,6 +3971,35 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
       toggleBtn.querySelector('span:last-child').textContent = '查看原文';
     }
 
+    // ===== v1.5 辅助函数 =====
+    function scrollToBlock(blockId) {
+      const el = document.getElementById(blockId);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function toggleBlock3() {
+      const content = document.getElementById('block3Content');
+      const icon = document.getElementById('block3Toggle');
+      if (content) {
+        const isOpen = content.style.display !== 'none';
+        content.style.display = isOpen ? 'none' : 'block';
+        if (icon) icon.textContent = isOpen ? '▼' : '▲';
+      }
+    }
+
+    function toggleBasisItem(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        const isOpen = el.style.display !== 'none';
+        el.style.display = isOpen ? 'none' : 'block';
+        const header = el.previousElementSibling;
+        if (header) {
+          const icon = header.querySelector('.toggle-icon');
+          if (icon) icon.textContent = isOpen ? '▼' : '▲';
+        }
+      }
+    }
+
     // 切换详细分析
     function toggleDetail() {
       const header = document.querySelector('.detail-header');
@@ -3786,23 +4086,6 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
       window.currentIndustryReport = evaluation.industry_report || null;
       window.currentGics4 = evaluation.route_info?.gics4 || '';
 
-      // 分析器徽章 - 根据route_info显示
-      const analyzerBadge = document.getElementById('analyzerBadge');
-      if (analyzerBadge) {
-        const benchmarkName = evaluation.route_info?.benchmark_name || '认知基准';
-        analyzerBadge.textContent = benchmarkName;
-        analyzerBadge.className = 'analyzer-badge';
-
-        // 根据基准类型设置样式
-        if (evaluation.route_info?.type === 'INDUSTRY_BENCHMARK') {
-          analyzerBadge.classList.add('industry');
-        } else {
-          analyzerBadge.classList.add('general');
-        }
-      } else {
-        console.warn('[显示结果] 找不到 analyzerBadge 元素');
-      }
-
       // 文章标题
       safeSetText('articleTitle', evaluation.article_title || '未知标题');
 
@@ -3816,393 +4099,218 @@ AI助手正在重塑客服、教育、内容创作等多个行业。`,
         }
       }
 
-      // ===== 从新的数据结构映射到前端UI =====
+      // ===== v1.5 Block结构渲染 =====
 
-      // 1. 核心信息卡片 - 映射 overall_assessment 和 dimension_scores
-      const overall = evaluation.overall_assessment || {};
+      const block0 = evaluation.block0 || {};
+      const block1 = evaluation.block1 || {};
+      const block2 = evaluation.block2 || {};
+      const block3 = evaluation.block3 || {};
 
-      // 判断 (judgmentValue): 映射 overall_assessment.rating
-      const ratingMap = {
-        'excellent': '优秀',
-        'good': '良好',
-        'acceptable': '一般',
-        'poor': '较差'
-      };
-      const judgmentText = ratingMap[overall.rating] || '未知';
-      const judgmentClass = overall.rating || 'unknown';
-      safeSetText('judgmentValue', judgmentText);
-      const judgmentValueEl = document.getElementById('judgmentValue');
-      if (judgmentValueEl) {
-        judgmentValueEl.className = 'value ' + judgmentClass;
+      // ---- BLOCK 0: 总体判断 ----
+
+      // 内容标签
+      const contentTagsEl = document.getElementById('contentTags');
+      if (contentTagsEl) {
+        const tags = block0.content_tags || [];
+        contentTagsEl.innerHTML = tags.map(tag =>
+          '<span class="content-tag">' + tag + '</span>'
+        ).join('');
       }
 
-      // 与您相关 (relevanceValue): 映射 strategic_value.decision_relevance
-      const strategic = evaluation.dimension_scores?.strategic_value || {};
-      const relevanceText = strategic.decision_relevance || '中';
-      safeSetText('relevanceValue', relevanceText);
-      const relevanceValueEl = document.getElementById('relevanceValue');
-      if (relevanceValueEl) {
-        // 根据相关性设置样式
-        const relevanceClassMap = { '高': 'high', '中': 'medium', '低': 'low' };
-        relevanceValueEl.className = 'value ' + (relevanceClassMap[relevanceText] || 'medium');
+      // 判定（verdict）
+      const verdictEl = document.getElementById('verdictValue');
+      if (verdictEl) {
+        const verdict = block0.verdict || '-';
+        verdictEl.textContent = verdict;
+        // 根据判定设置颜色
+        const verdictColorMap = {
+          '可以采信': 'verdict-green',
+          '基本可信': 'verdict-blue',
+          '谨慎采信': 'verdict-yellow',
+          '不建议采信': 'verdict-red'
+        };
+        verdictEl.className = 'verdict-value ' + (verdictColorMap[verdict] || 'verdict-blue');
       }
 
-      // 是否需行动 (urgencyValue): 映射 strategic_value.actionability
-      const urgencyText = strategic.actionability || '中';
-      const urgencyClassMap = { '高': 'yes', '中': 'maybe', '低': 'no' };
-      safeSetText('urgencyValue', urgencyText === '高' ? '是' : urgencyText === '中' ? '可能' : '否');
-      const urgencyValueEl = document.getElementById('urgencyValue');
-      if (urgencyValueEl) {
-        urgencyValueEl.className = 'value ' + (urgencyClassMap[urgencyText] || 'maybe');
-      }
+      // 一句话总结
+      safeSetText('verdictSummary', block0.one_sentence_summary || '-');
 
-      // 2. 核心价值摘要 (summaryValue): 映射 overall_assessment.one_sentence_summary
-      safeSetText('summaryValue', overall.one_sentence_summary || '-');
+      // 四卡片汇总
+      const cards = block0.summary_cards || {};
+      const factCheck = cards.fact_check || {};
+      const logicCheck = cards.logic_check || {};
+      const blindSpotCard = cards.blind_spot || {};
+      const timeliness = cards.timeliness || {};
 
-      // 3. 为什么要行动 (urgencyReason): 映射 strategic_value.assessment 或 recommendations.for_readers
-      const urgencyReasonText = strategic.assessment ||
-        (evaluation.recommendations?.for_readers?.[0]?.rationale) ||
-        (evaluation.verdict?.reading_time_recommendation) ||
-        '-';
-      safeSetText('urgencyReason', urgencyReasonText);
+      safeSetText('factCheckCount', factCheck.count != null ? String(factCheck.count) : '-');
+      safeSetText('factCheckLabel', factCheck.label || '-');
+      safeSetText('logicCheckCount', logicCheck.count != null ? String(logicCheck.count) : '-');
+      safeSetText('logicCheckLabel', logicCheck.label || '-');
+      safeSetText('blindSpotCount', blindSpotCard.count != null ? String(blindSpotCard.count) : '-');
+      safeSetText('blindSpotLabel', blindSpotCard.label || '-');
+      safeSetText('timelinessValue', timeliness.value || '-');
+      safeSetText('timelinessLabel', timeliness.label || '时效性');
 
-      // 4. 行动建议 (actionsList): 映射 recommendations.for_readers
-      const actionsList = document.getElementById('actionsList');
-      if (actionsList) {
-        actionsList.innerHTML = '';
-        const recommendations = evaluation.recommendations?.for_readers || [];
+      // 判断方法
+      safeSetText('methodologyText', block0.methodology || '-');
 
-        if (recommendations.length > 0) {
-          recommendations.forEach((rec, index) => {
-            const actionItem = document.createElement('div');
-            actionItem.className = 'action-item';
+      // ---- BLOCK 1: 核查详情 ----
 
-            const priorityClassMap = { '高': 'high', '中': 'medium', '低': 'low' };
-            const priorityClass = priorityClassMap[rec.priority] || 'medium';
-
-            actionItem.innerHTML =
-              '<div class="priority-badge ' + priorityClass + '">' + rec.priority + '</div>' +
-              '<div class="action-content">' +
-                '<div class="action-title">' + rec.recommendation + '</div>' +
-                '<div class="action-meta">' +
-                  '<div><span class="label">理由：</span>' + rec.rationale + '</div>' +
-                '</div>' +
-              '</div>';
-
-            actionsList.appendChild(actionItem);
-          });
+      // 数据核查清单
+      const dataChecksEl = document.getElementById('dataChecksContainer');
+      if (dataChecksEl) {
+        const dataChecks = block1.data_checks || [];
+        if (dataChecks.length > 0) {
+          dataChecksEl.innerHTML = dataChecks.map(item => {
+            // 兼容 verdict / status 两种字段
+            const statusIcon = item.verdict || item.status || '🔍';
+            // 兼容 actual / explanation 两种说明字段
+            const explanation = item.actual || item.explanation || '';
+            return '<div class="check-item">' +
+              '<div class="check-status">' + statusIcon + '</div>' +
+              '<div class="check-body">' +
+                '<div class="check-claim">' + (item.claim || '') + '</div>' +
+                (explanation ? '<div class="check-explanation">' + explanation + '</div>' : '') +
+                (item.source ? '<div class="check-source">来源：' + item.source + '</div>' : '') +
+              '</div>' +
+            '</div>';
+          }).join('');
         } else {
-          // 如果没有for_readers，显示verdict
-          const verdict = evaluation.verdict || {};
-          actionsList.innerHTML = '<div style="padding: 20px; color: #6b7280;">' +
-            '<div style="margin-bottom: 10px;"><strong>可靠性：</strong>' + (verdict.is_reliable || '-') + '</div>' +
-            '<div style="margin-bottom: 10px;"><strong>价值：</strong>' + (verdict.is_valuable || '-') + '</div>' +
-            '<div style="margin-bottom: 10px;"><strong>建议：</strong>' + (verdict.reading_time_recommendation || '-') + '</div>' +
-          '</div>';
+          dataChecksEl.innerHTML = '<div class="empty-hint">暂无数据型声明需核查</div>';
         }
       }
 
-      // 5. 战略洞察 - 新增 (KR1优化)
-      const strategicInsightsSection = document.getElementById('strategicInsightsSection');
-      const opportunitiesList = document.getElementById('opportunitiesList');
-      const risksList = document.getElementById('risksList');
-
-      if (strategic.opportunities && strategic.opportunities.length > 0) {
-        // 显示战略洞察区域
-        if (strategicInsightsSection) {
-          strategicInsightsSection.style.display = 'block';
-        }
-
-        // 显示机会列表
-        if (opportunitiesList) {
-          opportunitiesList.innerHTML = '';
-          strategic.opportunities.forEach(opp => {
-            const opportunityItem = document.createElement('div');
-            opportunityItem.className = 'opportunity-item';
-
-            const urgencyClass = opp.urgency || '中';
-            const impactClass = opp.potential_impact || '中';
-
-            opportunityItem.innerHTML =
-              '<div class="opportunity-badge">' + urgencyClass + '</div>' +
-              '<div class="opportunity-content">' +
-                '<div class="opportunity-type">' + opp.type + '：' + opp.description + '</div>' +
-                '<div class="opportunity-meta">' +
-                  '<span class="meta-tag ' + urgencyClass + '">紧急度：' + urgencyClass + '</span>' +
-                  '<span class="meta-tag ' + impactClass + '">影响：' + impactClass + '</span>' +
-                '</div>' +
-              '</div>';
-
-            opportunitiesList.appendChild(opportunityItem);
-          });
+      // 逻辑核查清单
+      const logicChecksEl = document.getElementById('logicChecksContainer');
+      if (logicChecksEl) {
+        const logicChecks = block1.logic_checks || [];
+        if (logicChecks.length > 0) {
+          logicChecksEl.innerHTML = logicChecks.map(item => {
+            // 兼容两种格式：
+            // 格式A: { claim, verdict, reasoning }
+            // 格式B: { type:"common_misconception", misconception, fact }
+            let statusIcon, claimText, explanationText;
+            if (item.type === 'common_misconception') {
+              statusIcon = '💡';
+              claimText = '常见误区：' + (item.misconception || '');
+              explanationText = '正确认知：' + (item.fact || '');
+            } else {
+              statusIcon = item.verdict || item.status || '🔍';
+              claimText = item.claim || '';
+              explanationText = item.reasoning || item.explanation || '';
+            }
+            return '<div class="check-item">' +
+              '<div class="check-status">' + statusIcon + '</div>' +
+              '<div class="check-body">' +
+                '<div class="check-claim">' + claimText + '</div>' +
+                (explanationText ? '<div class="check-explanation">' + explanationText + '</div>' : '') +
+              '</div>' +
+            '</div>';
+          }).join('');
+        } else {
+          logicChecksEl.innerHTML = '<div class="empty-hint">暂无逻辑型声明需核查</div>';
         }
       }
 
-      // 显示风险列表
-      if (strategic.risks && strategic.risks.length > 0) {
-        if (strategicInsightsSection) {
-          strategicInsightsSection.style.display = 'block';
-        }
-
-        if (risksList) {
-          risksList.innerHTML = '';
-          strategic.risks.forEach(risk => {
-            const riskItem = document.createElement('div');
-            riskItem.className = 'risk-item';
-
-            const probabilityClass = risk.probability || '中';
-
-            riskItem.innerHTML =
-              '<div class="risk-badge">' + probabilityClass + '</div>' +
-              '<div class="risk-content">' +
-                '<div class="risk-type">' + risk.type + '：' + risk.description + '</div>' +
-                '<div class="risk-meta">' +
-                  '<span class="meta-tag ' + probabilityClass + '">概率：' + probabilityClass + '</span>' +
-                  '<span style="color: #6b7280;">缓解措施：' + risk.mitigation + '</span>' +
-                '</div>' +
-              '</div>';
-
-            risksList.appendChild(riskItem);
-          });
+      // ---- BLOCK 2: 认知盲区 ----
+      const blindSpotsEl = document.getElementById('blindSpotsContainer');
+      if (blindSpotsEl) {
+        const blindSpots = block2.blind_spots || [];
+        if (blindSpots.length > 0) {
+          blindSpotsEl.innerHTML = blindSpots.map(item => {
+            // 兼容多种字段格式：
+            // 格式A: { title, description, suggestion }
+            // 格式B: { content } (只有一个字段)
+            // 格式C: { spot, explanation }
+            const title = item.title || item.spot || '';
+            const desc = item.description || item.explanation || item.content || '';
+            const suggestion = item.suggestion || '';
+            return '<div class="blind-spot-item">' +
+              (title ? '<div class="blind-spot-title">💡 ' + title + '</div>' : '') +
+              (desc ? '<div class="blind-spot-desc">' + desc + '</div>' : '') +
+              (suggestion ? '<div class="blind-spot-suggestion">建议：' + suggestion + '</div>' : '') +
+            '</div>';
+          }).join('');
+        } else {
+          blindSpotsEl.innerHTML = '<div class="empty-hint">未发现明显盲区</div>';
         }
       }
 
-      // 显示投资建议
-      const investmentRec = strategic.investment_recommendation;
-      if (investmentRec) {
-        if (strategicInsightsSection) {
-          strategicInsightsSection.style.display = 'block';
-        }
-
-        safeSetText('investmentVerdict', investmentRec.verdict || '-');
-        safeSetText('investmentRationale', investmentRec.rationale || '');
-        safeSetText('investmentTimeHorizon', '时间周期：' + (investmentRec.time_horizon || '-'));
+      // ---- BLOCK 3: 评估依据 ----
+      // 行业全景
+      const industryOverview = block3.industry_overview || {};
+      if (industryOverview.stage_description) {
+        safeSetText('industryStageDesc', industryOverview.stage_description);
       }
-
-      // 显示竞品对标分析
-      const competitive = evaluation.competitive_analysis || {};
-      const competitiveLeadersList = document.getElementById('competitiveLeadersList');
-      const articleComparisonEl = document.getElementById('articleComparison');
-
-      if (competitive.industry_leaders && competitive.industry_leaders.length > 0) {
-        if (strategicInsightsSection) {
-          strategicInsightsSection.style.display = 'block';
+      // 关键数据
+      const keyDataEl = document.getElementById('industryKeyData');
+      if (keyDataEl && industryOverview.key_data_table) {
+        const kd = industryOverview.key_data_table;
+        if (Array.isArray(kd)) {
+          // 格式：[{metric, value, source}]
+          keyDataEl.innerHTML = kd.map(row =>
+            '<div class="key-data-row">' +
+              '<span class="key-data-label">' + (row.metric || '') + '</span>' +
+              '<span class="key-data-val">' + (row.value || '') + '</span>' +
+              (row.source ? '<span class="check-source" style="margin-left:8px">' + row.source + '</span>' : '') +
+            '</div>'
+          ).join('');
+        } else if (typeof kd === 'object') {
+          keyDataEl.innerHTML = Object.entries(kd).map(([k, v]) =>
+            '<div class="key-data-row"><span class="key-data-label">' + k + '</span><span class="key-data-val">' + v + '</span></div>'
+          ).join('');
         }
-
-        if (competitiveLeadersList) {
-          competitiveLeadersList.innerHTML = '';
-          competitive.industry_leaders.forEach(leader => {
-            const leaderDiv = document.createElement('div');
-            leaderDiv.className = 'competitive-leader';
-
-            const metrics = leader.financial_metrics || {};
-            leaderDiv.innerHTML =
-              '<div class="leader-name">' + leader.company + ' <span style="font-weight: normal; color: #6b7280;">' + leader.strategic_focus + '</span></div>' +
-              '<div class="leader-strengths">优势：' + (leader.strengths?.join('、') || '-') + '</div>' +
-              '<div class="leader-metrics">' +
-                '<span class="leader-metric">营收增长：' + (metrics.revenue_growth || '-') + '</span>' +
-                '<span class="leader-metric">利润率：' + (metrics.profit_margin || '-') + '</span>' +
-                '<span class="leader-metric">ROE：' + (metrics.roe || '-') + '</span>' +
-              '</div>';
-
-            competitiveLeadersList.appendChild(leaderDiv);
-          });
-        }
-
-        if (articleComparisonEl && competitive.article_comparison) {
-          const comp = competitive.article_comparison;
-          let comparisonHtml = '<ul class="comparison-list">';
-          if (comp.similarities && comp.similarities.length > 0) {
-            comparisonHtml += '<li><strong>相似点：</strong>' + comp.similarities.join('；') + '</li>';
-          }
-          if (comp.differences && comp.differences.length > 0) {
-            comparisonHtml += '<li><strong>差异点：</strong>' + comp.differences.join('；') + '</li>';
-          }
-          comparisonHtml += '</ul>';
-          if (comp.gap_analysis) {
-            comparisonHtml += '<div style="margin-top: 8px; font-size: 13px; color: #6b7280;"><strong>差距分析：</strong>' + comp.gap_analysis + '</div>';
-          }
-          articleComparisonEl.innerHTML = comparisonHtml;
+      } else if (keyDataEl && industryOverview.key_data) {
+        const kd = industryOverview.key_data;
+        if (Array.isArray(kd)) {
+          keyDataEl.innerHTML = kd.map(row =>
+            '<div class="key-data-row">' +
+              '<span class="key-data-label">' + (row.metric || row.label || '') + '</span>' +
+              '<span class="key-data-val">' + (row.value || '') + '</span>' +
+            '</div>'
+          ).join('');
+        } else if (typeof kd === 'object') {
+          keyDataEl.innerHTML = Object.entries(kd).map(([k, v]) =>
+            '<div class="key-data-row"><span class="key-data-label">' + k + '</span><span class="key-data-val">' + v + '</span></div>'
+          ).join('');
+        } else {
+          keyDataEl.textContent = String(kd);
         }
       }
-
-      // 6. 置信度和数据质量 - 新增
-      const confidenceTrust = evaluation.confidence_and_trust || {};
-      const confidenceSection = document.getElementById('confidenceSection');
-
-      if (confidenceTrust.overall_confidence) {
-        if (confidenceSection) {
-          confidenceSection.style.display = 'block';
-        }
-
-        const overallConf = confidenceTrust.overall_confidence || {};
-        safeSetText('overallConfidenceScore', (overallConf.score || 0) + '%');
-        safeSetText('overallConfidenceLevel', overallConf.level || '-');
-        safeSetText('overallConfidenceExplanation', overallConf.explanation || '-');
+      if (industryOverview.competitive_landscape) {
+        safeSetText('industryCompetitive', '竞争格局：' + industryOverview.competitive_landscape);
       }
 
-      // 数据质量评分
-      const dataQuality = confidenceTrust.data_quality_score || {};
-      if (dataQuality.overall) {
-        if (confidenceSection) {
-          confidenceSection.style.display = 'block';
-        }
-
-        safeSetText('qualityCompleteness', (dataQuality.completeness || 0) + '%');
-        safeSetText('qualityCredibility', (dataQuality.credibility || 0) + '%');
-        safeSetText('qualityRecency', (dataQuality.recency || 0) + '%');
-        safeSetText('qualityQuantification', (dataQuality.quantification || 0) + '%');
-        safeSetText('qualityOverall', (dataQuality.overall || 0) + '%');
+      // 行业研究报告
+      const reportBasisItem = document.getElementById('reportBasisItem');
+      if (reportBasisItem) {
+        reportBasisItem.style.display = block3.industry_report ? 'block' : 'none';
       }
 
-      // 评估溯源
-      const traceability = confidenceTrust.evaluation_traceability || {};
-      const assessmentBasisList = document.getElementById('assessmentBasisList');
-      const uncertaintyList = document.getElementById('uncertaintyList');
-      const verifiedDataList = document.getElementById('verifiedDataList');
-
-      // 评估依据列表
-      if (traceability.assessment_basis && traceability.assessment_basis.length > 0) {
-        if (confidenceSection) {
-          confidenceSection.style.display = 'block';
-        }
-
-        if (assessmentBasisList) {
-          assessmentBasisList.innerHTML = '';
-          traceability.assessment_basis.forEach(basis => {
-            const basisDiv = document.createElement('div');
-            basisDiv.className = 'traceability-item';
-            basisDiv.innerHTML =
-              '<div class="traceability-aspect">' + basis.aspect + ' <span style="font-weight: normal; color: #667eea; margin-left: 8px;">评分: ' + basis.score + '</span></div>' +
-              '<div class="traceability-evidence">依据: ' + basis.evidence + '</div>' +
-              '<div class="traceability-source">📍 来源: ' + basis.source + '</div>';
-            assessmentBasisList.appendChild(basisDiv);
-          });
-        }
-      }
-
-      // 不确定领域列表
-      if (traceability.uncertainty_areas && traceability.uncertainty_areas.length > 0) {
-        if (confidenceSection) {
-          confidenceSection.style.display = 'block';
-        }
-
-        if (uncertaintyList) {
-          uncertaintyList.innerHTML = '';
-          traceability.uncertainty_areas.forEach(uncertainty => {
-            const uncertaintyDiv = document.createElement('div');
-            uncertaintyDiv.className = 'uncertainty-alert';
-            uncertaintyDiv.innerHTML =
-              '<div class="uncertainty-title">!' + uncertainty.area + '</div>' +
-              '<div class="uncertainty-detail">原因: ' + uncertainty.reason + '</div>' +
-              '<div class="uncertainty-detail">影响: ' + uncertainty.impact + '</div>' +
-              '<div class="uncertainty-verification">✓ 建议验证: ' + uncertainty.suggested_verification + '</div>';
-            uncertaintyList.appendChild(uncertaintyDiv);
-          });
-        }
-      } else {
-        if (uncertaintyList) {
-          uncertaintyList.innerHTML = '<div style="padding: 12px; color: #059669; font-size: 14px;">✓ 未发现明显不确定因素</div>';
-        }
-      }
-
-      // 关键数据点验证列表
-      if (traceability.key_data_points_verified && traceability.key_data_points_verified.length > 0) {
-        if (confidenceSection) {
-          confidenceSection.style.display = 'block';
-        }
-
-        if (verifiedDataList) {
-          verifiedDataList.innerHTML = '<ul class="verified-data-list">';
-          traceability.key_data_points_verified.forEach(data => {
-            const confidenceClass = data.confidence || '中';
-            verifiedDataList.innerHTML +=
-              '<li class="verified-data-item">' +
-                '<div class="verified-data-claim">' + data.claim + '</div>' +
-                '<div class="verified-data-meta">' +
-                  '<span class="verified-data-source">' + data.source + '</span>' +
-                  '<span class="verified-data-confidence ' + confidenceClass + '">' + confidenceClass + '</span>' +
-                '</div>' +
-              '</li>';
-          });
-          verifiedDataList.innerHTML += '</ul>';
-        }
-      }
-
-      // 7. 详细分析 - 映射 dimension_scores
-      const factual = evaluation.dimension_scores?.factual_accuracy || {};
-      updateDetailWithQuote('inputDiagnosis', factual.assessment || '-');
-
-      const benchmarkComp = evaluation.benchmark_comparison || {};
-      const benchmarkDetails = [];
-      if (benchmarkComp.above_benchmark?.length > 0) {
-        benchmarkDetails.push('【超出基准】' + benchmarkComp.above_benchmark.map(b => b.area).join('、'));
-      }
-      if (benchmarkComp.meets_benchmark?.length > 0) {
-        benchmarkDetails.push('【符合基准】' + benchmarkComp.meets_benchmark.map(b => b.area).join('、'));
-      }
-      if (benchmarkComp.below_benchmark?.length > 0) {
-        benchmarkDetails.push('【低于基准】' + benchmarkComp.below_benchmark.map(b => b.area + ': ' + b.improvement_suggestion).join('；'));
-      }
-      updateDetailWithQuote('macroBenchmark', benchmarkDetails.join('\n') || '暂无对比数据');
-
-      const blindSpots = evaluation.blind_spot_analysis || {};
-      const missingContext = blindSpots.critical_missing_context || [];
-      updateDetailWithQuote('blindSpotAlert',
-        missingContext.length > 0
-          ? '缺失关键背景：' + missingContext.join('；')
-          : (blindSpots.identified_blind_spots?.length > 0 ? '发现盲点：' + blindSpots.identified_blind_spots.map(s => s.spot).join('；') : '未发现明显盲点')
-      );
-
-      // 6. 更新评估依据信息
+      // 行业认知基准 or 通用基准
       const routeInfo = evaluation.route_info || {};
       const benchmarkType = routeInfo.type || 'GENERAL_BENCHMARK';
-      const benchmarkName = routeInfo.benchmark_name || '认知基准';
-
-      // 更新框架卡片（当前命中的认知基准）
-      const frameworkType = document.getElementById('frameworkType');
-      const frameworkName = document.getElementById('frameworkName');
-      const benchmarkTypeName = document.getElementById('benchmarkTypeName');
-
-      if (frameworkType && frameworkName && benchmarkTypeName) {
-        frameworkType.textContent = benchmarkType === 'INDUSTRY_BENCHMARK' ? '行业认知基准' : '通用认知基准';
-        frameworkType.className = 'framework-badge ' + (benchmarkType === 'INDUSTRY_BENCHMARK' ? 'industry' : 'general');
-        frameworkName.textContent = benchmarkName;
-        benchmarkTypeName.textContent = benchmarkType === 'INDUSTRY_BENCHMARK' ? '基于行业专业数据' : '基于通用商业知识';
+      const benchmarkBasisItem = document.getElementById('benchmarkBasisItem');
+      const generalBasisItem = document.getElementById('generalBasisItem');
+      const benchmarkGics4Text = document.getElementById('benchmarkGics4Text');
+      if (benchmarkType === 'INDUSTRY_BENCHMARK') {
+        if (benchmarkBasisItem) benchmarkBasisItem.style.display = 'block';
+        if (generalBasisItem) generalBasisItem.style.display = 'none';
+        if (benchmarkGics4Text) benchmarkGics4Text.textContent = 'GICS分类：' + (routeInfo.gics4 || '-');
+      } else {
+        if (benchmarkBasisItem) benchmarkBasisItem.style.display = 'none';
+        if (generalBasisItem) generalBasisItem.style.display = 'block';
       }
 
-      // 更新行业数据基准卡片
-      const benchmarkDataItem = document.getElementById('benchmarkDataItem');
-      const benchmarkDataValue = document.getElementById('benchmarkDataValue');
-      const generalBenchmarkItem = document.getElementById('generalBenchmarkItem');
-      const reportItem = document.getElementById('reportItem');
-      const reportValue = document.getElementById('reportValue');
-
-      if (benchmarkType === 'INDUSTRY_BENCHMARK' && benchmarkDataItem && benchmarkDataValue) {
-        // 显示行业数据基准
-        benchmarkDataItem.style.display = 'flex';
-        benchmarkDataValue.textContent = benchmarkName;
-        if (generalBenchmarkItem) {
-          generalBenchmarkItem.style.display = 'none';
-        }
-        // 显示行业研究报告（仅对行业基准显示）
-        if (reportItem && reportValue) {
-          reportItem.style.display = 'flex';
-          reportValue.textContent = benchmarkName + '研究报告';
-        }
-      } else if (generalBenchmarkItem) {
-        // 显示通用基准说明
-        generalBenchmarkItem.style.display = 'flex';
-        if (benchmarkDataItem) {
-          benchmarkDataItem.style.display = 'none';
-        }
-        // 隐藏行业研究报告（通用基准不显示）
-        if (reportItem) {
-          reportItem.style.display = 'none';
-        }
+      // ---- 更新顶部徽章 ----
+      const analyzerBadge2 = document.getElementById('analyzerBadge');
+      if (analyzerBadge2) {
+        const badgeName = routeInfo.benchmark_name || (benchmarkType === 'INDUSTRY_BENCHMARK' ? '行业认知基准' : '通用认知基准');
+        analyzerBadge2.textContent = badgeName;
+        analyzerBadge2.className = 'analyzer-badge ' + (benchmarkType === 'INDUSTRY_BENCHMARK' ? 'industry' : 'general');
       }
 
-      // 7. 更新浏览器URL显示
+      // 更新浏览器URL显示
       if (evaluation.article_url) {
         safeSetText('browserUrl', evaluation.article_url);
         sourceUrl = evaluation.article_url;
