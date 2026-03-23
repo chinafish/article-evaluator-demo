@@ -291,6 +291,39 @@ ${JSON.stringify(report.benchmark_data, null, 2)}
     const filepath = path.join(cacheDir, filename);
 
     if (!fs.existsSync(filepath)) {
+      // 模糊匹配：查找包含关键词的缓存文件
+      const keywords = gics4.replace(/行业|领域|分类/g, '').split(/[,，、\s]+/);
+      const files = fs.readdirSync(cacheDir).filter(f => f.endsWith('.json'));
+      for (const keyword of keywords) {
+        if (keyword.length < 2) continue;
+        for (const file of files) {
+          const fileName = file.replace('.json', '');
+          if (fileName.includes(keyword) || keyword.includes(fileName)) {
+            console.log(`[判断基准] 模糊匹配缓存: "${gics4}" -> "${fileName}"`);
+            const fuzzyPath = path.join(cacheDir, file);
+            const stats = fs.statSync(fuzzyPath);
+            const cacheAge = (Date.now() - stats.mtime.getTime()) / (1000 * 60 * 60 * 24);
+            if (cacheAge <= 30) {
+              const content = fs.readFileSync(fuzzyPath, 'utf-8');
+              return JSON.parse(content);
+            }
+          }
+          // 关键词交叉匹配（按共同字符数判断）
+          const targetChars = new Set(fileName.replace(/行业|领域|分类/g, ''));
+          const queryChars = new Set(keyword);
+          const commonChars = [...queryChars].filter(c => targetChars.has(c));
+          if (commonChars.length >= 3) {
+            console.log(`[判断基准] 交叉匹配缓存: "${gics4}" -> "${fileName}"`);
+            const fuzzyPath = path.join(cacheDir, file);
+            const stats = fs.statSync(fuzzyPath);
+            const cacheAge = (Date.now() - stats.mtime.getTime()) / (1000 * 60 * 60 * 24);
+            if (cacheAge <= 30) {
+              const content = fs.readFileSync(fuzzyPath, 'utf-8');
+              return JSON.parse(content);
+            }
+          }
+        }
+      }
       return null;
     }
 

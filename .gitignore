@@ -32,3 +32,9 @@ build/
 # Temporary files
 *.tmp
 .temp/
+
+# Backup files
+bak/
+
+# Test outputs
+test_result_*.json

@@ -113,12 +113,22 @@ class ArticleEvaluatorV15 {
       // 行业数据（从benchmark和report中提取，截断避免过长）
       KEY_DATA_TABLE: this.formatKeyDataTable(context.keyData),
       COMPETITIVE_LANDSCAPE: (context.competitiveLandscape || '暂无').substring(0, 500),
-      SUCCESS_FACTORS: (context.successFactors || ['暂无']).slice(0, 5),
+      SUCCESS_FACTORS: Array.isArray(context.successFactors) ? context.successFactors.slice(0, 5) : ['暂无'],
       COMMON_MISCONCEPTIONS: (context.commonMisconceptions || []).slice(0, 3),
 
       // 报告和基准（截断避免过长）
       INDUSTRY_REPORT: (context.industryReport || '暂无').substring(0, 800),
-      INDUSTRY_BENCHMARK: '已提供'
+      INDUSTRY_CHAIN: typeof context.industryChain === 'string' ? context.industryChain.substring(0, 500) :
+        context.industryChain ? JSON.stringify(context.industryChain).substring(0, 500) : '暂无',
+      INDUSTRY_BENCHMARK: context.industryBenchmark || '暂无',
+
+      // 行业知识维度和挑战（供盲点检测使用）
+      REQUIRED_KNOWLEDGE: Array.isArray(context.requiredKnowledge)
+        ? context.requiredKnowledge.slice(0, 5).map(k => `- ${k}`).join('\n') : '暂无',
+      KEY_CHALLENGES: Array.isArray(context.keyChallenges)
+        ? context.keyChallenges.slice(0, 3).map(c => `- ${c.area}：${c.description}`).join('\n') : '暂无',
+      HIGH_VALUE_TOPICS: Array.isArray(context.highValueTopics)
+        ? context.highValueTopics.slice(0, 4).map(t => `- ${t}`).join('\n') : '暂无'
     };
 
     const promptText = industryPromptTemplate(promptVars);
@@ -129,7 +139,7 @@ class ArticleEvaluatorV15 {
 
     return {
       system: systemMatch ? systemMatch[0].trim() : '你是一位专业的文章可信度分析师。',
-      user: userMatch ? userMatch[0].trim() + `\n\n# 待评估文章\n标题：${article.title}\n来源：${article.source}\n内容：${article.content}` : `请评估以下文章：\n${article.content}`
+      user: userMatch ? userMatch[0].trim() + `\n\n# 待评估文章\n标题：${article.title}\n来源：${article.source}${article.publishDate ? '\n发布日期：' + article.publishDate : ''}\n内容：${article.content}` : `请评估以下文章：\n${article.content}`
     };
   }
 
@@ -149,7 +159,7 @@ class ArticleEvaluatorV15 {
 
     return {
       system: systemMatch ? systemMatch[0].trim() : '你是一位专业的文章可信度分析师。',
-      user: userMatch ? userMatch[0].trim() + `\n\n# 待评估文章\n标题：${article.title}\n来源：${article.source}\n内容：${article.content}` : `请评估以下文章：\n${article.content}`
+      user: userMatch ? userMatch[0].trim() + `\n\n# 待评估文章\n标题：${article.title}\n来源：${article.source}${article.publishDate ? '\n发布日期：' + article.publishDate : ''}\n内容：${article.content}` : `请评估以下文章：\n${article.content}`
     };
   }
 
@@ -175,23 +185,74 @@ class ArticleEvaluatorV15 {
   }
 
   /**
-   * 解析评估结果
+   * 解析评估结果（容错：处理 AI 输出的常见 JSON 问题）
    */
   parseEvaluation(content) {
+    // 辅助：用花括号计数法提取完整 JSON 对象
+    function extractBraceContent(text) {
+      let depth = 0;
+      let start = -1;
+      for (let i = 0; i < text.length; i++) {
+        const ch = text[i];
+        if (ch === '{') {
+          if (depth === 0) start = i;
+          depth++;
+        } else if (ch === '}') {
+          depth--;
+          if (depth === 0 && start >= 0) {
+            return text.substring(start, i + 1);
+          }
+        }
+      }
+      return null;
+    }
+
+    // 辅助：修复常见 JSON 问题
+    function fixJSON(jsonStr) {
+      // 移除尾部逗号（}, ] 前的逗号）
+      let fixed = jsonStr.replace(/,\s*([}\]])/g, '$1');
+      // 移除 JSON 中的单行注释
+      fixed = fixed.replace(/\/\/.*$/gm, '');
+      return fixed;
+    }
+
     try {
-      // 尝试直接解析JSON
+      // 1. 尝试直接解析
       return JSON.parse(content);
     } catch (error) {
-      // 尝试提取JSON代码块
+      // 2. 尝试提取 ```json 代码块
       const jsonMatch = content.match(/```json\s*([\s\S]*?)\s*```/);
       if (jsonMatch) {
-        return JSON.parse(jsonMatch[1]);
+        try {
+          return JSON.parse(jsonMatch[1]);
+        } catch (e) {
+          const extracted = extractBraceContent(jsonMatch[1]);
+          if (extracted) return JSON.parse(fixJSON(extracted));
+        }
       }
-      // 尝试提取花括号内容
-      const braceMatch = content.match(/\{[\s\S]*\}/);
-      if (braceMatch) {
-        return JSON.parse(braceMatch[0]);
+
+      // 3. 用花括号计数法提取 JSON
+      const braceContent = extractBraceContent(content);
+      if (braceContent) {
+        try {
+          return JSON.parse(braceContent);
+        } catch (e) {
+          return JSON.parse(fixJSON(braceContent));
+        }
       }
+
+      // 4. 尝试简单正则
+      const simpleMatch = content.match(/\{[\s\S]*\}/);
+      if (simpleMatch) {
+        try {
+          return JSON.parse(simpleMatch[0]);
+        } catch (e) {
+          return JSON.parse(fixJSON(simpleMatch[0]));
+        }
+      }
+
+      console.error('[parseEvaluation] 所有解析方法均失败:', error.message);
+      console.error('[parseEvaluation] AI返回内容前200字符:', content.substring(0, 200));
       throw new Error('无法解析AI返回的JSON格式');
     }
   }
@@ -230,12 +291,26 @@ class ArticleEvaluatorV15 {
     let urgencyLevel = 'N/A';
     const timeliness = summaryCards.timeliness || {};
     if (timeliness.value) {
-      if (timeliness.value.includes('2021') || timeliness.value.includes('2022')) {
-        urgencyLevel = '低'; // 数据较旧
-      } else if (timeliness.value.includes('2023') || timeliness.value.includes('2024')) {
-        urgencyLevel = '中'; // 数据较新
-      } else if (timeliness.value.includes('预测')) {
-        urgencyLevel = '高'; // 预测性内容
+      const val = timeliness.value;
+      // 优先匹配中文描述
+      if (val.includes('数据较新') || val.includes('数据及时')) {
+        urgencyLevel = '高';
+      } else if (val.includes('数据较旧') || val.includes('数据过时')) {
+        urgencyLevel = '低';
+      } else if (val.includes('数据略有滞后') || val.includes('数据基本可用')) {
+        urgencyLevel = '中';
+      } else if (val.includes('预测') || val.includes('前瞻')) {
+        urgencyLevel = '高';
+      } else {
+        // 回退：从年份推算
+        const currentYear = new Date().getFullYear();
+        const dataYearMatch = val.match(/(\d{4})/);
+        if (dataYearMatch) {
+          const yearDiff = currentYear - parseInt(dataYearMatch[1]);
+          if (yearDiff >= 3) urgencyLevel = '低';
+          else if (yearDiff >= 1) urgencyLevel = '中';
+          else urgencyLevel = '高';
+        }
       }
     }
 

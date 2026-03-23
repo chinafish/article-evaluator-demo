@@ -122,10 +122,19 @@ class BenchmarkDataService {
     for (const keyword of keywords) {
       if (keyword.length < 2) continue;
 
-      // 查找包含关键词的GICS分类
       for (const gics4Name in this.index.byGics4) {
+        // 双向子串匹配
         if (gics4Name.includes(keyword) || keyword.includes(gics4Name)) {
           console.log(`[基准数据] 模糊匹配: "${gics4}" -> "${gics4Name}"`);
+          return this.index.byGics4[gics4Name];
+        }
+
+        // 关键词交叉匹配（处理"半导体设备" vs "半导体材料与设备"的情况）
+        const targetChars = new Set(gics4Name.replace(/行业|领域|分类/g, ''));
+        const queryChars = new Set(keyword);
+        const commonChars = [...queryChars].filter(c => targetChars.has(c));
+        if (commonChars.length >= 3) {
+          console.log(`[基准数据] 交叉匹配: "${gics4}" -> "${gics4Name}" (common: ${commonChars.join('')})`);
           return this.index.byGics4[gics4Name];
         }
       }

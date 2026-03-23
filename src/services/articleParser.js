@@ -224,6 +224,28 @@ class ArticleParser {
         console.log('[Puppeteer] 标题提取超时，使用默认值');
       }
 
+      // 提取发布日期
+      let publishDate = null;
+      try {
+        publishDate = await page.evaluate(() => {
+          // 微信公众号
+          const publishTimeEl = document.querySelector('#publish_time');
+          if (publishTimeEl?.textContent?.trim()) {
+            const ts = parseInt(publishTimeEl.textContent.trim());
+            if (!isNaN(ts)) return new Date(ts * 1000).toISOString().slice(0, 10);
+          }
+          // 通用 time 元素
+          const timeEl = document.querySelector('time[datetime]');
+          if (timeEl?.getAttribute('datetime')) return timeEl.getAttribute('datetime').slice(0, 10);
+          // meta 标签
+          const dateMeta = document.querySelector('meta[property="article:published_time"]');
+          if (dateMeta?.getAttribute('content')) return dateMeta.getAttribute('content').slice(0, 10);
+          return null;
+        }, { timeout: 5000 });
+      } catch (error) {
+        console.log('[Puppeteer] 日期提取超时');
+      }
+
       // 提取正文内容（带超时保护）
       let contentResult;
       try {
@@ -290,7 +312,8 @@ class ArticleParser {
         source: source,
         excerpt: content.substring(0, 200),
         url: url,
-        isPartialContent: isPartialContent
+        isPartialContent: isPartialContent,
+        publishDate: publishDate
       };
 
       if (isPartialContent) {
@@ -396,6 +419,7 @@ class ArticleParser {
         title: '直接输入内容',
         content: input,
         url: null,
+        publishDate: null,
         source: '直接输入'
       };
     }
@@ -440,13 +464,25 @@ class ArticleParser {
       if (contentDiv) {
         const content = this.cleanText(contentDiv.textContent);
         if (content.length >= 200) {
+          // 提取发布日期
+          let publishDate = null;
+          const publishTimeEl = document.querySelector('#publish_time');
+          if (publishTimeEl?.textContent?.trim()) {
+            const ts = parseInt(publishTimeEl.textContent.trim());
+            if (!isNaN(ts)) publishDate = new Date(ts * 1000).toISOString().slice(0, 10);
+          }
+          if (!publishDate) {
+            const ctMatch = response.data.match(/var\s+ct\s*=\s*["'](\d+)["']/);
+            if (ctMatch) publishDate = new Date(parseInt(ctMatch[1]) * 1000).toISOString().slice(0, 10);
+          }
           return {
             title: title,
             content: content,
             htmlContent: contentDiv.innerHTML,
             source: '微信公众号',
             excerpt: content.substring(0, 200),
-            url: url
+            url: url,
+            publishDate: publishDate
           };
         }
       }
@@ -482,7 +518,8 @@ class ArticleParser {
       htmlContent: article.content,
       source: this.extractSource(url),
       excerpt: article.excerpt || '',
-      url: url
+      url: url,
+      publishDate: article.publishedTime || null
     };
   }
 
@@ -537,6 +574,29 @@ class ArticleParser {
 
       const content = this.cleanText(rawContent);
 
+      // 提取发布日期
+      let publishDate = null;
+      // 优先从 #publish_time 元素提取
+      const publishTimeEl = document.querySelector('#publish_time');
+      if (publishTimeEl?.textContent?.trim()) {
+        const ts = parseInt(publishTimeEl.textContent.trim());
+        if (!isNaN(ts)) {
+          publishDate = new Date(ts * 1000).toISOString().slice(0, 10);
+        }
+      }
+      // 尝试从 var ct = "..." 脚本变量提取（WeChat常用）
+      if (!publishDate) {
+        const ctMatch = response.data.match(/var\s+ct\s*=\s*["'](\d+)["']/);
+        if (ctMatch) {
+          publishDate = new Date(parseInt(ctMatch[1]) * 1000).toISOString().slice(0, 10);
+        }
+      }
+      // 尝试从 meta 标签提取
+      if (!publishDate) {
+        const dateMeta = document.querySelector('meta[property="article:published_time"]')?.getAttribute('content');
+        if (dateMeta) publishDate = dateMeta.slice(0, 10);
+      }
+
       return {
         title: title,
         content: content,
@@ -544,6 +604,7 @@ class ArticleParser {
         source: '微信公众号',
         excerpt: content.substring(0, 200),
         url: url,
+        publishDate: publishDate,
         isPartialContent: content.length < 500
       };
 
